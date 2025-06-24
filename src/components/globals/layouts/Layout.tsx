@@ -8,10 +8,12 @@ interface IProps {
 
 export default function Layout({ title, children }: IProps) {
    return (
-      <main className="w-full h-screen">
-         <span className="text-lg">{title}</span>
+      <div className="w-full h-screen flex flex-col">
          <Navbar />
-         {children}
-      </main>
+         <main className="flex-1 overflow-y-auto">
+            <span className="text-lg">{title}</span>
+            {children}
+         </main>
+      </div>
    )
 }

@@ -21,7 +21,7 @@ const eslintConfig = [
       'public/',
       '**/generated/**',
     ],
-    plugins: ['prettier'],
+    plugins: ['prettier', '@unocss'],
     rules: {
       'prettier/prettier': [
         'error',
@@ -49,6 +49,7 @@ const eslintConfig = [
       'unused-imports/no-unused-imports': 'off',
       'unused-imports/no-unused-vars': 'off',
       'no-unused-vars': 'off',
+      '@unocss/enforce-class-compile': 'warn',
     },
   },
 ]

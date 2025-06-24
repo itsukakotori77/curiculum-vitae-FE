@@ -5,7 +5,7 @@ import Layout from "@/components/globals/layouts/Layout";
 export default function Home() {
   return (
     <Layout>
-      <Homepage />
+      <Homepage title={'Make your dream CV right now !'} />
     </Layout>
   );
 }

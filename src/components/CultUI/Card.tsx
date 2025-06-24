@@ -44,6 +44,7 @@ export interface CardProps
    children: React.ReactNode
    isClose?: boolean
    title?: string
+   useHeader?: boolean
 }
 
 const Card: React.FC<CardProps> = ({
@@ -52,6 +53,7 @@ const Card: React.FC<CardProps> = ({
    intent,
    isClose,
    title,
+   useHeader,
    ...props
 }) => {
 
@@ -65,16 +67,18 @@ const Card: React.FC<CardProps> = ({
          {...props}
       >
          <div className="grid w-full">
-            <div className="w-full h-4 bg-[#F37600] rounded-[3px_3px_0px_0px] outline-3 flex justify-between px-2 py-3.5">
-               <span className="flex items-center text-md font-bold">{title}</span>
-               {isClose && (
-                  <div className="flex items-center">
-                     <Square size={13} />
-                     <X size={13} />
-                  </div>
-               )}
-            </div>
-            <div className="px-4 py-2 w-full">
+            {useHeader && (
+               <div className="w-full h-4 bg-[#F37600] rounded-[3px_3px_0px_0px] outline-3 flex justify-between px-2 py-3.5">
+                  <span className="flex items-center text-md font-bold">{title}</span>
+                  {isClose && (
+                     <div className="flex items-center">
+                        <Square size={13} />
+                        <X size={13} />
+                     </div>
+                  )}
+               </div>
+            )}
+            <div className="px-4 py-2 w-full rounded-md border-3 border-black shadow-[3px_3px_0px_rgba(0,0,0,1)]">
                {children}
             </div>
          </div>

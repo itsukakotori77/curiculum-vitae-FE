@@ -12,20 +12,57 @@ const variants = cva(
       variants: {
          intent: {
             primary: [
-               "bg-[#5e5fed]",
+               "bg-[#292929]",
+               "rounded-md",
+               "text-white",
+               // "border-3",
+               // "border-black",
+               // "shadow-[2px_2px_0px_rgba(0,0,0,1)]",
+               "hover:bg-[#5C5C5C]",
+               "hover:cursor-pointer",
+               "hover:text-white",
+               "w-full",
+               "h-10"
+            ],
+            secondary: [
+               "bg-[#F9773F]",
                "rounded-md",
                "text-white",
                "border-3",
                "border-black",
-               "shadow-[2px_2px_0px_rgba(0,0,0,1)]",
-               "hover:bg-gray-200",
+               "shadow-[3px_3px_0px_rgba(0,0,0,1)]",
+               "hover:bg-[#00000]",
+               "hover:cursor-pointer",
+               "hover:text-white",
+               "w-full",
+               "h-10"
+            ],
+            default: [
+               "bg-[#E2E2E2]",
+               "rounded-md",
+               "text-black",
+               "border-3",
+               "border-black",
+               "shadow-[3px_3px_0px_rgba(0,0,0,1)]",
+               "hover:bg-[#00000]",
                "hover:cursor-pointer",
                "hover:text-black",
                "w-full",
                "h-10"
             ]
-         }
+         },
+         size: {
+            small: ["text-xs", "py-1", "px-2", "h-9", "rounded-[8px]"],
+            medium: ["text-base", "py-2", "px-4", "h-11", "rounded-[9px]"],
+            large: ["text-lg", "py-3", "px-6", "h-14", "rounded-[11px]"],
+         },
       },
+      compoundVariants: [
+         {
+            intent: ["primary", "secondary"],
+            className: "uppercase",
+         },
+      ],
       defaultVariants: {
          intent: "primary",
       },
@@ -57,7 +94,7 @@ const Button: React.FC<ButtonProps> = ({
          disabled={disabled || isLoading}
          {...props}
       >
-         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" /> }
+         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
          {children}
       </motion.button>
    )

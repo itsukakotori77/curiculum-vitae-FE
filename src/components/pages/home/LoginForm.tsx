@@ -1,0 +1,98 @@
+import React from 'react'
+import Card from '@/components/CultUI/Card'
+import TextForm from '@/components/globals/form/TextForm'
+import { useForm } from 'react-hook-form'
+import { ILogin } from '@/interface/login'
+import Button from '@/components/CultUI/Button'
+import { joinClass } from '@/utils/common'
+import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { Mail, LockKeyhole } from 'lucide-react'
+import CheckBoxForm from '@/components/globals/form/CheckBoxForm'
+import Image from 'next/image'
+
+interface IProps {
+   className?: string
+   onSubmit: (val?: any) => void
+}
+
+const schema = Yup.object().shape({
+   email: Yup.string().required('wajib diisi'),
+   password: Yup.string().required('wajib diisi')
+})
+
+export default function LoginForm({ className, onSubmit }: IProps) {
+   const { handleSubmit, control, formState, register } = useForm<ILogin>({
+      resolver: yupResolver(schema),
+      mode: 'onChange'
+   })
+
+   return (
+      <form
+         className={joinClass('max-md:w-full grid gap-2', className)}
+         onSubmit={handleSubmit(onSubmit)}
+      >
+         <TextForm
+            fieldLabel={{ children: 'Email', className: 'text-lg font-bold' }}
+            fieldInput={{
+               maxLength: 100, type: 'email', icon: (
+                  <span className="text-xs">
+                     <Mail className="absolute left-3 mt-0.5 w-5 h-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  </span>
+               )
+            }}
+            control={control}
+            name="email"
+            className="w-full"
+         />
+
+         <TextForm
+            fieldLabel={{ children: 'Password', className: 'text-lg font-bold' }}
+            fieldInput={{
+               maxLength: 100, type: 'password', icon: (
+                  <span className="text-xs">
+                     <LockKeyhole className="absolute left-3 mt-0.5 w-5 h-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  </span>
+               )
+            }}
+            control={control}
+            name="password"
+            className="w-full"
+         />
+
+         <div className="flex justify-between mb-4">
+            <CheckBoxForm
+               fieldLabel={{ children: '' }}
+               name="remember_me"
+               register={register}
+               titleClassName="text-sm"
+               fieldInput={[
+                  {
+                     label: 'Remember Me',
+                     value: 'remember_me'
+                  }
+               ]}
+            />
+            <span className="font-bold hover:text-stone-600 hover:cursor-pointer">Forgot Password ?</span>
+         </div>
+
+         <div className="grid gap-4">
+            <Button
+               className="lg:w-full border-2 rounded-lg"
+               intent="secondary"
+               type="submit"
+            >
+               <div className="font-bold">LOGIN NOW</div>
+            </Button>
+            <Button
+               className="lg:w-full border-2 rounded-lg flex gap-1.5"
+               intent="default"
+               type="button"
+            >
+               <Image src={'/icon/icon-google.svg'} width={10} height={10} alt="google" className="w-6" />
+               <div className="font-bold">LOGIN WITH GOOGLE</div>
+            </Button>
+         </div>
+      </form>
+   )
+}
