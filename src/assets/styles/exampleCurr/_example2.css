@@ -1,0 +1,57 @@
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0.5in;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+
+  .cv-container {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  .sidebar {
+    width: 25% !important;
+  }
+
+  .main-content {
+    width: 75% !important;
+  }
+
+  .print-break {
+    page-break-before: always;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .cv-container {
+    flex-direction: column !important;
+  }
+
+  .sidebar {
+    width: 100% !important;
+  }
+
+  .main-content {
+    width: 100% !important;
+  }
+}
+
+.sample2-container {
+  font-family: 'Times New Roman', Times, serif;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}

@@ -37,6 +37,19 @@ const variants = cva(
                "w-full",
                "h-10"
             ],
+            success: [
+               "bg-[#4FE023]",
+               "rounded-md",
+               "text-white",
+               "border-3",
+               "border-black",
+               "shadow-[3px_3px_0px_rgba(0,0,0,1)]",
+               "hover:bg-[#00000]",
+               "hover:cursor-pointer",
+               "hover:text-white",
+               "w-full",
+               "h-10"
+            ],
             default: [
                "bg-[#E2E2E2]",
                "rounded-md",

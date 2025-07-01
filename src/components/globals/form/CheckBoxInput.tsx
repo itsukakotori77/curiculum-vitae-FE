@@ -36,9 +36,10 @@ const CheckBoxInput: React.FC<CheckBoxProps> = forwardRef(
                      type="checkbox"
                      ref={ref}
                      disabled={isDisabled}
+                     checked={checked}
                      {...{
                         ...props,
-                        className: joinClass(`checkbox checkbox-warning border-2 border-black`, className),
+                        className: joinClass(`checkbox checkbox-info border-2 border-black`, className),
                      }}
                   />
                   <span

@@ -45,7 +45,7 @@ const CheckBoxForm: React.FC<CheckBoxForm> = ({
          )}
          <div
             className={joinClass(
-               'flex flex-col gap-1 lg:flex-row flex-wrap lg:items-center lg:gap-4 mt-1',
+               'flex flex-col gap-1 flex-wrap lg:gap-4 mt-1',
                classNameWrapper as string
             )}
          >

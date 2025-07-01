@@ -6,11 +6,6 @@ export const autoUnoClassName = (className?: string) => {
   return className.startsWith(':uno:') ? className : `:uno: ${className}`
 }
 
-export function cn(...inputs: ClassValue[]) {
-  const merged = twMerge(clsx(inputs))
-  return merged ? `:uno: ${merged}` : ''
-}
-
 export function joinClass(...args: Array<string | boolean | undefined>) {
   return twMerge(
     args
@@ -22,4 +17,12 @@ export function joinClass(...args: Array<string | boolean | undefined>) {
 
 export const capitalizeFirstLetter = (str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+export const cn = (...inputs: ClassValue[]) => {
+  return twMerge(clsx(inputs))
+}
+
+export const toIcon = () => {
+
 }

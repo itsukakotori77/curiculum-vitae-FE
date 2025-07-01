@@ -82,17 +82,23 @@ const TextForm: React.FC<TextFormProps> = ({
                      {suffix && <span>{suffix}</span>}
                      {fieldInput?.type === 'password' && (
                         typePass ? (
-                           <Eye
-                              className="absolute right-3 bottom-2.5 ms-6 
-                                 translate-middle-y cursor-pointer text-gray-600 w-5 h-5"
+                           <motion.div
+                              className="absolute right-3 bottom-2.5 ms-6 translate-middle-y cursor-pointer"
+                              animate={Boolean(errors?.[name]?.message) ? { x: [0, -6, 6, -6, 6, 0] } : {}}
+                              transition={{ duration: 0.4 }}
                               onClick={() => setTypePass(!typePass)}
-                           />
+                           >
+                              <Eye className="text-gray-600 w-5 h-5" />
+                           </motion.div>
                         ) : (
-                           <EyeOff
-                              className="absolute right-3 bottom-2.5 ms-6 
-                                 translate-middle-y cursor-pointer text-gray-600 w-5 h-5"
+                           <motion.div
+                              className="absolute right-3 bottom-2.5 ms-6 translate-middle-y cursor-pointer"
+                              animate={Boolean(errors?.[name]?.message) ? { x: [0, -6, 6, -6, 6, 0] } : {}}
+                              transition={{ duration: 0.4 }}
                               onClick={() => setTypePass(!typePass)}
-                           />
+                           >
+                              <EyeOff className="text-gray-600 w-5 h-5" />
+                           </motion.div>
                         )
                      )}
                   </motion.div>

@@ -29,6 +29,8 @@ const TextInput: React.FC<TextInputProps> = forwardRef(
                         : 'border-black',
                   className
                )}
+               animate={isInvalid ? { x: [0, -6, 6, -6, 6, 0] } : {}}
+               transition={{ duration: 0.4 }}
                // whileTap={{ scale: 0.98 }}
                // whileHover={{ scale: 1.02 }}
                // transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -40,7 +42,15 @@ const TextInput: React.FC<TextInputProps> = forwardRef(
                // }
                {...props}
             />
-            {icon}
+            {!!icon && (
+               <motion.div
+                  className="absolute left-3 mt-0.5 top-1/2 -translate-y-1/2"
+                  animate={Boolean(isInvalid) ? { x: [0, -6, 6, -6, 6, 0] } : {}}
+                  transition={{ duration: 0.4 }}
+               >
+                  {icon}
+               </motion.div>
+            )}
          </>
       )
    })

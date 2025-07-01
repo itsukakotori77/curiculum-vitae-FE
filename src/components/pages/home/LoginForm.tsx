@@ -17,8 +17,8 @@ interface IProps {
 }
 
 const schema = Yup.object().shape({
-   email: Yup.string().required('wajib diisi'),
-   password: Yup.string().required('wajib diisi')
+   email: Yup.string().required('email wajib diisi'),
+   password: Yup.string().required('password wajib diisi')
 })
 
 export default function LoginForm({ className, onSubmit }: IProps) {
@@ -35,9 +35,9 @@ export default function LoginForm({ className, onSubmit }: IProps) {
          <TextForm
             fieldLabel={{ children: 'Email', className: 'text-lg font-bold' }}
             fieldInput={{
-               maxLength: 100, type: 'email', icon: (
+               maxLength: 100, placeholder: 'Insert Email', type: 'email', icon: (
                   <span className="text-xs">
-                     <Mail className="absolute left-3 mt-0.5 w-5 h-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                     <Mail className="w-5 h-5 text-gray-400" />
                   </span>
                )
             }}
@@ -49,9 +49,9 @@ export default function LoginForm({ className, onSubmit }: IProps) {
          <TextForm
             fieldLabel={{ children: 'Password', className: 'text-lg font-bold' }}
             fieldInput={{
-               maxLength: 100, type: 'password', icon: (
+               maxLength: 100, placeholder: 'Insert Password', type: 'password', icon: (
                   <span className="text-xs">
-                     <LockKeyhole className="absolute left-3 mt-0.5 w-5 h-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                     <LockKeyhole className="w-5 h-5 text-gray-400" />
                   </span>
                )
             }}

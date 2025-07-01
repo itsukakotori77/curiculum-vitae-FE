@@ -30,7 +30,7 @@ const dropIn = {
       opacity: 1,
       transition: {
          duration: 0.1,
-         type: "spring",
+         type: "spring" as const,
          damping: 15,
          stiffness: 500,
       },
