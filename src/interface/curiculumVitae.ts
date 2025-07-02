@@ -56,6 +56,7 @@ export interface ICurrVitae {
     university: string
     gpa?: string
     gpaStatus?: string
+    majorDesc?: string
   }>
   certification?: Array<{
     name: string

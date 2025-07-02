@@ -83,11 +83,19 @@ export const biodataCurr: ICurrVitae = {
     {
       degree: 'Bachelor',
       major: 'Informatics Engineering',
-      university: 'University of Jenderal Achmad Yani',
+      university: 'University of Jenderal Achmad Yani | UNJANI',
       gpa: '3.5/4.0',
       gpaStatus: 'Cumlaude',
       graduated: moment('2020-09-10').format('YYYY-MM-DD'),
       graduatedStatus: true,
+      majorDesc: `
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute 
+            irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia 
+            deserunt mollit anim id est laborum.
+         `,
     },
   ],
   certification: [
@@ -159,5 +167,8 @@ export const biodataCurr: ICurrVitae = {
     email: 'test@gmail.com',
     instagram: '@user_test',
     linkedin: 'user_test',
+    address: `Jl. Gatot Subroto No. 177A, 
+      Kel No.RT 009/01 Kav 64, Menteng Dalam, 
+      Tebet, South Jakarta City, Jakarta 12870`,
   },
 }

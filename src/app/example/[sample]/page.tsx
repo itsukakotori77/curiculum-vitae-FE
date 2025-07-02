@@ -16,7 +16,7 @@ export default function Page() {
         <Sample1 data={biodataCurr} />
       )}
       {sample === '2' && (
-        <Sample2 />
+        <Sample2 data={biodataCurr} />
       )}
       {sample === '3' && (
         <Sample3 data={biodataCurr} />

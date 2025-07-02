@@ -201,7 +201,7 @@ export default function Sample3({ data }: CVProps) {
                               {data?.education?.map((item: any, key: number) => (
                                  <li key={key}>
                                     <div className="flex flex-col gap-1">
-                                       <span className="font-bold text-xs">{`${item?.degree} of ${item?.major} - ${item?.university}`}</span>
+                                       <span className="font-bold text-xs">{`${item?.degree} of ${item?.major} - ${item?.university.split('|')[0]}`}</span>
                                        {item?.graduatedStatus ? (
                                           <>
                                              <time className="flex items-center text-xs font-medium text-gray-500">

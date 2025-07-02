@@ -192,7 +192,7 @@ export default function Sample({ data }: CVProps) {
                     {data?.education?.map((item: any, key: number) => (
                       <li key={key}>
                         <span className="block mb-2 text-sm font-bold leading-none text-gray-600">
-                          {`${item?.degree} of ${item?.major} - ${item?.university}`}
+                          {`${item?.degree} of ${item?.major} - ${item?.university.split('|')[0]}`}
                         </span>
                         {item?.graduatedStatus ? (
                           <>
