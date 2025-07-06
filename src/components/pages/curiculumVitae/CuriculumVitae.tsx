@@ -3,10 +3,16 @@
 import React, { HTMLAttributeReferrerPolicy, useRef, useState } from 'react'
 import Card from '@/components/CultUI/Card'
 import Filter from './Filter'
-
+import Image from 'next/image'
+import { motion } from 'framer-motion'
+import { biodataCurr } from '@/data/cv'
+import Sample1 from '../exampleCv/Sample1'
+import Button from '@/components/CultUI/Button'
+import Modal from '@/components/globals/modal'
+import Stepper from '@/components/globals/stepper'
+import CuriculumVItaeStep1 from './step/CuriculumVitaeStep1'
 
 export default function CuriculumVitae() {
-
   const filterRef = useRef<HTMLAttributeReferrerPolicy>(null)
   const [state, setState] = useState<{
     head?: string,
@@ -16,31 +22,149 @@ export default function CuriculumVitae() {
     style: [],
   })
 
+  const [modal, setModal] = useState<boolean>(false)
+  const [currStep, setCurrStep] = useState<number>(1)
+
+  const componentConfig = [
+    {
+      key: 'sample1',
+      title: 'Sample 1',
+      value: 'sample1'
+    },
+    {
+      key: 'sample2',
+      title: 'Sample 2',
+      value: 'sample2'
+    },
+    {
+      key: 'sample3',
+      title: 'Sample 3',
+      value: 'sample3'
+    },
+    {
+      key: 'sample2',
+      title: 'Sample 2',
+      value: 'sample2'
+    },
+    {
+      key: 'sample3',
+      title: 'Sample 3',
+      value: 'sample3'
+    },
+    {
+      key: 'sample2',
+      title: 'Sample 2',
+      value: 'sample2'
+    },
+    {
+      key: 'sample3',
+      title: 'Sample 3',
+      value: 'sample3'
+    },
+    {
+      key: 'sample3',
+      title: 'Sample 3',
+      value: 'sample3'
+    },
+    {
+      key: 'sample2',
+      title: 'Sample 2',
+      value: 'sample2'
+    },
+    {
+      key: 'sample3',
+      title: 'Sample 3',
+      value: 'sample3'
+    },
+    {
+      key: 'sample3',
+      title: 'Sample 3',
+      value: 'sample3'
+    },
+    {
+      key: 'sample2',
+      title: 'Sample 2',
+      value: 'sample2'
+    },
+    {
+      key: 'sample3',
+      title: 'Sample 3',
+      value: 'sample3'
+    },
+  ]
+
   return (
-    <section className="w-full h-full px-7 pt-36">
+    <section className="w-full h-full px-7 mt-36 relative">
       <div className="flex w-full h-auto gap-24">
-        <div className="flex w-[20%] items-center justify-center">
-          <Filter
-            ref={filterRef}
-            filter={state}
-            setFilter={setState}
-          />
+        <div className="flex w-[20%] items-start justify-center">
+          <div className="w-full sticky top-0">
+            <Filter
+              ref={filterRef}
+              filter={state}
+              setFilter={setState}
+            />
+          </div>
         </div>
-        <div className="flex w-[80%] gap-2">
-          <Card className="w-full">
-            Test
-          </Card>
-          <Card className="w-full">
-            Test
-          </Card>
-          <Card className="w-full">
-            Test
-          </Card>
-          <Card className="w-full">
-            Test
-          </Card>
+
+        <div className="w-[80%]">
+          {/* CV Components Grid */}
+          <div className="overflow-y-auto grid grid-cols-4 gap-6 pr-2 pb-4 py-2 px-4">
+            {componentConfig?.map((item: any, key: number) => (
+              <motion.div
+                className="hover:cursor-pointer"
+                whileHover={{
+                  scale: 1.04,
+                  transition: {
+                    type: 'spring',
+                    stiffness: 400,
+                    damping: 10
+                  }
+                }}
+                onClick={() => setModal(true)}
+              >
+                <Card
+                  key={key}
+                  className="w-full rounded-md h-full hover:bg-black hover:opacity-[100%]"
+                  childrenClass="p-0.5 rounded-sm"
+                >
+                  <Image
+                    className="w-full h-full object-cover"
+                    src={`/cvExample/${item.value}.png`}
+                    width={800}
+                    height={800}
+                    alt={item.value}
+                  />
+                </Card>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={modal}
+        handleClose={() => setModal(false)}
+        size="lg"
+      >
+        <div className="flex flex-col gap-5 items-center justify-center py-2 px-3">
+          <Stepper
+            className="z-[99]"
+            size={3}
+            current={currStep}
+            direction="horizontal"
+            useNumber={false}
+            onChangeCurr={(index) => {
+              console.log(`Changed to step: ${index}`);
+              setCurrStep(index);
+            }}
+          />
+
+          {currStep === 1 && (
+            <CuriculumVItaeStep1/>
+          )}
+
+        </div>
+      </Modal>
     </section>
   )
 }

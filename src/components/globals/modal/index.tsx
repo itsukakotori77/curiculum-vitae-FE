@@ -5,13 +5,17 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { joinClass } from '@/utils/common';
 
 const variants = cva(
-   'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-xl shadow-lg p-6',
+   `fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+      z-50 bg-white rounded-xl shadow-lg p-6 h-auto
+      overflow-auto
+   `,
    {
       variants: {
          size: {
-            sm: ["w-[30%]", "h-auto"],
-            md: ["w-[50%]", "h-auto"],
-            lg: ["w-[80%]", "h-auto"]
+            sm: ["w-[100%] max-w-sm"],
+            md: ["w-[100%] max-w-lg"],
+            lg: ["w-[100%] max-w-4xl"],
+            xl: ["w-[100%] max-w-7xl"]
          }
       },
       defaultVariants: {
@@ -56,9 +60,9 @@ const Modal = ({ isOpen, handleClose, children, className, size }: ModalProps) =
             <>
                {/* Overlay */}
                <motion.div
-                  className="absolute inset-0 bg-[#717171bf] z-40 opacity-70"
+                  className="fixed inset-0 bg-black/50 z-40"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 40 }}
+                  animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={handleClose}
                />
@@ -66,11 +70,10 @@ const Modal = ({ isOpen, handleClose, children, className, size }: ModalProps) =
                {/* Modal Content */}
                <motion.div
                   className={joinClass(variants({ size }), className)}
+                  variants={dropIn}
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 50 }}
-                  variants={dropIn}
-                  style={{ transform: 'translate(-50%, -50%)' }}
                >
                   {children}
                </motion.div>

@@ -197,7 +197,7 @@ export default function Sample({ data }: CVProps) {
                         {item?.graduatedStatus ? (
                           <>
                             <time className="flex items-center mb-2 text-sm font-medium leading-none text-gray-500">
-                              {`Graduated, ${moment(item?.graduated).format('MMMM, Do YYYY')}`}
+                              {`G raduated, ${moment(item?.graduated).format('MMMM, Do YYYY')}`}
                             </time>
                             <p className="text-sm font-normal text-gray-500">
                               {`GPA: ${item?.gpa} - ${item?.gpaStatus}`}

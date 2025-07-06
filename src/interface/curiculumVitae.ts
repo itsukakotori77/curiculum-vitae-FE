@@ -47,7 +47,7 @@ export interface ICurrVitae {
   role: string
   profile: string
   profilePicture?: string
-  experience?: Array<Experience>
+  experience: Array<Experience>
   education?: Array<{
     degree: string
     major?: string

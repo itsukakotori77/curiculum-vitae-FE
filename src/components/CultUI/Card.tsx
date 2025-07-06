@@ -45,6 +45,7 @@ export interface CardProps
    isClose?: boolean
    title?: string
    useHeader?: boolean
+   childrenClass?: string
 }
 
 const Card: React.FC<CardProps> = ({
@@ -54,6 +55,7 @@ const Card: React.FC<CardProps> = ({
    isClose,
    title,
    useHeader,
+   childrenClass,
    ...props
 }) => {
 
@@ -78,7 +80,7 @@ const Card: React.FC<CardProps> = ({
                   )}
                </div>
             )}
-            <div className="px-4 py-2 w-full rounded-md border-3 border-black shadow-[3px_3px_0px_rgba(0,0,0,1)]">
+            <div className={joinClass(`px-4 py-2 w-full rounded-md border-3 border-black shadow-[3px_3px_0px_rgba(0,0,0,1)]`, childrenClass)}>
                {children}
             </div>
          </div>

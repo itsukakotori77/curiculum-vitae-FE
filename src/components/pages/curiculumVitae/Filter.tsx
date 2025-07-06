@@ -8,10 +8,12 @@ import * as Yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
 import CheckBoxForm from '@/components/globals/form/CheckBoxForm'
 import { IFilterCur } from '@/interface/curiculumVitae'
+import { joinClass } from '@/utils/common'
 
 interface FilterProps {
    filter?: any
    setFilter: React.Dispatch<React.SetStateAction<any>> | ((val?: any) => void)
+   className?: string
 }
 
 const headOpt: LabelValueProps[] = [
@@ -52,7 +54,7 @@ const schema = Yup.object().shape({
 })
 
 const Filter = forwardRef(
-   ({ filter, setFilter }: FilterProps, ref) => {
+   ({ filter, setFilter, className }: FilterProps, ref) => {
 
       const { handleSubmit, control, reset, register, watch } = useForm<IFilterCur>({
          resolver: yupResolver(schema) as Resolver<IFilterCur>,
@@ -98,7 +100,7 @@ const Filter = forwardRef(
 
       return (
          <Card
-            className="w-full"
+            className={joinClass('w-full', className)}
          >
             <form
                className="grid gap-4"

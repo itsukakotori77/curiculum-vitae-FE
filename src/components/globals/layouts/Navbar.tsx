@@ -29,7 +29,7 @@ export default function Navbar() {
          <Modal
             isOpen={modal}
             handleClose={() => setModal(false)}
-            size="sm"
+            size="md"
             className="rounded-xl"
          >
             <LoginForm
