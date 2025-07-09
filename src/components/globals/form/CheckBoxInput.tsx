@@ -2,10 +2,9 @@ import { joinClass } from '@/utils/common';
 import { HTMLMotionProps, motion } from 'framer-motion';
 import React, { forwardRef } from 'react'
 
-type NewType = boolean;
 
 export interface CheckBoxProps extends HTMLMotionProps<'input'> {
-   isDisabled?: NewType
+   isDisabled?: boolean
    isInvalid?: boolean
    isValid?: boolean
    color?: string

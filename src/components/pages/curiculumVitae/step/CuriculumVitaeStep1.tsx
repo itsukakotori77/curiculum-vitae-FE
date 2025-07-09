@@ -3,22 +3,31 @@
 import Card from '@/components/CultUI/Card'
 import React, { useState } from 'react'
 import Image from 'next/image'
+import Button from '@/components/CultUI/Button'
 
-export default function CuriculumVitaeStep1() {
+interface CurrVitae1Props {
+  handleChange: (step: number, data?: any) => void
+}
+
+export default function CuriculumVitaeStep1({ handleChange }: CurrVitae1Props) {
 
   const [focusedCard, setFocusedCard] = useState<boolean | number | null>(null)
   const [selectedCard, setSelectedCard] = useState<boolean | number | null>(null)
 
+  const handleNext = () => {
+    handleChange(2)
+  }
+
   return (
     <>
-
       <div className="grid place-content-center place-items-center">
         <span className="text-xl font-bold">Will you be adding a photo to your resume ?</span>
         <span className="text-sm font-light">Add a photo if it’s a standard practive in your industry or region.</span>
       </div>
       <div className="flex w-full gap-5 items-center justify-center">
+
         <Card
-          className={`w-1/2 cursor-pointer transition-all duration-200 rounded-lg ${selectedCard === 0 ? 'ring-2 ring-blue-500' :
+          className={`w-[40%] cursor-pointer transition-all duration-200 rounded-lg ${selectedCard === 0 ? 'ring-2 ring-blue-500' :
             focusedCard === 0 ? 'ring-1 ring-blue-300' :
               'hover:ring-1 hover:ring-gray-300'
             }`}
@@ -41,7 +50,7 @@ export default function CuriculumVitaeStep1() {
         </Card>
 
         <Card
-          className={`w-1/2 cursor-pointer transition-all duration-200 rounded-lg ${selectedCard === 1 ? 'ring-2 ring-blue-500' :
+          className={`w-[40%] cursor-pointer transition-all duration-200 rounded-lg ${selectedCard === 1 ? 'ring-2 ring-blue-500' :
             focusedCard === 1 ? 'ring-1 ring-blue-300' :
               'hover:ring-1 hover:ring-gray-300'
             }`}
@@ -62,6 +71,17 @@ export default function CuriculumVitaeStep1() {
             />
           </div>
         </Card>
+
+      </div>
+      <div className="flex justify-end w-full">
+        <Button
+          intent="info"
+          className="w-32"
+          onClick={handleNext}
+          disabled={selectedCard === null}
+        >
+          <span className="font-bold">Next</span>
+        </Button>
       </div>
     </>
   )

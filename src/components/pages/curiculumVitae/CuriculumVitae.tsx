@@ -5,12 +5,11 @@ import Card from '@/components/CultUI/Card'
 import Filter from './Filter'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { biodataCurr } from '@/data/cv'
-import Sample1 from '../exampleCv/Sample1'
 import Button from '@/components/CultUI/Button'
 import Modal from '@/components/globals/modal'
 import Stepper from '@/components/globals/stepper'
 import CuriculumVItaeStep1 from './step/CuriculumVitaeStep1'
+import CuriculumVitaeStep2 from './step/CuriculumVitaeStep2'
 
 export default function CuriculumVitae() {
   const filterRef = useRef<HTMLAttributeReferrerPolicy>(null)
@@ -111,6 +110,7 @@ export default function CuriculumVitae() {
           <div className="overflow-y-auto grid grid-cols-4 gap-6 pr-2 pb-4 py-2 px-4">
             {componentConfig?.map((item: any, key: number) => (
               <motion.div
+                key={key}
                 className="hover:cursor-pointer"
                 whileHover={{
                   scale: 1.04,
@@ -123,7 +123,6 @@ export default function CuriculumVitae() {
                 onClick={() => setModal(true)}
               >
                 <Card
-                  key={key}
                   className="w-full rounded-md h-full hover:bg-black hover:opacity-[100%]"
                   childrenClass="p-0.5 rounded-sm"
                 >
@@ -160,7 +159,13 @@ export default function CuriculumVitae() {
           />
 
           {currStep === 1 && (
-            <CuriculumVItaeStep1/>
+            <CuriculumVItaeStep1 handleChange={(val) => {
+              setCurrStep(val)
+            }} />
+          )}
+
+          {currStep === 2 && (
+            <CuriculumVitaeStep2 />
           )}
 
         </div>

@@ -34,6 +34,9 @@ const variants = cva(
                "hover:bg-[#00000]",
                "hover:cursor-pointer",
                "hover:text-white",
+               "disabled:bg-gray-400",
+               "transition-all",
+               "duration-200",
                "w-full",
                "h-10"
             ],
@@ -47,6 +50,21 @@ const variants = cva(
                "hover:bg-[#00000]",
                "hover:cursor-pointer",
                "hover:text-white",
+               "disabled:bg-gray-400",
+               "w-full",
+               "h-10"
+            ],
+            info: [
+               "bg-[#4999CF]",
+               "rounded-md",
+               "text-white",
+               "border-3",
+               "border-black",
+               "shadow-[3px_3px_0px_rgba(0,0,0,1)]",
+               "hover:bg-[#00000]",
+               "hover:cursor-pointer",
+               "hover:text-white",
+               "disabled:bg-gray-400",
                "w-full",
                "h-10"
             ],
@@ -72,7 +90,7 @@ const variants = cva(
       },
       compoundVariants: [
          {
-            intent: ["primary", "secondary"],
+            intent: ["primary", "secondary", "info", "default", "success"],
             className: "uppercase",
          },
       ],

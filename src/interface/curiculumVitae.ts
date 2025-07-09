@@ -1,3 +1,4 @@
+import { RgbaColor } from 'react-colorful'
 import { LabelValueProps } from './select'
 
 export interface IFilterCur {
@@ -76,4 +77,19 @@ export interface ICurrVitae {
       username: string
     }
   }
+}
+
+export interface IColorCurr {
+  sidebarColor: RgbaColor 
+  primaryColor: RgbaColor
+}
+
+export interface CVProps {
+  data?: ICurrVitae
+  sidebarWidth?: number
+  className?: string
+  sidebarColor?: string
+  primaryColor?: string
+  sidebarTextColor?: string
+  skillColor?: string
 }
