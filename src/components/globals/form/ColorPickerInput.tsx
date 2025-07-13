@@ -2,6 +2,7 @@ import { HTMLMotionProps } from 'framer-motion'
 import React, { forwardRef, useState, useEffect } from 'react'
 import { RgbaColorPicker, RgbaColor } from "react-colorful"
 import { motion } from 'framer-motion'
+import '@/assets/styles/partials/_colorpicker.css'
 
 export interface ColorPickerProps extends Omit<HTMLMotionProps<'div'>, 'onChange'> {
    isDisabled?: boolean

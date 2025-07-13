@@ -42,13 +42,18 @@ export interface SkillsNonLevel {
 export type SkillsType = SkillsLevel | SkillsNonLevel
 
 export interface ICurrVitae {
+  // +=========+ STEP 1 +=========+ //
   firstName: string
   lastName: string
   nickname: string
   role: string
   profile: string
   profilePicture?: string
+
+  // +=========+ STEP 2 +=========+ //
   experience: Array<Experience>
+
+  // +=========+ STEP 3 +=========+ //
   education?: Array<{
     degree: string
     major?: string
@@ -59,14 +64,18 @@ export interface ICurrVitae {
     gpaStatus?: string
     majorDesc?: string
   }>
+
+  // +=========+ STEP 4 +=========+ //
   certification?: Array<{
     name: string
     company?: string
     certificate_date?: Date | string
   }>
+
+  // +=========+ STEP 5 +=========+ //
   skills: Array<SkillsType>
   contacts: {
-    address?: string 
+    address?: string
     phone: string
     email: string
     telegram?: string
@@ -80,8 +89,9 @@ export interface ICurrVitae {
 }
 
 export interface IColorCurr {
-  sidebarColor: RgbaColor 
+  sidebarColor: RgbaColor
   primaryColor: RgbaColor
+  skillColor?: RgbaColor
 }
 
 export interface CVProps {
@@ -92,4 +102,57 @@ export interface CVProps {
   primaryColor?: string
   sidebarTextColor?: string
   skillColor?: string
+}
+
+export interface IGeneratorStep1 {
+  firstName: string | any
+  lastName: string | any
+  nickname: string | any
+  role: string | any
+  profile: string | any
+  // profilePicture?: string | null
+}
+
+export interface IGeneratorStep2 {
+  jobTitle: string | any
+  company: string | any
+  role: string | any
+  isCurrent: boolean | any 
+  startDate: Date | string | any
+  endDate: Date | string | any 
+  descJob?: string | any
+}
+
+export interface IGeneratorStep3 {
+  degree: string | any
+  major?: string | any
+  graduated?: Date | string | any
+  graduatedStatus?: boolean | any
+  university: string | any 
+  gpa?: string | any
+  gpaStatus?: string | any
+  majorDesc?: string | any
+}
+
+export interface IGeneratorStep4 {
+  name: string | any
+  company?: string | any
+  certificate_date?: Date | string | any
+}
+
+export interface IGeneratorStep5 {
+  // SKILLS
+  skills: Array<SkillsType>
+
+  // CONTACTS
+  address?: string
+  phone: string
+  email: string
+  telegram?: string
+  instagram?: string
+  linkedin?: string
+  otherwise?: {
+    name: string
+    username: string
+  }
 }

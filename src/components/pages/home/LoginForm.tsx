@@ -22,7 +22,7 @@ const schema = Yup.object().shape({
 })
 
 export default function LoginForm({ className, onSubmit }: IProps) {
-   const { handleSubmit, control, formState, register } = useForm<ILogin>({
+   const { handleSubmit, control, register } = useForm<ILogin>({
       resolver: yupResolver(schema),
       mode: 'onChange'
    })

@@ -354,7 +354,10 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                                     PROFILE
                                  </CVText>
                               </div>
-                              <CVText variant="tiny" size={textSize} className="mt-2 font-light text-slate-600 px-2 text-justify block">
+                              <CVText 
+                                 variant="tiny" 
+                                 size={textSize} 
+                                 className="mt-2 font-light text-slate-600 px-2 text-justify block break-all">
                                  {data?.profile}
                               </CVText>
                            </div>

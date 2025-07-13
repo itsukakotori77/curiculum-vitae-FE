@@ -7,12 +7,16 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import Button from '@/components/CultUI/Button'
 import Modal from '@/components/globals/modal'
-import Stepper from '@/components/globals/stepper'
+import StepperStrips from '@/components/globals/stepper/StepperStrips'
 import CuriculumVItaeStep1 from './step/CuriculumVitaeStep1'
 import CuriculumVitaeStep2 from './step/CuriculumVitaeStep2'
+import { useModalConfirm } from '@/libs/modalConfirm'
+import FloatingPanelDemo from '@/components/globals/popOver/PopOverConfirm'
 
 export default function CuriculumVitae() {
   const filterRef = useRef<HTMLAttributeReferrerPolicy>(null)
+
+  const { openModal, closeModal } = useModalConfirm()
   const [state, setState] = useState<{
     head?: string,
     style?: string[]
@@ -144,14 +148,14 @@ export default function CuriculumVitae() {
         isOpen={modal}
         handleClose={() => setModal(false)}
         size="lg"
+        className="!max-h-screen overflow-auto"
       >
-        <div className="flex flex-col gap-5 items-center justify-center py-2 px-3">
-          <Stepper
+        <div className="flex flex-col gap-5 items-center justify-center py-5 px-3">
+          <StepperStrips
             className="z-[99]"
             size={3}
             current={currStep}
             direction="horizontal"
-            useNumber={false}
             onChangeCurr={(index) => {
               console.log(`Changed to step: ${index}`);
               setCurrStep(index);

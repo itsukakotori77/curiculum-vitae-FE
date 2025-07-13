@@ -251,7 +251,7 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
               <CVText variant="subtitle" size={textSize} style={{ color: primaryColor }}>
                 PROFILE
               </CVText>
-              <CVText variant="tiny" size={textSize} className="font-light leading-relaxed mt-2">
+              <CVText variant="tiny" size={textSize} className="font-light leading-relaxed mt-2 break-all">
                 {data?.profile}
               </CVText>
             </div>

@@ -3,6 +3,7 @@
 
 @import './partials/_modal.css';
 @import './partials/_inputs.css';
+@import './partials/_datepicker.css';
 
 @custom-variant dark (&:is(.dark *));
 

@@ -21,7 +21,7 @@ const eslintConfig = [
       'public/',
       '**/generated/**',
     ],
-    plugins: ['prettier', '@unocss'],
+    plugins: ['prettier'],
     rules: {
       'prettier/prettier': [
         'error',
@@ -49,7 +49,11 @@ const eslintConfig = [
       'unused-imports/no-unused-imports': 'off',
       'unused-imports/no-unused-vars': 'off',
       'no-unused-vars': 'off',
-      '@unocss/enforce-class-compile': 'warn',
+      'react/no-unescaped-entities': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+      'react/prop-types': 'off',
+      'react/no-unknown-property': 'off',
+      'no-extra-boolean-cast': 'off',
     },
   },
 ]

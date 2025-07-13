@@ -70,3 +70,19 @@ export const hexToRgba = (hex: string, alpha: number = 1): RgbaColor => {
     a: alpha,
   }
 }
+
+export const calcHeight = (value: string) => {
+  const numberOfLineBreaks = (String(value).match(/\n/g) || []).length
+  const newHeight = 20 + numberOfLineBreaks * 20 + 12 + 2
+  return newHeight
+}
+
+export const typeTextArea = (type: string): number => {
+  switch (type) {
+    case 'chat':
+      return 34
+
+    default:
+      return 40
+  }
+}

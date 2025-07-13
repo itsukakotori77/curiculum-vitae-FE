@@ -229,7 +229,7 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
             <CVText 
               variant="tiny" 
               size={textSize} 
-              className="text-justify"
+              className="text-justify break-all"
             >
               {data?.profile || ''}
             </CVText>

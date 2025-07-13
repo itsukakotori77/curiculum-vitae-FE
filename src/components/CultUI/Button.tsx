@@ -35,8 +35,6 @@ const variants = cva(
                "hover:cursor-pointer",
                "hover:text-white",
                "disabled:bg-gray-400",
-               "transition-all",
-               "duration-200",
                "w-full",
                "h-10"
             ],

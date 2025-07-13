@@ -51,16 +51,34 @@ export interface ModalProps extends HTMLMotionProps<'div'>, VariantProps<typeof 
    children?: React.ReactNode
    text?: string
    className?: string
+   classNameOverlay?: string
 }
 
-const Modal = ({ isOpen, handleClose, children, className, size }: ModalProps) => {
+const Modal = ({
+   isOpen,
+   handleClose,
+   children,
+   className,
+   classNameOverlay,
+   size,
+   ...props
+}: ModalProps) => {
+
+   const defaultProps = {
+      initial: { opacity: 0, y: 50 },
+      animate: { opacity: 1, y: 0 },
+      exit: { opacity: 0, y: 50 },
+      transition: { duration: 0.2 },
+      ...props 
+   }
+
    return (
       <AnimatePresence>
          {isOpen && (
             <>
                {/* Overlay */}
                <motion.div
-                  className="fixed inset-0 bg-black/50 z-40"
+                  className={joinClass('fixed inset-0 bg-black/50 z-40', classNameOverlay)}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -69,11 +87,9 @@ const Modal = ({ isOpen, handleClose, children, className, size }: ModalProps) =
 
                {/* Modal Content */}
                <motion.div
-                  className={joinClass(variants({ size }), className)}
                   variants={dropIn}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 50 }}
+                  className={joinClass(variants({ size }), className)}
+                  {...defaultProps}
                >
                   {children}
                </motion.div>
