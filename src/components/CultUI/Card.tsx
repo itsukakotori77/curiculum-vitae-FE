@@ -81,6 +81,7 @@ const Card: React.FC<CardProps> = ({
                </div>
             )}
             <div className={joinClass(`px-4 py-2 w-full rounded-md border-3 border-black shadow-[3px_3px_0px_rgba(0,0,0,1)]`, childrenClass)}>
+               <h3 className="font-semibold text-lg">{title}</h3>
                {children}
             </div>
          </div>

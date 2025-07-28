@@ -123,6 +123,7 @@ interface Sample extends CVProps {
    printable?: VariantProps<typeof cvVariants>['printable']
    iconSize?: VariantProps<typeof iconVariants>['iconSize']
    variantText?: VariantProps<typeof textVariants>['variant']
+   childrenClassName?: string
 }
 
 const CVText = ({
@@ -139,7 +140,7 @@ const CVText = ({
 } & React.HtmlHTMLAttributes<HTMLSpanElement>) => {
    return (
       <span
-         className={cn(textVariants({ variant, size }), className)}
+         className={cn(textVariants({ variant, size }), 'break-all', className)}
          {...props}
       >
          {children}
@@ -161,17 +162,18 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
       primaryColor = '#FFFFF',
       sidebarTextColor = '#463F3F',
       skillColor = '#262424',
-      variantText = 'small'
+      variantText = 'small',
+      childrenClassName,
    }, ref) => {
       return (
          <>
             {/* PRINT STYLES */}
             <div
                ref={ref}
-               className={cn(cvVariants({ size, scale }), 'origin-top', className)}
+               className={cn(cvVariants({ size, scale }), className)}
             >
                <div
-                  className={cn(cvVariants({ printable }))}
+                  className={cn(cvVariants({ printable }), childrenClassName)}
                   style={{
                      transformOrigin: 'top center',
                      marginBottom: scale === 'xs' || scale === 'sm' ? '10vh' : '0'
@@ -354,10 +356,10 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                                     PROFILE
                                  </CVText>
                               </div>
-                              <CVText 
-                                 variant="tiny" 
-                                 size={textSize} 
-                                 className="mt-2 font-light text-slate-600 px-2 text-justify block break-all">
+                              <CVText
+                                 variant="tiny"
+                                 size={textSize}
+                                 className="mt-2 font-light text-slate-600 px-2 text-justify block">
                                  {data?.profile}
                               </CVText>
                            </div>

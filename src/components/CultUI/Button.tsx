@@ -94,6 +94,7 @@ const variants = cva(
       ],
       defaultVariants: {
          intent: "primary",
+         size: "medium"
       },
    }
 )
@@ -112,11 +113,12 @@ const Button: React.FC<ButtonProps> = ({
    intent,
    isLoading,
    disabled,
+   size,
    ...props
 }) => {
    return (
       <motion.button
-         className={joinClass(variants({ intent }) + ' disabled:cursor-not-allowed', className)}
+         className={joinClass(variants({ intent, size }) + ' disabled:cursor-not-allowed', className)}
          whileTap={{ scale: 0.98 }}
          whileHover={{ scale: 1.02 }}
          transition={{ type: "spring", stiffness: 400, damping: 10 }}

@@ -118,20 +118,19 @@ export interface IGeneratorStep2 {
   company: string | any
   role: string | any
   isCurrent: boolean | any 
-  startDate: Date | string | any
-  endDate: Date | string | any 
+  date: Date[] | string[]
   descJob?: string | any
 }
 
 export interface IGeneratorStep3 {
   degree: string | any
-  major?: string | any
+  major: string | any
+  graduatedStatus: boolean | string | any
   graduated?: Date | string | any
-  graduatedStatus?: boolean | any
   university: string | any 
-  gpa?: string | any
-  gpaStatus?: string | any
-  majorDesc?: string | any
+  gpa?: string | null | any
+  gpaStatus?: string | null | any
+  majorDesc?: string | null | any
 }
 
 export interface IGeneratorStep4 {
@@ -155,4 +154,59 @@ export interface IGeneratorStep5 {
     name: string
     username: string
   }
+}
+
+export interface CVStep1Store {
+  data: IGeneratorStep1 | undefined
+  updateData: (data: IGeneratorStep1) => void
+  clearData: () => void
+}
+
+export interface storeFormStep<T> {
+  add: (data: T) => void
+  update: (index: number, data: T) => void 
+  remove: (index: number) => void 
+  setEditIndex: (index: number | null) => void  
+  clearData: () => void 
+}
+
+export interface CVStep2Store extends storeFormStep<IGeneratorStep2> {
+  experiences: IGeneratorStep2[] | undefined
+  currentEditIndex: number | null
+  // addExperience: (experience: IGeneratorStep2) => void
+  // updateExperience: (index: number, experience: IGeneratorStep2) => void
+  // removeExperience: (index: number) => void
+  // setEditIndex: (index: number | null) => void
+  // clearExperiences: () => void
+}
+
+export interface CVStep3Store extends storeFormStep<IGeneratorStep3> {
+  educations: IGeneratorStep3[] | undefined
+  currentEditIndex: number | null
+  // addEducations: (education: IGeneratorStep3) => void 
+  // updateEducation: (index: number, education: IGeneratorStep3) => void 
+  // removeEducation: (index: number) => void 
+  // setEditIndex: (index: number | null) => void 
+  // clearEducation: () => void
+}
+
+export interface CVStep4Store {
+  data: IGeneratorStep4[] | undefined
+  updateData: (data: IGeneratorStep4[]) => void
+  clearData: () => void
+}
+
+export interface CVStep5Store {
+  data: IGeneratorStep5 | undefined
+  updateData: (data: IGeneratorStep5) => void
+  clearData: () => void
+}
+
+export interface CVNavigationStore {
+  currentStep: number
+  showForm: boolean
+  setCurrentStep: (step: number) => void
+  setShowForm: (show: boolean) => void
+  nextStep: () => void
+  previousStep: () => void
 }

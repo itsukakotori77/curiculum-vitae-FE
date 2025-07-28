@@ -86,3 +86,30 @@ export const typeTextArea = (type: string): number => {
       return 40
   }
 }
+
+export const convertTime = (dt2: any, dt1: any, type: string): number => {
+  let diff = (dt2.getTime() - dt1.getTime()) / 1000
+  let val = 0
+  switch (type) {
+    case 'minutes':
+      diff /= 60
+      val = Math.abs(Math.round(diff))
+      break
+
+    case 'hours':
+      diff /= 60 * 60
+      val = Math.abs(Math.round(diff))
+      break
+
+    case 'days':
+      diff /= 60 * 1440
+      val = Math.abs(Math.round(diff))
+      break
+  }
+
+  return val
+}
+
+export const checkTimeDay = (dt2: any, dt1: any): number => {
+  return convertTime(dt2, dt1, 'days')
+}

@@ -95,24 +95,24 @@ input::placeholder {
   pointer-events: auto;
 }
 
-.react-daterange-picker {
+.react-datepicker-picker {
   display: flex;
   position: relative;
 }
 
-.react-daterange-picker--disabled {
+.react-datepicker-picker--disabled {
   background-color: #f0f0f0;
   color: #6d6d6d;
 }
 
-.react-daterange-picker__wrapper {
+.react-datepicker-picker__wrapper {
   display: flex;
   align-items: center;
   gap: 1rem;
   width: 100%;
 }
 
-.react-daterange-picker__inputGroup {
+.react-datepicker-picker__inputGroup {
   display: flex;
   align-items: center;
   width: 100%;
@@ -123,17 +123,17 @@ input::placeholder {
   cursor: pointer;
 }
 
-.react-daterange-picker__inputGroup__divider {
+.react-datepicker-picker__inputGroup__divider {
   padding: 1px 0;
   white-space: pre;
   display: inline-block;
 }
 
-.react-daterange-picker__inputGroup__leadingZero {
+.react-datepicker-picker__inputGroup__leadingZero {
   display: inline-block;
 }
 
-.react-daterange-picker__inputGroup__input {
+.react-datepicker-picker__inputGroup__input {
   cursor: pointer;
   min-width: 0.54em;
   height: 100%;
@@ -145,46 +145,46 @@ input::placeholder {
   appearance: textfield;
 }
 
-.react-daterange-picker__inputGroup__input::-webkit-outer-spin-button,
-.react-daterange-picker__inputGroup__input::-webkit-inner-spin-button {
+.react-datepicker-picker__inputGroup__input::-webkit-outer-spin-button,
+.react-datepicker-picker__inputGroup__input::-webkit-inner-spin-button {
   appearance: none;
   margin: 0;
 }
 
-.react-daterange-picker__inputGroup__input--hasLeadingZero {
+.react-datepicker-picker__inputGroup__input--hasLeadingZero {
   margin-left: -0.54em;
   padding-left: calc(1px + 0.54em);
 }
 
-.react-daterange-picker__button {
+.react-datepicker-picker__button {
   border: none;
   background: transparent;
   padding: 0.25rem 6px;
 }
 
-.react-daterange-picker__button:enabled {
+.react-datepicker-picker__button:enabled {
   cursor: pointer;
 }
 
-.react-daterange-picker__button:disabled .react-daterange-picker__button__icon {
+.react-datepicker-picker__button:disabled .react-datepicker-picker__button__icon {
   stroke: #6d6d6d;
 }
 
-.react-daterange-picker__button svg {
+.react-datepicker-picker__button svg {
   display: inherit;
 }
 
-.react-daterange-picker__calendar {
+.react-datepicker-picker__calendar {
   width: 350px;
   max-width: 100vw;
   z-index: 1;
 }
 
-.react-daterange-picker__calendar .react-calendar {
+.react-datepicker-picker__calendar .react-calendar {
   border: 1px solid #d1d5db;
 }
 
-.react-daterange-picker__calendar--closed {
+.react-datepicker-picker__calendar--closed {
   display: none;
 }
 

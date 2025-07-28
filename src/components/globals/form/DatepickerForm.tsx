@@ -1,12 +1,11 @@
 'use client'
 
-import { HTMLMotionProps, motion } from 'framer-motion';
 import React, { HTMLProps } from 'react'
 import Label, { LabelProps } from './Label';
 import { Control, Controller } from 'react-hook-form';
 import DatepickerInput from './DatepickerInput';
 
-interface DatepickerForm extends HTMLMotionProps<'div'> {
+interface DatepickerForm extends HTMLProps<HTMLDivElement> {
    fieldLabel: LabelProps
    control: Control<any>
    name: string
@@ -30,7 +29,7 @@ const DatepickerForm: React.FC<DatepickerForm> = ({
    ...props
 }) => {
    return (
-      <motion.div {...props}>
+      <div {...props}>
          <Label {...fieldLabel} />
          <Controller
             defaultValue={null}
@@ -44,7 +43,7 @@ const DatepickerForm: React.FC<DatepickerForm> = ({
                   <DatepickerInput
                      name={name}
                      className="!mt-1"
-                     value={value}
+                     value={value || null}
                      onBlur={onBlur}
                      ref={ref}
                      format="ddd, DD MMM YYYY"
@@ -59,10 +58,15 @@ const DatepickerForm: React.FC<DatepickerForm> = ({
                      disablePast={disablePast}
                      disabled={disabled}
                   />
+                  {errors?.[name]?.message && (
+                     <span className="text-xs text-error">
+                        {errors?.[name]?.message?.toString()}
+                     </span>
+                  )}
                </>
             )}
          />
-      </motion.div>
+      </div>
    )
 }
 

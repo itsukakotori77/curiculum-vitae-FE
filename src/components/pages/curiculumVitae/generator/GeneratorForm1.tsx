@@ -1,20 +1,30 @@
 'use client'
 
-import { IGeneratorStep1 } from '@/interface/curiculumVitae'
+import { IGeneratorStep1, IGeneratorStep2 } from '@/interface/curiculumVitae'
 import { yupResolver } from '@hookform/resolvers/yup'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, forwardRef, useImperativeHandle, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
 import TextForm from '@/components/globals/form/TextForm'
 import TextareaForm from '@/components/globals/form/TextareaForm'
 import Button from '@/components/CultUI/Button'
+import Card from '@/components/CultUI/Card'
 
 interface FormGeneratorStep1 {
    data?: IGeneratorStep1
    loading?: boolean
    onSubmit: (val: IGeneratorStep1) => void
    onCancel: (val: IGeneratorStep1) => void
-   onChange?: (val: IGeneratorStep1) => void // Add this prop for live preview
+   onChange?: (val: IGeneratorStep1) => void
+   setState?: React.Dispatch<React.SetStateAction<IGeneratorStep1 | undefined>>
+}
+
+// Define the ref methods that will be exposed
+export interface GeneratorForm1Ref {
+   submitForm: () => void
+   resetForm: () => void
+   getCurrentValues: () => IGeneratorStep1
+   setFieldValue: (fieldName: keyof IGeneratorStep1, value: string) => void
 }
 
 const Schema = Yup.object().shape({
@@ -25,14 +35,24 @@ const Schema = Yup.object().shape({
    profile: Yup.string().required('profile is required')
 })
 
-export default function GeneratorForm1({
+const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(({
    data,
    loading,
    onSubmit,
-   onChange // Add this
-}: FormGeneratorStep1) {
+   onChange,
+   onCancel,
+   setState
+}, ref) => {
 
-   const { handleSubmit, control, watch } = useForm<IGeneratorStep1>({
+   const {
+      handleSubmit,
+      control,
+      watch,
+      reset,
+      setValue,
+      getValues,
+      formState: { isValid }
+   } = useForm<IGeneratorStep1>({
       resolver: yupResolver(Schema),
       mode: 'all',
       defaultValues: data || {
@@ -44,22 +64,49 @@ export default function GeneratorForm1({
       }
    })
 
+   const watchedValues = watch()
+   const prevValuesRef = useRef<IGeneratorStep1>(null)
+
    useEffect(() => {
-      if (!onChange) return
+      const hasChanged = !prevValuesRef.current ||
+         JSON.stringify(prevValuesRef.current) !== JSON.stringify(watchedValues)
 
-      const subscription = watch((value) => {
-         onChange(value as IGeneratorStep1)
-      })
+      if (hasChanged) {
+         prevValuesRef.current = watchedValues
 
-      return () => subscription.unsubscribe()
-   }, [watch, onChange])
+         if (onChange) {
+            onChange(watchedValues)
+         }
+
+         if (setState) {
+            setState(watchedValues)
+         }
+      }
+   }, [watchedValues, onChange, setState])
+
+   useImperativeHandle(ref, () => ({
+      submitForm: () => {
+         handleSubmit(onSubmit)()
+      },
+      resetForm: () => {
+         reset()
+      },
+      getCurrentValues: () => {
+         return getValues()
+      },
+      setFieldValue: (fieldName: keyof IGeneratorStep1, value: string) => {
+         setValue(fieldName, value)
+      }
+   }), [handleSubmit, onSubmit, reset, getValues, setValue])
 
    return (
-      <div>
+      <Card
+         title="Profile"
+      >
          <form
             onSubmit={handleSubmit(onSubmit)}
             noValidate
-            className="grid gap-2"
+            className="grid gap-2 py-3 px-2"
          >
             <div className="grid grid-cols-2 gap-5">
                <TextForm
@@ -97,15 +144,30 @@ export default function GeneratorForm1({
                control={control}
             />
 
-            <Button
-               type="submit"
-               className="w-full"
-               intent="info"
-               isLoading={loading}
-            >
-               <span className="font-bold">Submit</span>
-            </Button>
+            <div className="flex justify-end gap-5 w-full">
+               <Button
+                  type="button"
+                  intent="default"
+                  className="w-40"
+                  onClick={() => onCancel(watchedValues)}
+               >
+                  <span className="font-bold">Cancel</span>
+               </Button>
+               <Button
+                  type="submit"
+                  intent="info"
+                  className="w-40"
+                  isLoading={loading}
+                  disabled={!isValid}
+               >
+                  <span className="font-bold">Submit</span>
+               </Button>
+            </div>
          </form>
-      </div>
+      </Card>
    )
-}
+})
+
+GeneratorForm1.displayName = 'GeneratorForm1'
+
+export default GeneratorForm1

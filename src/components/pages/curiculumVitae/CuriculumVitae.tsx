@@ -153,7 +153,7 @@ export default function CuriculumVitae() {
         <div className="flex flex-col gap-5 items-center justify-center py-5 px-3">
           <StepperStrips
             className="z-[99]"
-            size={3}
+            size={2}
             current={currStep}
             direction="horizontal"
             onChangeCurr={(index) => {

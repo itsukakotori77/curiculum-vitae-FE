@@ -52,7 +52,7 @@ const TextareaInput: React.FC<TextareaInputProps> = forwardRef(
                }}
                onKeyUp={() => {
                   if (props?.isAutoHeight) {
-                     calcHeight(props.value!.toString()) == typeTextArea(type!) ? setHeight('40px')
+                     calcHeight(props.value!.toString()) == typeTextArea(type!) ? setHeight('100px')
                         : setHeight(`${calcHeight(props.value!.toString()).toString()}px`)
                   }
                }}

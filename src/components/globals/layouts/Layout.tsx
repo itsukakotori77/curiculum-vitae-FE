@@ -4,12 +4,15 @@ import Navbar from './Navbar'
 interface IProps {
    title?: string
    children: React.ReactNode
+   useHeader?: boolean
 }
 
-export default function Layout({ title, children }: IProps) {
+export default function Layout({ title, children, useHeader = true }: IProps) {
    return (
       <div className="w-full h-screen flex flex-col">
-         <Navbar />
+         {useHeader && (
+            <Navbar />
+         )}
          <main className="flex-1 overflow-y-auto">
             <span className="text-lg">{title}</span>
             {children}

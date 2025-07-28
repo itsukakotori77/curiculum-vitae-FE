@@ -10,7 +10,7 @@ import {
 // Transform data to ICurrVitae structure
 export const transformToICurrVitae = (
   step1Data?: IGeneratorStep1,
-  step2Data?: IGeneratorStep2,
+  step2Data?: IGeneratorStep2[] | IGeneratorStep2,
   step3Data?: IGeneratorStep3[],
   step4Data?: IGeneratorStep4[],
   step5Data?: IGeneratorStep5,
@@ -23,20 +23,31 @@ export const transformToICurrVitae = (
     role: step1Data?.role || '',
     profile: step1Data?.profile || '',
 
-    // Step 2: Transform single experience to array
-    experience: step2Data
-      ? [
-          {
-            jobTitle: step2Data.jobTitle,
-            company: step2Data.company,
-            startDate: step2Data.startDate,
-            endDate: step2Data.endDate,
-            isCurrent: step2Data.isCurrent,
-            role: step2Data.role,
-            descJob: step2Data.descJob,
-          },
-        ]
-      : [],
+    // Step 2: Transform array of experiences
+    experience:
+      step2Data && Array.isArray(step2Data)
+        ? step2Data.map((exp) => ({
+            jobTitle: exp.jobTitle,
+            company: exp.company,
+            startDate: exp.date[0],
+            endDate: exp.date[1],
+            isCurrent: exp.isCurrent,
+            role: exp.role,
+            descJob: exp.descJob,
+          }))
+        : step2Data && typeof step2Data === 'object'
+        ? [
+            {
+              jobTitle: step2Data.jobTitle,
+              company: step2Data.company,
+              startDate: step2Data.date[0],
+              endDate: step2Data.date[1],
+              isCurrent: step2Data.isCurrent,
+              role: step2Data.role,
+              descJob: step2Data.descJob,
+            },
+          ]
+        : [],
 
     // Step 3: Education array (optional)
     education: step3Data || [],

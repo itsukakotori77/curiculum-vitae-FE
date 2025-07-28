@@ -4,7 +4,7 @@ import CurrVitaeGenerator from '@/components/pages/curiculumVitae/generator/Curr
 
 export default function Page() {
    return (
-      <Layout>
+      <Layout useHeader={false}>
          <CurrVitaeGenerator />
       </Layout>
    )
