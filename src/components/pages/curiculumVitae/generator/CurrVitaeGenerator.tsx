@@ -516,7 +516,7 @@ export default function CurrVitaeGenerator() {
                               >
                                  <div className="flex gap-1 items-center text-blue-600 hover:underline">
                                     <CirclePlus className="w-5 h-5" />
-                                    <p className="font-bold text-sm mt-1">Add Skills</p>
+                                    <p className="font-bold text-sm mt-1">Add Skills & Certificated</p>
                                  </div>
                               </div>
 

@@ -34,7 +34,7 @@ const SwitchForm: React.FC<SwitchFormProps> = ({
             defaultValue={false}
             control={control}
             name={name}
-            render={({
+         render={({
                field: { onChange, ref, name, value },
                formState: { errors }
             }) => (

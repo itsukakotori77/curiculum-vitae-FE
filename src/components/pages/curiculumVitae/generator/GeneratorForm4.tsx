@@ -31,9 +31,12 @@ export interface GeneratorForm4Ref {
 }
 
 const Schema = Yup.object().shape({
-   name: Yup.string().required(),
+   certificateName: Yup.string().required('Certificate Name is required'),
    company: Yup.string().notRequired(),
-   certificatedDate: Yup.string().notRequired()
+   certificatedDate: Yup.string().notRequired(),
+   skillName: Yup.string().required('Skillname is required'),
+   isHasLevel: Yup.mixed().required(''),
+   level: Yup.number().notRequired()
 })
 
 const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
@@ -43,7 +46,7 @@ const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
       onSubmit,
       onCancel,
       onChange,
-      setState,
+      setState,   
       className,
    }, ref) => {
 
@@ -52,7 +55,6 @@ const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
          control,
          watch,
          formState: { isValid },
-         setValue
       } = useForm<IGeneratorStep4 | any>({
          resolver: yupResolver(Schema),
          mode: 'onChange'
@@ -106,6 +108,7 @@ const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
                      control={control}
                      name="level"
                      label="Rate you level"
+                     disabled={!checked}
                   />
                   <SwitchForm
                      fieldLabel={{ children: '', required: false }}
@@ -113,7 +116,6 @@ const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
                      name="isHasLevel"
                      setChange={setChecked}
                      label="You want to use level in your skill ?"
-                     // className="mt-6"
                   />
                </div>
 
@@ -131,7 +133,7 @@ const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
                      intent="info"
                      className="w-40"
                      isLoading={loading}
-                     disabled={!isValid}
+                     // disabled={!isValid}
                   >
                      <span className="font-bold">Submit</span>
                   </Button>

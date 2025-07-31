@@ -10,7 +10,7 @@ import {
 // Transform data to ICurrVitae structure
 export const transformToICurrVitae = (
   step1Data?: IGeneratorStep1,
-  step2Data?: IGeneratorStep2[] | IGeneratorStep2,
+  step2Data?: IGeneratorStep2[],
   step3Data?: IGeneratorStep3[],
   step4Data?: IGeneratorStep4[],
   step5Data?: IGeneratorStep5,
@@ -35,34 +35,40 @@ export const transformToICurrVitae = (
             role: exp.role,
             descJob: exp.descJob,
           }))
-        : step2Data && typeof step2Data === 'object'
-        ? [
-            {
-              jobTitle: step2Data.jobTitle,
-              company: step2Data.company,
-              startDate: step2Data.date[0],
-              endDate: step2Data.date[1],
-              isCurrent: step2Data.isCurrent,
-              role: step2Data.role,
-              descJob: step2Data.descJob,
-            },
-          ]
         : [],
 
     // Step 3: Education array (optional)
-    education: step3Data || [],
+    education: Array.isArray(step3Data)
+      ? step3Data.map((data) => ({
+          degree: data.degree,
+          major: data.major?.value,
+          majorDesc: data.majorDesc,
+          graduated: data.graduated,
+          graduatedStatus: data.graduatedStatus,
+          university: data.university,
+          gpa: data.gpa,
+          gpaStatus: data.gpaStatus,
+        }))
+      : [],
 
     // Step 4: Certification array (optional)
-    certification: step4Data || [],
+    certification: Array.isArray(step4Data)
+      ? step4Data.map((data) => ({
+          name: data.certificateName,
+          company: data.company,
+          certificateDate: data.certificateDate,
+        }))
+      : [],
+
+    skills: Array.isArray(step4Data)
+      ? step4Data.map((data) => ({
+          name: data.skillName,
+          isHasLevel: data.isHasLevel,
+          level: data.level,
+        }))
+      : [],
 
     // Step 5: Extract skills and contacts separately
-    skills:
-      step5Data?.skills?.map((item: any) => ({
-        name: item.name,
-        isHasLevel: item.isHasLevel,
-        level: item.level,
-      })) || [],
-
     contacts: {
       address: step5Data?.address,
       phone: step5Data?.phone || '',

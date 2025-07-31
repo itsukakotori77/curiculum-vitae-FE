@@ -165,6 +165,7 @@ export const useCVStep4Store = create<CVStep4Store>()(
   persist(
     (set) => ({
       skills: [],
+      certification: [],
       currentEditIndex: null,
 
       add: (data: IGeneratorStep4) => {
