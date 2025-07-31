@@ -4,7 +4,7 @@ import { StepProps } from '@/interface/stepper'
 import { joinClass } from '@/utils/common'
 import { cva, VariantProps } from 'class-variance-authority'
 import { HTMLMotionProps, motion } from 'framer-motion'
-import React from 'react'
+import React, { useCallback } from 'react'
 
 const variantsStep = cva(
    `w-full flex items-center max-h-screen max-w-full`,
@@ -36,9 +36,9 @@ const StepperBubble: React.FC<StepBubbleProps> = ({
    ...props
 }) => {
 
-   const handleStepClick = (index: number) => {
+   const handleStepClick = useCallback((index: number) => {
       onChangeCurr(index)
-   }
+   }, [onChangeCurr])
 
    return (
       <motion.div

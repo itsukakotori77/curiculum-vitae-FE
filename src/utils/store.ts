@@ -32,7 +32,7 @@ export const useCVMainStore = create<CVMainStore>((set, get) => ({
     const step1Data = useCVStep1Store.getState().data
     const step2Data = useCVStep2Store.getState().experiences
     const step3Data = useCVStep3Store.getState().educations
-    const step4Data = useCVStep4Store.getState().data
+    const step4Data = useCVStep4Store.getState().skills
     const step5Data = useCVStep5Store.getState().data
 
     const finalCV = transformToICurrVitae(step1Data, step2Data, step3Data, step4Data, step5Data)
@@ -127,14 +127,14 @@ export const useCVStep3Store = create<CVStep3Store>()(
       add: (data: IGeneratorStep3) => {
         set((state) => ({
           educations: [...(state.educations ?? []), data],
-          currentEditIndex: null
+          currentEditIndex: null,
         }))
       },
 
       update: (index: number, data: IGeneratorStep3) => {
         set((state) => ({
           educations: state.educations!.map((exp, i) => (i === index ? data : exp)),
-          currentEditIndex: null
+          currentEditIndex: null,
         }))
       },
 
@@ -151,7 +151,7 @@ export const useCVStep3Store = create<CVStep3Store>()(
       clearData: () => {
         set({
           educations: [],
-          currentEditIndex: null
+          currentEditIndex: null,
         })
       },
     }),
@@ -164,14 +164,38 @@ export const useCVStep3Store = create<CVStep3Store>()(
 export const useCVStep4Store = create<CVStep4Store>()(
   persist(
     (set) => ({
-      data: undefined,
+      skills: [],
+      currentEditIndex: null,
 
-      updateData: (data: IGeneratorStep4[]) => {
-        set({ data })
+      add: (data: IGeneratorStep4) => {
+        set((state) => ({
+          skills: [...(state.skills ?? []), data],
+          currentEditIndex: null,
+        }))
+      },
+
+      update: (index: number, data: IGeneratorStep4) => {
+        set((state) => ({
+          skills: state.skills!.map((skils, i) => (i === index ? data : skils)),
+          currentEditIndex: null,
+        }))
+      },
+
+      remove: (index: number) => {
+        set((state) => ({
+          skills: state.skills!.filter((_, i) => i !== index) ?? [],
+        }))
+      },
+
+      setEditIndex: (index: number | null) => {
+        set({ currentEditIndex: index })
       },
 
       clearData: () => {
-        set({ data: undefined })
+        set({
+          skills: [],
+          currentEditIndex: null,
+        })
       },
     }),
     {
@@ -202,9 +226,11 @@ export const useCVStep5Store = create<CVStep5Store>()(
 export const useCVNavigationStore = create<CVNavigationStore>((set, get) => ({
   currentStep: 1,
   showForm: false,
+  maxStep: 6,
 
   setCurrentStep: (step: number) => {
-    if (step >= 1 && step <= 5) {
+    const { maxStep } = get()
+    if (step >= 1 && step <= maxStep) {
       set({ currentStep: step })
     }
   },
@@ -214,8 +240,8 @@ export const useCVNavigationStore = create<CVNavigationStore>((set, get) => ({
   },
 
   nextStep: () => {
-    const { currentStep } = get()
-    if (currentStep < 5) {
+    const { currentStep, maxStep } = get()
+    if (currentStep < maxStep) {
       set({ currentStep: currentStep + 1 })
     }
   },

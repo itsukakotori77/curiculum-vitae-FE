@@ -28,7 +28,7 @@ const NumberInput: React.FC<NumberInputProps> = forwardRef(
                getInputRef={ref}
                className={joinClass(
                   'w-full py-2 px-3 border-2 border-black rounded-lg outline-none focus:border-primary/60',
-                  'disabled:bg-gray-200 disabled:text-gray-400 shadow-[3px_3px_0px_rgba(0,0,0,1)]',
+                  'disabled:bg-gray-200 disabled:text-gray-400 shadow-[3px_3px_0px_rgba(0,0,0,1)] bg-white',
                   isInvalid
                      ? 'border-error'
                      : isValid

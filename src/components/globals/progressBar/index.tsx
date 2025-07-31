@@ -37,7 +37,7 @@ const ProgressBar: React.FC<IProps> = ({
             />
          </div>
          {usePercentage && (
-            <span className="text-xs w-full flex justify-end font-bold mt-1 pr-2">{`${progressPercentage}%`}</span>
+            <span className="text-xs w-full flex justify-end font-bold mt-1 pr-2">{`${progressPercentage.toFixed(0)}%`}</span>
          )}
       </>
    )

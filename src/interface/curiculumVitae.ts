@@ -69,11 +69,11 @@ export interface ICurrVitae {
   certification?: Array<{
     name: string
     company?: string
-    certificate_date?: Date | string
+    certificateDate?: Date | string
   }>
+  skills: Array<SkillsType>
 
   // +=========+ STEP 5 +=========+ //
-  skills: Array<SkillsType>
   contacts: {
     address?: string
     phone: string
@@ -117,7 +117,7 @@ export interface IGeneratorStep2 {
   jobTitle: string | any
   company: string | any
   role: string | any
-  isCurrent: boolean | any 
+  isCurrent: boolean | any
   date: Date[] | string[]
   descJob?: string | any
 }
@@ -127,21 +127,24 @@ export interface IGeneratorStep3 {
   major: string | any
   graduatedStatus: boolean | string | any
   graduated?: Date | string | any
-  university: string | any 
+  university: string | any
   gpa?: string | null | any
   gpaStatus?: string | null | any
   majorDesc?: string | null | any
 }
 
 export interface IGeneratorStep4 {
-  name: string | any
-  company?: string | any
-  certificate_date?: Date | string | any
+  certificateName: string | any
+  company?: string | null | any
+  certificateDate?: Date | string | null | any
+  skillName: string | null | any 
+  isHasLevel: boolean | null | any 
+  level: number | null | any
 }
 
 export interface IGeneratorStep5 {
   // SKILLS
-  skills: Array<SkillsType>
+  // skills: Array<SkillsType>
 
   // CONTACTS
   address?: string
@@ -164,36 +167,23 @@ export interface CVStep1Store {
 
 export interface storeFormStep<T> {
   add: (data: T) => void
-  update: (index: number, data: T) => void 
-  remove: (index: number) => void 
-  setEditIndex: (index: number | null) => void  
-  clearData: () => void 
+  update: (index: number, data: T) => void
+  remove: (index: number) => void
+  currentEditIndex: number | null
+  setEditIndex: (index: number | null) => void
+  clearData: () => void
 }
 
 export interface CVStep2Store extends storeFormStep<IGeneratorStep2> {
   experiences: IGeneratorStep2[] | undefined
-  currentEditIndex: number | null
-  // addExperience: (experience: IGeneratorStep2) => void
-  // updateExperience: (index: number, experience: IGeneratorStep2) => void
-  // removeExperience: (index: number) => void
-  // setEditIndex: (index: number | null) => void
-  // clearExperiences: () => void
 }
 
 export interface CVStep3Store extends storeFormStep<IGeneratorStep3> {
   educations: IGeneratorStep3[] | undefined
-  currentEditIndex: number | null
-  // addEducations: (education: IGeneratorStep3) => void 
-  // updateEducation: (index: number, education: IGeneratorStep3) => void 
-  // removeEducation: (index: number) => void 
-  // setEditIndex: (index: number | null) => void 
-  // clearEducation: () => void
 }
 
-export interface CVStep4Store {
-  data: IGeneratorStep4[] | undefined
-  updateData: (data: IGeneratorStep4[]) => void
-  clearData: () => void
+export interface CVStep4Store extends storeFormStep<IGeneratorStep4> {
+  skills: IGeneratorStep4[] | undefined
 }
 
 export interface CVStep5Store {
@@ -205,6 +195,7 @@ export interface CVStep5Store {
 export interface CVNavigationStore {
   currentStep: number
   showForm: boolean
+  maxStep: number
   setCurrentStep: (step: number) => void
   setShowForm: (show: boolean) => void
   nextStep: () => void

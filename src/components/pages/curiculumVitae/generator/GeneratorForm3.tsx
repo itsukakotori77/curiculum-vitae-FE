@@ -48,11 +48,10 @@ const Schema = Yup.object().shape({
       is: (val: string | any) => val === 'true',
       then: (schema) => schema.required('GPA is required when GPA check is enabled'),
       otherwise: (schema) => schema.notRequired()
-   })
-      .matches(
-         /^[0-5](\.[0-9]{1,2})?$/,
-         'GPA not valid'
-      ),
+   }).matches(
+      /^[0-5](\.[0-9]{1,2})?$/,
+      'GPA not valid'
+   ),
 
    gpaStatus: Yup.string().when('gpaCheck', {
       is: (val: string | any) => val === 'true',
@@ -73,12 +72,12 @@ const GeneratorForm3 = forwardRef<GeneratorForm3Ref, FormGenerator3>(
       className,
    }, ref) => {
 
-      const { 
-         handleSubmit, 
-         control, 
-         setValue, 
-         watch, 
-         formState: { isValid } 
+      const {
+         handleSubmit,
+         control,
+         setValue,
+         watch,
+         formState: { isValid }
       } = useForm<IGeneratorStep3 | any>({
          resolver: yupResolver(Schema),
          mode: 'onChange',
@@ -206,7 +205,7 @@ const GeneratorForm3 = forwardRef<GeneratorForm3Ref, FormGenerator3>(
                   >
                      <span className="font-bold">Cancel</span>
                   </Button>
-                  <Button
+                  <Button  
                      type="submit"
                      intent="info"
                      className="w-40"

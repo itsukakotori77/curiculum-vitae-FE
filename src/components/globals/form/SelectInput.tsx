@@ -105,7 +105,7 @@ const SelectInput: React.FC<SelectInputProps> = forwardRef(
                               : '2px solid #000000',
                      outline: 'none',
                      boxShadow: '3px 3px 0px #000000',
-                     background: '#f5f4f0'
+                     background: '#fffff'
                   }),
                   ...props.styles,
                }}
