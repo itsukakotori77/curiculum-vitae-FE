@@ -76,7 +76,7 @@ const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
                <span className="font-semibold">Certificated</span>
                <hr className="w-full border-[2px] rounded-xl border-gray-600" />
                <TextForm
-                  fieldLabel={{ children: 'Name', required: true }}
+                  fieldLabel={{ children: 'Certificate Name', required: true }}
                   fieldInput={{ maxLength: 50 }}
                   name="certificateName"
                   control={control}

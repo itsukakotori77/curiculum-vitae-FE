@@ -143,10 +143,6 @@ export interface IGeneratorStep4 {
 }
 
 export interface IGeneratorStep5 {
-  // SKILLS
-  // skills: Array<SkillsType>
-
-  // CONTACTS
   address?: string
   phone: string
   email: string
@@ -187,9 +183,9 @@ export interface CVStep4Store extends storeFormStep<IGeneratorStep4> {
 }
 
 export interface CVStep5Store {
-  data: IGeneratorStep5 | undefined
-  updateData: (data: IGeneratorStep5) => void
-  clearData: () => void
+  contacts: IGeneratorStep5 | any
+
+  update: (val: IGeneratorStep5) => void
 }
 
 export interface CVNavigationStore {

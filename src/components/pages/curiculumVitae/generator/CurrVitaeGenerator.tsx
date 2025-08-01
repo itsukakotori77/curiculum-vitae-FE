@@ -3,7 +3,7 @@
 import React, { useRef, useCallback, useMemo } from 'react'
 import StepperBubble from '@/components/globals/stepper/StepperBubble'
 import GeneratorForm1, { GeneratorForm1Ref } from './GeneratorForm1'
-import { IGeneratorStep1, IGeneratorStep2, IGeneratorStep3, IGeneratorStep4 } from '@/interface/curiculumVitae'
+import { IGeneratorStep1, IGeneratorStep2, IGeneratorStep3, IGeneratorStep4, IGeneratorStep5 } from '@/interface/curiculumVitae'
 import { useRouter } from 'next/navigation'
 import Sample3 from '../../exampleCv/Sample3'
 import { biodataCurr } from '@/data/cv'
@@ -14,24 +14,26 @@ import ProgressBar from '@/components/globals/progressBar'
 import { Pencil, Trash, TriangleAlert, CirclePlus } from 'lucide-react'
 import Badge from '@/components/globals/UI/Badge'
 import { useModalConfirm } from '@/libs/modalConfirm'
-import { 
-   useCVNavigationStore, 
-   useCVStep1Store, 
-   useCVStep2Store, 
-   useCVStep3Store, 
-   useCVStep4Store 
+import {
+   useCVNavigationStore,
+   useCVStep1Store,
+   useCVStep2Store,
+   useCVStep3Store,
+   useCVStep4Store,
+   useCVStep5Store
 } from '@/utils/store'
 import GeneratorForm3, { GeneratorForm3Ref } from './GeneratorForm3'
 import moment from 'moment'
-import GeneratorForm4, {GeneratorForm4Ref} from './GeneratorForm4'
+import GeneratorForm4, { GeneratorForm4Ref } from './GeneratorForm4'
+import GeneratorForm5, { GeneratorForm5Ref } from './GeneratorForm5'
 
 
 const labels: string[] = [
-   'Profile', 
-   'Experiences', 
-   'Educations', 
-   'Skills & Certificate', 
-   'Contacts', 
+   'Profile',
+   'Experiences',
+   'Educations',
+   'Skills & Certificate',
+   'Contacts',
    'Preview'
 ]
 
@@ -44,15 +46,16 @@ export default function CurrVitaeGenerator() {
    const form2Ref = useRef<GeneratorForm2Ref>(null)
    const form3Ref = useRef<GeneratorForm3Ref>(null)
    const form4Ref = useRef<GeneratorForm4Ref>(null)
+   const form5Ref = useRef<GeneratorForm5Ref>(null)
 
    // Zustand stores
-   const { 
-      currentStep, 
-      showForm, 
-      setCurrentStep, 
-      setShowForm, 
-      nextStep, 
-      maxStep 
+   const {
+      currentStep,
+      showForm,
+      setCurrentStep,
+      setShowForm,
+      nextStep,
+      maxStep
    } = useCVNavigationStore()
    const { updateData: updateStep1Data } = useCVStep1Store()
    const {
@@ -81,6 +84,8 @@ export default function CurrVitaeGenerator() {
       remove: removeSkill,
       setEditIndex: setEditIndexSkill
    } = useCVStep4Store()
+
+   const { contacts, update: updateContacts } = useCVStep5Store()
 
    // Combined CV data
    const { finalCV } = useCVData()
@@ -151,6 +156,18 @@ export default function CurrVitaeGenerator() {
       })
    }, [idxSkill, updateSkill, addSkill, setShowForm, openModal, closeModal])
 
+   const handleStep5Submit = useCallback((val: IGeneratorStep5) => {
+      openModal({
+         title: "Attention !",
+         description: "Are you sure to save this data ?",
+         onConfirm: () => {
+            updateContacts(val)
+            nextStep()
+            closeModal()
+         }
+      })
+   }, [contacts])
+
    // +==================+ EXPERIENCE +==================+ //
    const handleEditExperience = useCallback((index: number) => {
       setEditIndexExp(index)
@@ -195,7 +212,7 @@ export default function CurrVitaeGenerator() {
       setShowForm(true)
    }, [setEditIndexEdu, setShowForm])
 
-   // +==================+ SKILLS +==================+ //
+   // +==================+ SKILLS & CERTIFICATE +==================+ //
    const handleEditSkill = useCallback((index: number) => {
       setEditIndexSkill(index)
       setShowForm(true)
@@ -216,6 +233,8 @@ export default function CurrVitaeGenerator() {
       setEditIndexSkill(null)
       setShowForm(true)
    }, [setEditIndexSkill, setShowForm])
+
+   // +==================+ CONTACTS +==================+ //
 
    // Cancel handler
    const handleCancel = useCallback(() => {
@@ -319,10 +338,25 @@ export default function CurrVitaeGenerator() {
                      >
                         {index + 1}
                      </div>
-                     <div className="flex flex-col">
-                        <span className="font-bold text-md">{data.name}</span>
-                        <p className="text-sm font-medium">{data?.company}</p>
-                        <p className="text-sm"><span className="font-medium">Certificated Publish</span> {`${moment(data?.certificateDate).format('MMMM, Do YYYY')}`}</p>
+                     <div className="flex flex-col gap-4">
+                        <div className="flex flex-col">
+                           <span className="font-bold text-xl">Certificate</span>
+                           <span className="font-bold text-md">{data.certificateName}</span>
+                           <p className="text-sm font-medium">{data?.company}</p>
+                           <p className="text-sm"><span className="font-medium">Certificated Publish</span> {`${moment(data?.certificateDate).format('MMMM, Do YYYY')}`}</p>
+                        </div>
+                        <div className="flex flex-col">
+                           <span className="font-bold text-xl">Skills</span>
+                           <span className="font-bold text-md">{data.skillName}</span>
+                           <p className="text-sm font-medium">{data?.company}</p>
+                           {data?.isHasLevel && (
+                              <div className="grid grid-cols-5 gap-1">
+                                 {Array.from({ length: 5 }, (_, index) => (
+                                    <div key={index} className={`${index + 1 <= data.level ? 'bg-green-600' : 'bg-gray-500'} w-full h-4 rounded-xs`}></div>
+                                 ))}
+                              </div>
+                           )}
+                        </div>
                      </div>
                   </div>
                   <div className="flex gap-2">
@@ -551,6 +585,19 @@ export default function CurrVitaeGenerator() {
                      </div>
                   )}
 
+                  {/* Step 5 - Contacts */}
+                  {currentStep === 5 && (
+                     <div className="flex flex-col w-full max-w-5xl mx-auto gap-4 overflow-y-auto h-[calc(100vh-8rem)] px-4 lg:px-6">
+                        <GeneratorForm5
+                           ref={form5Ref}
+                           data={contacts}
+                           onSubmit={handleStep5Submit}
+                           onCancel={handleFormCancel}
+                           className="w-full"
+                        />
+                     </div>
+                  )}
+
 
                </div>
 
@@ -560,7 +607,7 @@ export default function CurrVitaeGenerator() {
                      <div className="sticky top-0 bg-white pb-4 mb-4 border-b border-gray-200">
                         <h3 className="text-lg font-semibold">Live Preview</h3>
                      </div>
-                     <div className="scale-75 lg:scale-90 origin-top">
+                     <div className="scale-75 lg:scale-90 origin-top -mt-20">
                         <Sample3
                            ref={ref}
                            data={finalCV || biodataCurr}
@@ -569,7 +616,7 @@ export default function CurrVitaeGenerator() {
                            textSize="xs"
                            iconSize="xs"
                            variantText="tiny"
-                           sidebarWidth={25}
+                           sidebarWidth={28}
                            printable="noPrint"
                            primaryColor={'#FFFFF'}
                            sidebarColor={'#8B8EBC'}

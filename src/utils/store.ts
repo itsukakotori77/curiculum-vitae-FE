@@ -33,7 +33,7 @@ export const useCVMainStore = create<CVMainStore>((set, get) => ({
     const step2Data = useCVStep2Store.getState().experiences
     const step3Data = useCVStep3Store.getState().educations
     const step4Data = useCVStep4Store.getState().skills
-    const step5Data = useCVStep5Store.getState().data
+    const step5Data = useCVStep5Store.getState().contacts
 
     const finalCV = transformToICurrVitae(step1Data, step2Data, step3Data, step4Data, step5Data)
 
@@ -46,7 +46,7 @@ export const useCVMainStore = create<CVMainStore>((set, get) => ({
     useCVStep2Store.getState().clearData()
     useCVStep3Store.getState().clearData()
     useCVStep4Store.getState().clearData()
-    useCVStep5Store.getState().clearData()
+    // useCVStep5Store.getState().clearData()
 
     set({ finalCV: null })
   },
@@ -208,14 +208,10 @@ export const useCVStep4Store = create<CVStep4Store>()(
 export const useCVStep5Store = create<CVStep5Store>()(
   persist(
     (set) => ({
-      data: undefined,
+      contacts: null,
 
-      updateData: (data: IGeneratorStep5) => {
-        set({ data })
-      },
-
-      clearData: () => {
-        set({ data: undefined })
+      update: (data: IGeneratorStep5) => {
+        set({ contacts: data })
       },
     }),
     {
