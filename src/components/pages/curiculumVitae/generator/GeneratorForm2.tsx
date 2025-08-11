@@ -102,7 +102,7 @@ const GeneratorForm2 = forwardRef<GeneratorForm2Ref, FormGeneratorStep2>(({
                />
 
                <DaterangepickerForm
-                  fieldLabel={{ children: 'Pilih Tanggal' }}
+                  fieldLabel={{ children: 'Entry Date' }}
                   control={control}
                   name="date"
                   max={30}

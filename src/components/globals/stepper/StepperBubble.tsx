@@ -48,7 +48,10 @@ const StepperBubble: React.FC<StepBubbleProps> = ({
          {Array.from({ length: size }, (_, index) => (
             <React.Fragment key={index}>
                {direction === 'horizontal' ? (
-                  <div className="flex flex-col justify-start items-start gap-0 relative">
+                  <div
+                     className="flex flex-col justify-start items-start gap-0 relative cursor-pointer"
+                     onClick={() => handleStepClick(index + 1)}
+                  >
                      <div className="flex justify-center items-center flex-row gap-2 pr-10 absolute">
                         {labels && labels[index] && (
                            <span className="font-bold sm:text-xs py-2">{labels[index]}</span>
@@ -56,7 +59,6 @@ const StepperBubble: React.FC<StepBubbleProps> = ({
                      </div>
                      <div className="flex items-center mt-12">
                         <motion.div
-                           onClick={() => handleStepClick(index + 1)}
                            whileHover={{ scale: 0.98 }}
                            whileTap={{ scale: 0.95 }}
                            transition={{ type: 'spring', stiffness: 400, damping: 10 }}
@@ -82,11 +84,13 @@ const StepperBubble: React.FC<StepBubbleProps> = ({
                      </div>
                   </div>
                ) : (
-                  <div className="flex h-full gap-4 justify-between w-full relative">
+                  <div 
+                     className="flex h-full gap-4 justify-between w-full relative cursor-pointer"
+                     onClick={() => handleStepClick(index + 1)}
+                  >
                      <>
                         <div className="flex flex-col items-center h-full absolute">
                            <motion.div
-                              onClick={() => handleStepClick(index + 1)}
                               whileHover={{ scale: 0.98 }}
                               whileTap={{ scale: 0.95 }}
                               transition={{ type: 'spring', stiffness: 400, damping: 10 }}

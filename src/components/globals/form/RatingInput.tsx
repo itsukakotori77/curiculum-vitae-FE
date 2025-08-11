@@ -136,7 +136,8 @@ const RatingInput = forwardRef<HTMLDivElement, RatingInputProps>(
                </div>
 
                <AnimatePresence mode="wait">
-                  {(hoveredRating || value) > 0 && (
+                  {/* {(hoveredRating || value) > 0 && (
+                  )} */}
                      <motion.div
                         key={hoveredRating || value}
                         initial={{ opacity: 0, y: 5 }}
@@ -146,7 +147,7 @@ const RatingInput = forwardRef<HTMLDivElement, RatingInputProps>(
                         className="flex items-center space-x-3"
                      >
                         <span className="text-sm font-medium text-gray-700">
-                           {ratingTexts[hoveredRating || value]}
+                           {ratingTexts[hoveredRating || value] || 'none'}
                         </span>
                         <motion.div
                            className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden"
@@ -162,10 +163,9 @@ const RatingInput = forwardRef<HTMLDivElement, RatingInputProps>(
                            />
                         </motion.div>
                         <span className="text-xs text-gray-500 min-w-0">
-                           {hoveredRating || value}/5
+                           {hoveredRating || value || 0}/5
                         </span>
                      </motion.div>
-                  )}
                </AnimatePresence>
             </motion.div>
          </div>

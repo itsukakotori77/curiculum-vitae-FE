@@ -155,6 +155,10 @@ export interface IGeneratorStep5 {
   }
 }
 
+export interface IGenerator6 {
+  
+}
+
 export interface CVStep1Store {
   data: IGeneratorStep1 | undefined
   updateData: (data: IGeneratorStep1) => void

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useCallback, useMemo } from 'react'
+import React, { useRef, useCallback, useMemo, useState } from 'react'
 import StepperBubble from '@/components/globals/stepper/StepperBubble'
 import GeneratorForm1, { GeneratorForm1Ref } from './GeneratorForm1'
 import { IGeneratorStep1, IGeneratorStep2, IGeneratorStep3, IGeneratorStep4, IGeneratorStep5 } from '@/interface/curiculumVitae'
@@ -26,6 +26,7 @@ import GeneratorForm3, { GeneratorForm3Ref } from './GeneratorForm3'
 import moment from 'moment'
 import GeneratorForm4, { GeneratorForm4Ref } from './GeneratorForm4'
 import GeneratorForm5, { GeneratorForm5Ref } from './GeneratorForm5'
+import PreviewGenerator from './perviewGenerator'
 
 
 const labels: string[] = [
@@ -34,7 +35,7 @@ const labels: string[] = [
    'Educations',
    'Skills & Certificate',
    'Contacts',
-   'Preview'
+   'Summary'
 ]
 
 export default function CurrVitaeGenerator() {
@@ -91,7 +92,9 @@ export default function CurrVitaeGenerator() {
    const { finalCV } = useCVData()
 
    const { openModal, closeModal } = useModalConfirm()
-   const window = useWindowSize()
+   const [preview, setPreview] = useState<boolean>(false)
+   const [isGenerating, setIsGenerating] = useState<boolean>(false)
+   const windowSize = useWindowSize()
 
    // Form submission handlers
    const handleStep1Submit = useCallback((val: IGeneratorStep1) => {
@@ -388,6 +391,78 @@ export default function CurrVitaeGenerator() {
       return idxSkill !== null ? skills![idxSkill] : undefined
    }, [idxSkill, skills])
 
+   const downloadCV = async (format: any) => {
+      setIsGenerating(true)
+      try {
+         const response = await fetch('/api/generate-cv', {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+               cvData: finalCV || biodataCurr,
+               format: format // 'png' or 'pdf'
+            }),
+         });
+
+         if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `cv_${new Date().getTime()}.${format}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+         } else {
+            const errorData = await response.json();
+            console.error('Error generating file:', errorData);
+            alert('Failed to generate file. Please try again.');
+         }
+      } catch (error) {
+         console.error('Error downloading CV:', error);
+         alert('Failed to download CV. Please try again.');
+      } finally {
+         setIsGenerating(false);
+      }
+   };
+
+   const downloadPNGClient = async () => {
+      const html2canvas = (await import('html2canvas')).default;
+
+      try {
+         setIsGenerating(true);
+         const element = ref.current;
+
+         if (!element) {
+            alert('CV preview not found');
+            return;
+         }
+
+         const canvas = await html2canvas(element, {
+            background: '#ffffff',
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            width: 794,
+            height: 1123,
+            scrollX: 0,
+            scrollY: 0,
+         } as any);
+
+         const link = document.createElement('a');
+         link.download = `cv_${new Date().getTime()}.png`;
+         link.href = canvas.toDataURL('image/png', 1.0);
+         link.click();
+      } catch (error) {
+         console.error('Error generating PNG:', error);
+         alert('Failed to generate PNG. Please try again.');
+      } finally {
+         setIsGenerating(false);
+      }
+   };
+
    return (
       <div className="min-h-screen lg:h-screen">
          <div className="flex flex-col lg:flex-row h-full">
@@ -397,7 +472,7 @@ export default function CurrVitaeGenerator() {
                   <StepperBubble
                      size={maxStep}
                      current={currentStep}
-                     direction={window.width > 1024 ? 'vertical' : 'horizontal'}
+                     direction={windowSize.width > 1024 ? 'vertical' : 'horizontal'}
                      onChangeCurr={(val: number) => setCurrentStep(val)}
                      useNumber
                      className="justify-center lg:justify-start lg:py-12"
@@ -598,16 +673,28 @@ export default function CurrVitaeGenerator() {
                      </div>
                   )}
 
+                  {currentStep === 6 && (
+                     <div className="flex items-start">
+                        <Button
+                           intent="secondary"
+                           isLoading={isGenerating}
+                           onClick={() => downloadCV('pdf')}
+                        >Generate CV</Button>
+                     </div>
+                  )}
 
                </div>
 
                {/* Preview Section */}
-               {currentStep === 1 && (
+               {(currentStep === 1 || currentStep === 6) && (
                   <div className="w-full lg:w-1/3 xl:w-2/5 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-4 lg:p-6 overflow-hidden">
                      <div className="sticky top-0 bg-white pb-4 mb-4 border-b border-gray-200">
                         <h3 className="text-lg font-semibold">Live Preview</h3>
                      </div>
-                     <div className="scale-75 lg:scale-90 origin-top -mt-20">
+                     <div
+                        className="scale-75 lg:scale-90 origin-top -mt-20 cursor-pointer"
+                        onClick={() => setPreview(true)}
+                     >
                         <Sample3
                            ref={ref}
                            data={finalCV || biodataCurr}
@@ -627,6 +714,12 @@ export default function CurrVitaeGenerator() {
                      </div>
                   </div>
                )}
+
+               <PreviewGenerator
+                  data={finalCV}
+                  isShowing={preview}
+                  onClose={() => setPreview(false)}
+               />
             </div>
          </div>
       </div>

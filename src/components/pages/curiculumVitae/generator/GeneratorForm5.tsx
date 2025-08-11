@@ -7,13 +7,13 @@ import TextForm from '@/components/globals/form/TextForm'
 import { IGeneratorStep5 } from '@/interface/curiculumVitae'
 import { joinClass } from '@/utils/common'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Instagram, Linkedin, Mail, Phone } from 'lucide-react'
 import React, { forwardRef } from 'react'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons'
 import { faInstagram, faLinkedin, faTelegram } from '@fortawesome/free-brands-svg-icons'
+import { regexNumeric } from '@/utils/regex'
 interface FormGenerator5 {
    data?: IGeneratorStep5
    loading?: boolean
@@ -32,11 +32,16 @@ export interface GeneratorForm5Ref {
 
 const Schema = Yup.object().shape({
    address: Yup.string().optional(),
-   phone: Yup.string().required('Phone is required'),
-   email: Yup.string().email('Invalid email').required('Email is required'),
-   telegram: Yup.string().optional(),
-   instagram: Yup.string().optional(),
-   linkedin: Yup.string().optional()
+   phone: Yup.string()
+      .matches(/^(?:\+62|0)[2-9]\d{3,15}$/, 'Phone is not valid')
+      .required('Phone is required'),
+   email: Yup.string()
+      .email('Invalid email')
+      .matches(/^[\w\\.-]+@[\w\\.-]+\.\w+$/, 'Email is not valid')
+      .required('Email is required'),
+   telegram: Yup.string().matches(/^@[a-zA-Z0-9_]+$/, 'Telegram is not valid').optional(),
+   instagram: Yup.string().matches(/^[a-zA-Z0-9_]+$/, 'Instagram is not valid').optional(),
+   linkedin: Yup.string().matches(/^[a-zA-Z0-9_]+$/, 'Linkedin is not valid').optional()
 })
 
 
@@ -67,10 +72,11 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
          <Card
             title="Contacts"
             className={joinClass('', className)}
+            useShadow={false}
          >
             <form
                noValidate
-               className="grid gap-4 py-3 px-3"
+               className="grid gap-2 py-3 px-3"
                onSubmit={handleSubmit(onSubmit)}
             >
                <TextForm
@@ -85,11 +91,12 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
                   }}
                   name="phone"
                   control={control}
+                  regexReplace={regexNumeric}
                />
                <TextForm
                   fieldLabel={{ children: 'Email', required: true }}
                   fieldInput={{
-                     maxLength: 15,
+                     maxLength: 50,
                      type: 'email',
                      icon: (
                         <span className="text-lg">
@@ -101,7 +108,7 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
                   control={control}
                />
                <TextForm
-                  fieldLabel={{ children: 'Telegram', required: true }}
+                  fieldLabel={{ children: 'Telegram', required: false }}
                   fieldInput={{
                      maxLength: 15,
                      icon: (
@@ -114,7 +121,7 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
                   control={control}
                />
                <TextForm
-                  fieldLabel={{ children: 'Instagram', required: true }}
+                  fieldLabel={{ children: 'Instagram', required: false }}
                   fieldInput={{
                      maxLength: 15,
                      icon: (
@@ -127,7 +134,7 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
                   control={control}
                />
                <TextForm
-                  fieldLabel={{ children: 'Linkedin', required: true }}
+                  fieldLabel={{ children: 'Linkedin', required: false }}
                   fieldInput={{
                      maxLength: 15,
                      icon: (
@@ -160,7 +167,7 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
                      intent="info"
                      className="w-40"
                      isLoading={loading}
-                     // disabled={!isValid}
+                     disabled={!isValid}
                   >
                      <span className="font-bold">Submit</span>
                   </Button>

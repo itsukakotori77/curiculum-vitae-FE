@@ -97,7 +97,7 @@ export default function CuriculumVitae() {
   ]
 
   return (
-    <section className="w-full h-full px-7 mt-36 relative">
+    <section className="w-full h-full px-7 mt-20 relative">
       <div className="flex w-full h-auto gap-24">
         <div className="flex w-[20%] items-start justify-center">
           <div className="w-full sticky top-0">

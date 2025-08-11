@@ -57,9 +57,9 @@ export const useCVStep1Store = create<CVStep1Store>()(
     (set) => ({
       data: undefined,
 
-      updateData: debounce((data: IGeneratorStep1) => {
+      updateData: (data: IGeneratorStep1) => {
         set({ data })
-      }, 200),
+      },
 
       clearData: () => {
         set({ data: undefined })

@@ -46,6 +46,7 @@ export interface CardProps
    title?: string
    useHeader?: boolean
    childrenClass?: string
+   useShadow?: boolean
 }
 
 const Card: React.FC<CardProps> = ({
@@ -56,6 +57,7 @@ const Card: React.FC<CardProps> = ({
    title,
    useHeader,
    childrenClass,
+   useShadow = true,
    ...props
 }) => {
 
