@@ -1,6 +1,5 @@
 import React from 'react'
 import { HTMLMotionProps, motion } from "framer-motion";
-import { AnimatePresence } from 'framer-motion';
 import { cva, VariantProps } from 'class-variance-authority';
 import { joinClass } from '@/utils/common';
 
@@ -25,24 +24,28 @@ const variants = cva(
 )
 
 const dropIn = {
-   hidden: {
-      y: "-100vh",
-      opacity: 0,
-   },
-   visible: {
+   open: {
       y: "0",
       opacity: 1,
+      pointerEvents: "auto",
       transition: {
-         duration: 0.1,
+         duration: 0.2,
          type: "spring" as const,
-         damping: 15,
+         damping: 70,
          stiffness: 500,
       },
    },
-   exit: {
+   closed: {
       y: "100vh",
       opacity: 0,
-   },
+      pointerEvents: "none", // disables click when hidden
+      transition: { 
+         duration: 0.2,
+         type: "spring" as const,
+         damping: 80,
+         stiffness: 600 
+      },
+   }
 }
 
 export interface ModalProps extends HTMLMotionProps<'div'>, VariantProps<typeof variants> {
@@ -63,39 +66,31 @@ const Modal = ({
    size,
    ...props
 }: ModalProps) => {
-
-   const defaultProps = {
-      initial: { opacity: 0, y: 50 },
-      animate: { opacity: 1, y: 0 },
-      exit: { opacity: 0, y: 50 },
-      transition: { duration: 0.2 },
-      ...props 
-   }
-
    return (
-      <AnimatePresence>
-         {isOpen && (
-            <>
-               {/* Overlay */}
-               <motion.div
-                  className={joinClass('fixed inset-0 bg-black/50 z-40', classNameOverlay)}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onClick={handleClose}
-               />
+      <>
+         {/* Overlay */}
+         <motion.div
+            className={joinClass('fixed inset-0 bg-black/50 z-40', classNameOverlay)}
+            initial={{ opacity: 0, pointerEvents: "none" }}
+            animate={{
+               opacity: isOpen ? 1 : 0,
+               pointerEvents: isOpen ? "auto" : "none"
+            }}
+            transition={{ duration: 0.2 }}
+            onClick={handleClose}
+         />
 
-               {/* Modal Content */}
-               <motion.div
-                  variants={dropIn}
-                  className={joinClass(variants({ size }), className)}
-                  {...defaultProps}
-               >
-                  {children}
-               </motion.div>
-            </>
-         )}
-      </AnimatePresence>
+         {/* Modal Content */}
+         <motion.div
+            variants={dropIn}
+            initial="closed"
+            animate={isOpen ? "open" : "closed"}
+            className={joinClass(variants({ size }), className)}
+            {...props}
+         >
+            {children}
+         </motion.div>
+      </>
    )
 }
 

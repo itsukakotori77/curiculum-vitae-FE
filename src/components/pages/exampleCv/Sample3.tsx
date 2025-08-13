@@ -303,11 +303,11 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                                     <CVText variant="small" size={textSize} className="font-medium" style={{ color: sidebarTextColor }}>
                                        {item?.name}
                                     </CVText>
-                                    <div className="grid grid-cols-5 w-full gap-1">
+                                    <div className="grid grid-cols-5 w-full">
                                        {Array.from({ length: item?.level }, (_, index) => (
                                           <div
                                              key={index}
-                                             className={`h-3.5 w-full rounded-xs`}
+                                             className={`h-3.5 w-full`}
                                              style={{
                                                 background: ` ${item?.isHasLevel && index < item.level
                                                    ? skillColor

@@ -15,8 +15,8 @@ export const useCVData = () => {
   const step1Data = useCVStep1Store((state) => state.data)
   const step2Data = useCVStep2Store((state) => state.experiences)
   const step3Data = useCVStep3Store((state) => state.educations)
-  const step4Data = useCVStep4Store((state) => state.data)
-  const step5Data = useCVStep5Store((state) => state.data)
+  const step4Data = useCVStep4Store((state) => state.skills)
+  const step5Data = useCVStep5Store((state) => state.contacts)
 
   const { finalCV, updateFinalCV } = useCVMainStore()
 

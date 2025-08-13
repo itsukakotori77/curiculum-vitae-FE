@@ -25,6 +25,7 @@
     "class-variance-authority": "^0.7.1",
     "cv-generator-fe": "file:",
     "dayjs": "^1.11.13",
+    "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
     "iconify": "^1.4.0",
     "jspdf": "^3.0.1",
