@@ -91,7 +91,7 @@ export const useWindowSize = () => {
 //    return [result, state, setState]
 //  }
 
-export function useDebounceEffect(fn: () => void, waitTime: number, deps?: DependencyList) {
+export const useDebounceEffect = (fn: () => void, waitTime: number, deps?: DependencyList) => {
   useEffect(() => {
     const t = setTimeout(() => {
       fn.apply(undefined, deps as any)

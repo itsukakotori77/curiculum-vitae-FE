@@ -95,17 +95,17 @@
       {
         name: 'AWS Certified Developer Associate',
         company: 'Amazon',
-        certificate_date: moment('2022-10-10').format('YYYY-MM-DD'),
+        certificateDate: moment('2022-10-10').format('YYYY-MM-DD'),
       },
       {
         name: 'Google Cloud Professional Developer',
         company: 'Google',
-        certificate_date: moment('2022-10-10').format('YYYY-MM-DD'),
+        certificateDate: moment('2022-10-10').format('YYYY-MM-DD'),
       },
       {
         name: 'Microsoft Azure Fundamentals',
         company: 'Microsoft',
-        certificate_date: moment('2022-10-10').format('YYYY-MM-DD'),
+        certificateDate: moment('2022-10-10').format('YYYY-MM-DD'),
       },
     ],
     skills: [

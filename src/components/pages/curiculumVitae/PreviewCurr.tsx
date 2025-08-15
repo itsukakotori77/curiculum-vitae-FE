@@ -7,10 +7,10 @@ import Filter from './Filter'
 import Sample1 from '../exampleCv/Sample1'
 import Sample2 from '../exampleCv/Sample2'
 import Sample3 from '../exampleCv/Sample3'
-import PreviewCurr from './PreviewCurr'
 import { biodataCurr } from '@/data/cv'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
+
 
 export default function CuriculumVitae() {
   const filterRef = useRef<HTMLAttributeReferrerPolicy>(null)
