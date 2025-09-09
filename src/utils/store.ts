@@ -18,10 +18,13 @@ import {
   ISettingCurr,
 } from '@/interface/curiculumVitae'
 import { transformToICurrVitae } from './parseToForm'
+import { transformToCurrPayload } from './parseToPayload'
+import { decodeToken, getToken } from './common'
 
 interface CVMainStore {
   finalCV: ICurrVitae | null
   updateFinalCV: () => void
+  updatePayloadCV: () => void
   resetAllData: () => void
 }
 
@@ -42,43 +45,64 @@ export const useCVSettingStore = create<CVSettingStore>()(
   ),
 )
 
-export const useCVMainStore = create<CVMainStore>(
-  (set, get) => ({
-    finalCV: null,
+export const useCVMainStore = create<CVMainStore>((set, get) => ({
+  finalCV: null,
 
-    updateFinalCV: () => {
-      // Get data from all step stores
-      const step1Data = useCVStep1Store.getState().data
-      const step2Data =
-        useCVStep2Store.getState().experiences
-      const step3Data =
-        useCVStep3Store.getState().educations
-      const step4Data = useCVStep4Store.getState().skills
-      const step5Data = useCVStep5Store.getState().contacts
+  updateFinalCV: () => {
+    // Get data from all step stores
+    const step1Data = useCVStep1Store.getState().data
+    const step2Data = useCVStep2Store.getState().experiences
+    const step3Data = useCVStep3Store.getState().educations
+    const step4Data = useCVStep4Store.getState().skills
+    const step5Data = useCVStep5Store.getState().contacts
 
-      const finalCV = transformToICurrVitae(
-        step1Data,
-        step2Data,
-        step3Data,
-        step4Data,
-        step5Data,
-      )
+    const finalCV = transformToICurrVitae(
+      step1Data,
+      step2Data,
+      step3Data,
+      step4Data,
+      step5Data,
+    )
 
-      set({ finalCV })
-    },
+    set({ finalCV })
+  },
 
-    resetAllData: () => {
-      // Clear all stores
-      useCVStep1Store.getState().clearData()
-      useCVStep2Store.getState().clearData()
-      useCVStep3Store.getState().clearData()
-      useCVStep4Store.getState().clearData()
-      // useCVStep5Store.getState().clearData()
+  updatePayloadCV: () => {
+    // Get data from all step stores
+    const step1Data = useCVStep1Store.getState().data
+    const step2Data = useCVStep2Store.getState().experiences
+    const step3Data = useCVStep3Store.getState().educations
+    const step4Data = useCVStep4Store.getState().skills
+    const step5Data = useCVStep5Store.getState().contacts
+    const setting = useCVSettingStore.getState().data
+    const user = decodeToken(getToken()!) as any
 
-      set({ finalCV: null })
-    },
-  }),
-)
+    const payloadCV = transformToCurrPayload(
+      step1Data,
+      step2Data,
+      step3Data,
+      step4Data,
+      step5Data,
+      {
+        user_id: user?.id,
+        setting_id: setting?.id!,
+      },
+    )
+
+    return payloadCV
+  },
+
+  resetAllData: () => {
+    // Clear all stores
+    useCVStep1Store.getState().clearData()
+    useCVStep2Store.getState().clearData()
+    useCVStep3Store.getState().clearData()
+    useCVStep4Store.getState().clearData()
+    // useCVStep5Store.getState().clearData()
+
+    set({ finalCV: null })
+  },
+}))
 
 export const useCVStep1Store = create<CVStep1Store>()(
   persist(
@@ -107,18 +131,12 @@ export const useCVStep2Store = create<CVStep2Store>()(
 
       add: (experience: IGeneratorStep2) => {
         set((state) => ({
-          experiences: [
-            ...(state.experiences ?? []),
-            experience,
-          ],
+          experiences: [...(state.experiences ?? []), experience],
           currentEditIndex: null,
         }))
       },
 
-      update: (
-        index: number,
-        experience: IGeneratorStep2,
-      ) => {
+      update: (index: number, experience: IGeneratorStep2) => {
         set((state) => ({
           experiences: state.experiences!.map((exp, i) =>
             i === index ? experience : exp,
@@ -130,9 +148,7 @@ export const useCVStep2Store = create<CVStep2Store>()(
       remove: (index: number) => {
         set((state) => ({
           experiences:
-            state.experiences!.filter(
-              (_, i) => i !== index,
-            ) ?? [],
+            state.experiences!.filter((_, i) => i !== index) ?? [],
           currentEditIndex: null,
         }))
       },
@@ -182,9 +198,7 @@ export const useCVStep3Store = create<CVStep3Store>()(
       remove: (index: number) => {
         set((state) => ({
           educations:
-            state.educations!.filter(
-              (_, i) => i !== index,
-            ) ?? [],
+            state.educations!.filter((_, i) => i !== index) ?? [],
         }))
       },
 
@@ -230,9 +244,7 @@ export const useCVStep4Store = create<CVStep4Store>()(
 
       remove: (index: number) => {
         set((state) => ({
-          skills:
-            state.skills!.filter((_, i) => i !== index) ??
-            [],
+          skills: state.skills!.filter((_, i) => i !== index) ?? [],
         }))
       },
 
@@ -268,8 +280,8 @@ export const useCVStep5Store = create<CVStep5Store>()(
   ),
 )
 
-export const useCVNavigationStore =
-  create<CVNavigationStore>((set, get) => ({
+export const useCVNavigationStore = create<CVNavigationStore>(
+  (set, get) => ({
     currentStep: 1,
     showForm: false,
     maxStep: 6,
@@ -298,4 +310,5 @@ export const useCVNavigationStore =
         set({ currentStep: currentStep - 1 })
       }
     },
-  }))
+  }),
+)

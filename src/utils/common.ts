@@ -1,13 +1,19 @@
 import clsx, { ClassValue } from 'clsx'
 import { RgbaColor } from 'react-colorful'
 import { twMerge } from 'tailwind-merge'
+import { getCookie } from 'cookies-next'
+import { jwtDecode } from 'jwt-decode'
 
 export const autoUnoClassName = (className?: string) => {
   if (!className) return ''
-  return className.startsWith(':uno:') ? className : `:uno: ${className}`
+  return className.startsWith(':uno:')
+    ? className
+    : `:uno: ${className}`
 }
 
-export function joinClass(...args: Array<string | boolean | undefined>) {
+export function joinClass(
+  ...args: Array<string | boolean | undefined>
+) {
   return twMerge(
     args
       .filter((str) => typeof str === 'string')
@@ -35,17 +41,24 @@ export const rgbaToHex = (color: RgbaColor): string => {
   const alpha = Math.round(a * 255)
 
   if (a < 1) {
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}${toHex(alpha)}`
+    return `#${toHex(r).toLocaleUpperCase()}${toHex(g).toUpperCase()}${toHex(b).toLocaleUpperCase}${
+      toHex(alpha).toLocaleUpperCase
+    }`
   }
 
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`
+  return `#${toHex(r).toLocaleUpperCase()}${toHex(g).toLocaleUpperCase()}${toHex(b).toUpperCase()}`
 }
 
 export const convertColor = (color: RgbaColor) => {
-  return color ? `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})` : 'rgba(91, 116, 165, 1)'
+  return color
+    ? `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
+    : 'rgba(91, 116, 165, 1)'
 }
 
-export const hexToRgba = (hex: string, alpha: number = 1): RgbaColor => {
+export const hexToRgba = (
+  hex: string,
+  alpha: number = 1,
+): RgbaColor => {
   hex = hex.replace(/^#/, '')
 
   if (hex.length === 3) {
@@ -87,7 +100,11 @@ export const typeTextArea = (type: string): number => {
   }
 }
 
-export const convertTime = (dt2: any, dt1: any, type: string): number => {
+export const convertTime = (
+  dt2: any,
+  dt1: any,
+  type: string,
+): number => {
   let diff = (dt2.getTime() - dt1.getTime()) / 1000
   let val = 0
   switch (type) {
@@ -110,6 +127,31 @@ export const convertTime = (dt2: any, dt1: any, type: string): number => {
   return val
 }
 
+export const getToken = () => {
+  const token = getCookie('accessToken')
+  if (token && typeof token === 'string') {
+    return token
+  }
+
+  return null
+}
+
 export const checkTimeDay = (dt2: any, dt1: any): number => {
   return convertTime(dt2, dt1, 'days')
+}
+
+export const parseToken = (token: string) => {
+  if (token && token !== 'undefined') {
+    const base64Url = token?.split('.')[1]
+    const base64 = base64Url?.replace(/-/g, '+')?.replace(/_/g, '/')
+    const buff = new Buffer(base64, 'base64')
+    const payloadinit = buff.toString('ascii')
+    return JSON.parse(payloadinit)
+  }
+  return null
+}
+
+export const decodeToken = (token: string) => {
+  const decoded = jwtDecode(token)
+  return decoded
 }

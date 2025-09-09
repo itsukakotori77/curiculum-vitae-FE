@@ -1,53 +1,32 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import ColorPickerForm from '@/components/globals/form/ColorPickerForm'
 import { useForm } from 'react-hook-form'
 import Button from '@/components/CultUI/Button'
-import {
-  convertColor,
-  rgbaToHex,
-  hexToRgba,
-} from '@/utils/common'
+import { convertColor, hexToRgba } from '@/utils/common'
 import Sample3 from '../../exampleCv/Sample3'
 import { biodataCurr } from '@/data/cv'
 import { IColorCurr } from '@/interface/curiculumVitae'
-import { useModalConfirm } from '@/libs/modalConfirm'
-import { useCVSettingStore } from '@/utils/store'
-import { useRouter } from 'next/navigation'
+interface IProps {
+  className?: string
+  onSubmit: (val: IColorCurr) => void
+  isLoading?: boolean
+}
 
-export default function CuriculumVitaeStep2() {
+export default function CuriculumVitaeStep2({
+  className,
+  onSubmit,
+  isLoading,
+}: IProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const { updateData } = useCVSettingStore()
-  const router = useRouter()
-
-  const { handleSubmit, control, watch } =
-    useForm<IColorCurr>({
-      defaultValues: {
-        sidebarColor: hexToRgba('#8B8EBC', 1),
-        primaryColor: hexToRgba('#FFF', 1),
-        skillColor: hexToRgba('#262424', 1) ?? '',
-      },
-    })
-
-  const { openModal, closeModal } = useModalConfirm()
-
-  const onSubmit = useCallback((val: IColorCurr) => {
-    openModal({
-      title: 'Attention !',
-      description: 'You sure want to use this color ?',
-      onConfirm: async () => {
-        updateData(val)
-        console.log(val)
-        closeModal()
-        router.push('/curiculumVitae/generate')
-      },
-    })
-  }, [])
-
-  useEffect(() => {
-    console.log(convertColor(watch('skillColor')!))
-  }, [watch()])
+  const { handleSubmit, control, watch } = useForm<IColorCurr>({
+    defaultValues: {
+      sidebarColor: hexToRgba('#8B8EBC', 1),
+      primaryColor: hexToRgba('#FFF', 1),
+      skillColor: hexToRgba('#262424', 1) ?? '',
+    },
+  })
 
   return (
     <>
@@ -61,16 +40,13 @@ export default function CuriculumVitaeStep2() {
             sidebarWidth={25}
             printable="noPrint"
             primaryColor={
-              convertColor(watch('primaryColor')) ||
-              '#E3E9EF'
+              convertColor(watch('primaryColor')) || '#E3E9EF'
             }
             sidebarColor={
-              convertColor(watch('sidebarColor')) ||
-              '#5977AC'
+              convertColor(watch('sidebarColor')) || '#5977AC'
             }
             skillColor={
-              convertColor(watch('skillColor')!) ||
-              '#262424'
+              convertColor(watch('skillColor')!) || '#262424'
             }
             iconSize="xs"
             variantText="tiny"
@@ -105,7 +81,11 @@ export default function CuriculumVitaeStep2() {
               required: 'Please select a color',
             }}
           />
-          <Button type="submit" intent="secondary">
+          <Button
+            type="submit"
+            intent="secondary"
+            isLoading={isLoading}
+          >
             <span className="font-bold">Choose</span>
           </Button>
         </form>

@@ -10,12 +10,12 @@ interface IProps {
 
 export default function Loading({ isLoading }: IProps) {
   return (
-    <div 
+    <div
       className={`fixed inset-0 bg-gray-800 z-[999] transition-opacity duration-300 ${
         isLoading ? 'opacity-95' : 'opacity-0 pointer-events-none'
       }`}
     >
-      <div 
+      <div
         className={`flex justify-center items-center h-screen transition-all duration-500 delay-150 ${
           isLoading ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}

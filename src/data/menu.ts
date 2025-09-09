@@ -1,6 +1,6 @@
 interface INavMenu {
   url: string
-  name: string 
+  name: string
   aliases?: string
 }
 
@@ -8,26 +8,35 @@ export const navMenu: INavMenu[] = [
   {
     url: '/',
     name: 'Home',
-    aliases: 'home'
+    aliases: 'home',
   },
   {
     url: '/about',
     name: 'About',
-    aliases: 'home'
+    aliases: 'home',
   },
   {
     url: '/faq',
     name: 'FAQ',
-    aliases: 'faq'
+    aliases: 'faq',
   },
   {
     url: '/none',
     name: 'None',
-    aliases: 'home'
+    aliases: 'home',
   },
   {
     url: '/none',
     name: 'None',
-    aliases: 'home'
+    aliases: 'home',
   },
+]
+
+export const labels: string[] = [
+  'Profile',
+  'Experiences',
+  'Educations',
+  'Skills & Certificate',
+  'Contacts',
+  'Summary',
 ]

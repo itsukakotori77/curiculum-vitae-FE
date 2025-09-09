@@ -21,8 +21,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json()
   const token = (await cookies()).get('accessToken')
+  const body = await request.json()
 
   try {
     const fetch = httpRequest(API_URL!, token?.value)

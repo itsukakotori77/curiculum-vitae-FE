@@ -1,13 +1,16 @@
-"use client"
+'use client'
 
-import React, { useEffect, useState } from "react"
-import { Check, ChevronDown } from "lucide-react"
-import { AnimatePresence, motion } from "framer-motion"
-import Button from "./Button"
-import Label from "../globals/form/Label"
-import TextInput from "../globals/form/TextInput"
-import { PopoverTrigger, PopoverContent, PopoverRoot } from "./Popover"
-
+import React, { useEffect, useState } from 'react'
+import { Check, ChevronDown } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import Button from './Button'
+import Label from '../globals/form/Label'
+import TextInput from '../globals/form/TextInput'
+import {
+  PopoverTrigger,
+  PopoverContent,
+  PopoverRoot,
+} from './Popover'
 
 // Helper functions for color conversion
 const hslToHex = (h: number, s: number, l: number) => {
@@ -18,7 +21,7 @@ const hslToHex = (h: number, s: number, l: number) => {
     const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
     return Math.round(255 * color)
       .toString(16)
-      .padStart(2, "0")
+      .padStart(2, '0')
   }
   return `#${f(0)}${f(8)}${f(4)}`
 }
@@ -54,20 +57,29 @@ const hexToHsl = (hex: string): [number, number, number] => {
     h /= 6
   }
 
-  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)]
+  return [
+    Math.round(h * 360),
+    Math.round(s * 100),
+    Math.round(l * 100),
+  ]
 }
 
 const normalizeColor = (color: string): string => {
-  if (color.startsWith("#")) {
+  if (color.startsWith('#')) {
     return color.toUpperCase()
-  } else if (color.startsWith("hsl")) {
-    const [h, s, l] = color.match(/\d+(\.\d+)?/g)?.map(Number) || [0, 0, 0]
+  } else if (color.startsWith('hsl')) {
+    const [h, s, l] = color.match(/\d+(\.\d+)?/g)?.map(Number) || [
+      0, 0, 0,
+    ]
     return `hsl(${Math.round(h)}, ${Math.round(s)}%, ${Math.round(l)}%)`
   }
   return color
 }
 
-const trimColorString = (color: string, maxLength: number = 20): string => {
+const trimColorString = (
+  color: string,
+  maxLength: number = 20,
+): string => {
   if (color.length <= maxLength) return color
   return `${color.slice(0, maxLength - 3)}...`
 }
@@ -92,26 +104,30 @@ export function ColorPicker({
     setColorInput(normalizedColor)
 
     let h, s, l
-    if (normalizedColor.startsWith("#")) {
+    if (normalizedColor.startsWith('#')) {
       ;[h, s, l] = hexToHsl(normalizedColor)
     } else {
-      ;[h, s, l] = normalizedColor.match(/\d+(\.\d+)?/g)?.map(Number) || [
-        0, 0, 0,
-      ]
+      ;[h, s, l] = normalizedColor
+        .match(/\d+(\.\d+)?/g)
+        ?.map(Number) || [0, 0, 0]
     }
 
     setHsl([h, s, l])
-    onChange(`hsl(${h.toFixed(1)}, ${s.toFixed(1)}%, ${l.toFixed(1)}%)`)
+    onChange(
+      `hsl(${h.toFixed(1)}, ${s.toFixed(1)}%, ${l.toFixed(1)}%)`,
+    )
   }
 
   const handleHueChange = (hue: number) => {
     const newHsl: [number, number, number] = [hue, hsl[1], hsl[2]]
     setHsl(newHsl)
-    handleColorChange(`hsl(${newHsl[0]}, ${newHsl[1]}%, ${newHsl[2]}%)`)
+    handleColorChange(
+      `hsl(${newHsl[0]}, ${newHsl[1]}%, ${newHsl[2]}%)`,
+    )
   }
 
   const handleSaturationLightnessChange = (
-    event: React.MouseEvent<HTMLDivElement>
+    event: React.MouseEvent<HTMLDivElement>,
   ) => {
     const rect = event.currentTarget.getBoundingClientRect()
     const x = event.clientX - rect.left
@@ -120,11 +136,13 @@ export function ColorPicker({
     const l = Math.round(100 - (y / rect.height) * 100)
     const newHsl: [number, number, number] = [hsl[0], s, l]
     setHsl(newHsl)
-    handleColorChange(`hsl(${newHsl[0]}, ${newHsl[1]}%, ${newHsl[2]}%)`)
+    handleColorChange(
+      `hsl(${newHsl[0]}, ${newHsl[1]}%, ${newHsl[2]}%)`,
+    )
   }
 
   const handleColorInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const newColor = event.target.value
     setColorInput(newColor)
@@ -137,31 +155,31 @@ export function ColorPicker({
   }
 
   const colorPresets = [
-    "#FF3B30",
-    "#FF9500",
-    "#FFCC00",
-    "#4CD964",
-    "#5AC8FA",
-    "#007AFF",
-    "#5856D6",
-    "#FF2D55",
-    "#8E8E93",
-    "#EFEFF4",
-    "#E5E5EA",
-    "#D1D1D6",
+    '#FF3B30',
+    '#FF9500',
+    '#FFCC00',
+    '#4CD964',
+    '#5AC8FA',
+    '#007AFF',
+    '#5856D6',
+    '#FF2D55',
+    '#8E8E93',
+    '#EFEFF4',
+    '#E5E5EA',
+    '#D1D1D6',
   ]
 
   return (
     <PopoverRoot>
       <PopoverTrigger>
-        <Button
-          className="w-[200px] justify-start text-left font-normal"
-        >
+        <Button className="w-[200px] justify-start text-left font-normal">
           <div
             className="w-4 h-4 rounded-full mr-2 shadow-sm"
             style={{ backgroundColor: colorInput }}
           />
-          <span className="flex-grow">{trimColorString(colorInput)}</span>
+          <span className="flex-grow">
+            {trimColorString(colorInput)}
+          </span>
           <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>

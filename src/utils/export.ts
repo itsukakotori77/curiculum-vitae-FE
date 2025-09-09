@@ -11,11 +11,16 @@ export interface ExportOptions {
 }
 
 // Function to convert OKLCH and other modern CSS colors to supported formats
-const convertUnsupportedColors = (element: HTMLElement): HTMLElement => {
+const convertUnsupportedColors = (
+  element: HTMLElement,
+): HTMLElement => {
   const clonedElement = element.cloneNode(true) as HTMLElement
 
   // Get all elements in the cloned tree
-  const allElements = [clonedElement, ...clonedElement.querySelectorAll('*')] as HTMLElement[]
+  const allElements = [
+    clonedElement,
+    ...clonedElement.querySelectorAll('*'),
+  ] as HTMLElement[]
 
   allElements.forEach((el) => {
     const computedStyle = window.getComputedStyle(el)
@@ -47,9 +52,16 @@ const convertUnsupportedColors = (element: HTMLElement): HTMLElement => {
 
     // Handle CSS custom properties (variables) that might contain OKLCH
     const styles = el.getAttribute('style') || ''
-    if (styles.includes('oklch') || styles.includes('lch') || styles.includes('lab')) {
+    if (
+      styles.includes('oklch') ||
+      styles.includes('lch') ||
+      styles.includes('lab')
+    ) {
       // Remove potentially problematic custom properties
-      const cleanedStyles = styles.replace(/--[^:]+:\s*(?:oklch|lch|lab)\([^)]+\);?/g, '')
+      const cleanedStyles = styles.replace(
+        /--[^:]+:\s*(?:oklch|lch|lab)\([^)]+\);?/g,
+        '',
+      )
       el.setAttribute('style', cleanedStyles)
     }
   })
@@ -58,7 +70,9 @@ const convertUnsupportedColors = (element: HTMLElement): HTMLElement => {
 }
 
 // Alternative approach: Create a temporary container with converted colors
-const createExportableElement = (originalElement: HTMLElement): HTMLElement => {
+const createExportableElement = (
+  originalElement: HTMLElement,
+): HTMLElement => {
   // Create a temporary container
   const container = document.createElement('div')
   container.style.position = 'absolute'
@@ -94,7 +108,8 @@ export const exportToPNG = async (
 
     // Create exportable element with converted colors
     tempContainer = createExportableElement(element)
-    const targetElement = tempContainer.firstElementChild as HTMLElement
+    const targetElement =
+      tempContainer.firstElementChild as HTMLElement
 
     const canvas = await html2canvas(targetElement, {
       // scale,
@@ -147,7 +162,12 @@ export const exportToPDF = async (
   elementId: string,
   options: ExportOptions = {},
 ): Promise<void> => {
-  const { filename = 'export', scale = 2, format = 'A4', orientation = 'portrait' } = options
+  const {
+    filename = 'export',
+    scale = 2,
+    format = 'A4',
+    orientation = 'portrait',
+  } = options
 
   let tempContainer: HTMLElement | null = null
 
@@ -159,7 +179,8 @@ export const exportToPDF = async (
 
     // Create exportable element with converted colors
     tempContainer = createExportableElement(element)
-    const targetElement = tempContainer.firstElementChild as HTMLElement
+    const targetElement =
+      tempContainer.firstElementChild as HTMLElement
 
     // Capture the element as canvas
     const canvas = await html2canvas(targetElement, {
@@ -199,7 +220,10 @@ export const exportToPDF = async (
     const canvasHeight = canvas.height
 
     // Calculate dimensions to fit the page
-    const ratio = Math.min(pdfWidth / (canvasWidth / scale), pdfHeight / (canvasHeight / scale))
+    const ratio = Math.min(
+      pdfWidth / (canvasWidth / scale),
+      pdfHeight / (canvasHeight / scale),
+    )
     const imgWidth = (canvasWidth / scale) * ratio
     const imgHeight = (canvasHeight / scale) * ratio
 
@@ -264,7 +288,12 @@ export const exportToMultiPagePDF = async (
   elementId: string,
   options: ExportOptions = {},
 ): Promise<void> => {
-  const { filename = 'export', scale = 2, format = 'A4', orientation = 'portrait' } = options
+  const {
+    filename = 'export',
+    scale = 2,
+    format = 'A4',
+    orientation = 'portrait',
+  } = options
 
   let tempContainer: HTMLElement | null = null
 
@@ -275,7 +304,8 @@ export const exportToMultiPagePDF = async (
     }
 
     tempContainer = createExportableElement(element)
-    const targetElement = tempContainer.firstElementChild as HTMLElement
+    const targetElement =
+      tempContainer.firstElementChild as HTMLElement
 
     const canvas = await html2canvas(targetElement, {
       // scale,

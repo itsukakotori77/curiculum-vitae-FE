@@ -8,102 +8,136 @@ import { cn } from '@/utils/common'
 // Define variants using CVA
 const cvVariants = cva(
   // Base classes
-  "flex flex-col gap-3 w-full bg-white shadow-lg sample2-container print:shadow-none",
+  'flex flex-col gap-3 w-full bg-white shadow-lg sample2-container print:shadow-none',
   {
     variants: {
       size: {
-        xs: "max-w-2xl",
-        sm: "max-w-3xl",
-        md: "max-w-4xl",
-        lg: "max-w-5xl",
-        xl: "max-w-6xl",
-        full: "max-w-full"
+        xs: 'max-w-2xl',
+        sm: 'max-w-3xl',
+        md: 'max-w-4xl',
+        lg: 'max-w-5xl',
+        xl: 'max-w-6xl',
+        full: 'max-w-full',
       },
       scale: {
-        xs: "scale-[0.6]",
-        sm: "scale-[0.8]",
-        md: "scale-[1.0]",
-        lg: "scale-[1.2]",
-        xl: "scale-[1.4]"
+        xs: 'scale-[0.6]',
+        sm: 'scale-[0.8]',
+        md: 'scale-[1.0]',
+        lg: 'scale-[1.2]',
+        xl: 'scale-[1.4]',
       },
       printable: {
-        print: ['min-h-screen', 'flex', 'justify-center', 'items-start', 'print:bg-white', 'print:py-0', 'flex-col'],
-        noPrint: ['min-h-screen', 'flex', 'justify-center', 'items-start', 'flex-col']
-      }
+        print: [
+          'min-h-screen',
+          'flex',
+          'justify-center',
+          'items-start',
+          'print:bg-white',
+          'print:py-0',
+          'flex-col',
+        ],
+        noPrint: [
+          'min-h-screen',
+          'flex',
+          'justify-center',
+          'items-start',
+          'flex-col',
+        ],
+      },
     },
     defaultVariants: {
-      size: "md",
-      scale: "md"
-    }
-  }
+      size: 'md',
+      scale: 'md',
+    },
+  },
 )
 
-const textVariants = cva("", {
+const textVariants = cva('', {
   variants: {
     variant: {
-      title: "",
-      subtitle: "",
-      body: "",
-      small: "",
-      tiny: ""
+      title: '',
+      subtitle: '',
+      body: '',
+      small: '',
+      tiny: '',
     },
     size: {
-      xs: "",
-      sm: "",
-      md: "",
-      lg: "",
-      xl: ""
-    }
+      xs: '',
+      sm: '',
+      md: '',
+      lg: '',
+      xl: '',
+    },
   },
   compoundVariants: [
     // Title variants
-    { variant: "title", size: "xs", class: "text-xl font-bold" },
-    { variant: "title", size: "sm", class: "text-2xl font-bold" },
-    { variant: "title", size: "md", class: "text-3xl font-bold" },
-    { variant: "title", size: "lg", class: "text-4xl font-bold" },
-    { variant: "title", size: "xl", class: "text-5xl font-bold" },
+    { variant: 'title', size: 'xs', class: 'text-xl font-bold' },
+    { variant: 'title', size: 'sm', class: 'text-2xl font-bold' },
+    { variant: 'title', size: 'md', class: 'text-3xl font-bold' },
+    { variant: 'title', size: 'lg', class: 'text-4xl font-bold' },
+    { variant: 'title', size: 'xl', class: 'text-5xl font-bold' },
 
     // Subtitle variants
-    { variant: "subtitle", size: "xs", class: "text-sm font-semibold" },
-    { variant: "subtitle", size: "sm", class: "text-base font-semibold" },
-    { variant: "subtitle", size: "md", class: "text-lg font-semibold" },
-    { variant: "subtitle", size: "lg", class: "text-xl font-semibold" },
-    { variant: "subtitle", size: "xl", class: "text-2xl font-semibold" },
+    {
+      variant: 'subtitle',
+      size: 'xs',
+      class: 'text-sm font-semibold',
+    },
+    {
+      variant: 'subtitle',
+      size: 'sm',
+      class: 'text-base font-semibold',
+    },
+    {
+      variant: 'subtitle',
+      size: 'md',
+      class: 'text-lg font-semibold',
+    },
+    {
+      variant: 'subtitle',
+      size: 'lg',
+      class: 'text-xl font-semibold',
+    },
+    {
+      variant: 'subtitle',
+      size: 'xl',
+      class: 'text-2xl font-semibold',
+    },
 
     // Body variants
-    { variant: "body", size: "xs", class: "text-xs" },
-    { variant: "body", size: "sm", class: "text-sm" },
-    { variant: "body", size: "md", class: "text-base" },
-    { variant: "body", size: "lg", class: "text-lg" },
-    { variant: "body", size: "xl", class: "text-xl" },
+    { variant: 'body', size: 'xs', class: 'text-xs' },
+    { variant: 'body', size: 'sm', class: 'text-sm' },
+    { variant: 'body', size: 'md', class: 'text-base' },
+    { variant: 'body', size: 'lg', class: 'text-lg' },
+    { variant: 'body', size: 'xl', class: 'text-xl' },
 
     // Small variants
-    { variant: "small", size: "xs", class: "text-[10px]" },
-    { variant: "small", size: "sm", class: "text-xs" },
-    { variant: "small", size: "md", class: "text-sm" },
-    { variant: "small", size: "lg", class: "text-base" },
-    { variant: "small", size: "xl", class: "text-lg" },
+    { variant: 'small', size: 'xs', class: 'text-[10px]' },
+    { variant: 'small', size: 'sm', class: 'text-xs' },
+    { variant: 'small', size: 'md', class: 'text-sm' },
+    { variant: 'small', size: 'lg', class: 'text-base' },
+    { variant: 'small', size: 'xl', class: 'text-lg' },
 
     // Tiny variants
-    { variant: "tiny", size: "xs", class: "text-[8px]" },
-    { variant: "tiny", size: "sm", class: "text-[10px]" },
-    { variant: "tiny", size: "md", class: "text-xs" },
-    { variant: "tiny", size: "lg", class: "text-sm" },
-    { variant: "tiny", size: "xl", class: "text-base" },
+    { variant: 'tiny', size: 'xs', class: 'text-[8px]' },
+    { variant: 'tiny', size: 'sm', class: 'text-[10px]' },
+    { variant: 'tiny', size: 'md', class: 'text-xs' },
+    { variant: 'tiny', size: 'lg', class: 'text-sm' },
+    { variant: 'tiny', size: 'xl', class: 'text-base' },
   ],
   defaultVariants: {
-    variant: "body",
-    size: "md"
-  }
+    variant: 'body',
+    size: 'md',
+  },
 })
 
 // Section header component for consistency
-const SectionHeader = ({ 
-  children, 
-  textSize = "md" 
-}: { 
-  children: React.ReactNode;
-  textSize?: VariantProps<typeof textVariants>['size'];
+const SectionHeader = ({
+  children,
+  textSize = 'md',
+}: {
+  children: React.ReactNode
+  textSize?: VariantProps<typeof textVariants>['size']
 }) => (
   <div className="flex justify-center items-center bg-[#F2F2F2] w-full">
     <CVText variant="body" size={textSize} className="font-bold">
@@ -120,8 +154,8 @@ interface Sample extends CVProps {
 }
 
 const CVText = ({
-  variant = "body",
-  size = "md",
+  variant = 'body',
+  size = 'md',
   className,
   children,
   ...props
@@ -142,22 +176,29 @@ const CVText = ({
 }
 
 const Sample2 = forwardRef<HTMLDivElement, Sample>(
-  ({
-    data,
-    size = "md",
-    scale = "md",
-    textSize = "md",
-    sidebarWidth = 25,
-    printable = "print",
-    className,
-    sidebarColor = '#E3E9EF',
-    primaryColor = '#5977AC'
-  }, ref) => {
+  (
+    {
+      data,
+      size = 'md',
+      scale = 'md',
+      textSize = 'md',
+      sidebarWidth = 25,
+      printable = 'print',
+      className,
+      sidebarColor = '#E3E9EF',
+      primaryColor = '#5977AC',
+    },
+    ref,
+  ) => {
     // Safely handle potential undefined data
     if (!data) {
       return (
         <div className="flex items-center justify-center h-64">
-          <CVText variant="body" size={textSize} className="text-gray-500">
+          <CVText
+            variant="body"
+            size={textSize}
+            className="text-gray-500"
+          >
             No CV data available
           </CVText>
         </div>
@@ -165,38 +206,39 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
     }
 
     return (
-      <div
-        ref={ref}
-        className={cn(cvVariants({ printable }))}
-      >
+      <div ref={ref} className={cn(cvVariants({ printable }))}>
         <div
-          className={cn(cvVariants({ size, scale }), "origin-top", className)}
+          className={cn(
+            cvVariants({ size, scale }),
+            'origin-top',
+            className,
+          )}
           style={{
             transformOrigin: 'top center',
-            marginBottom: scale === 'xs' || scale === 'sm' ? '10vh' : '0'
+            marginBottom:
+              scale === 'xs' || scale === 'sm' ? '10vh' : '0',
           }}
         >
-
           {/* BIOGRAPHY MAIN */}
           <div className="flex flex-col w-full">
             <div className="flex justify-center flex-col items-center w-full">
-              <CVText 
-                variant="title" 
-                size={textSize} 
+              <CVText
+                variant="title"
+                size={textSize}
                 className="tracking-wide"
               >
                 {`${data?.firstName?.toUpperCase() || ''} ${data?.lastName?.toUpperCase() || ''}`}
               </CVText>
-              <CVText 
-                variant="subtitle" 
-                size={textSize} 
+              <CVText
+                variant="subtitle"
+                size={textSize}
                 className="font-medium tracking-wide"
               >
                 {data?.role || ''}
               </CVText>
-              <CVText 
-                variant="small" 
-                size={textSize} 
+              <CVText
+                variant="small"
+                size={textSize}
                 className="font-medium tracking-normal whitespace-normal text-center"
               >
                 {data?.contacts?.address || ''}
@@ -204,16 +246,16 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
             </div>
 
             <div className="flex justify-evenly">
-              <CVText 
-                variant="body" 
-                size={textSize} 
+              <CVText
+                variant="body"
+                size={textSize}
                 className="font-bold"
               >
                 {data?.contacts?.email || ''}
               </CVText>
-              <CVText 
-                variant="body" 
-                size={textSize} 
+              <CVText
+                variant="body"
+                size={textSize}
                 className="font-bold"
               >
                 {data?.contacts?.phone || ''}
@@ -226,9 +268,9 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
           {/* SUMMARY */}
           <div className="flex flex-col w-full gap-3">
             <SectionHeader textSize={textSize}>SUMMARY</SectionHeader>
-            <CVText 
-              variant="tiny" 
-              size={textSize} 
+            <CVText
+              variant="tiny"
+              size={textSize}
               className="text-justify break-all"
             >
               {data?.profile || ''}
@@ -237,75 +279,81 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
 
           {/* EXPERIENCE */}
           <div className="flex flex-col w-full gap-3">
-            <SectionHeader textSize={textSize}>EXPERIENCE</SectionHeader>
+            <SectionHeader textSize={textSize}>
+              EXPERIENCE
+            </SectionHeader>
             <ul className="list-none">
-              {data?.experience?.toReversed().map((item: any, key: number) => (
-                <li key={key} className="grid gap-2 mb-3">
-                  <div className="flex items-end justify-between">
-                    <CVText 
-                      variant="small" 
-                      size={textSize} 
-                      className="font-bold"
+              {data?.experience
+                ?.toReversed()
+                .map((item: any, key: number) => (
+                  <li key={key} className="grid gap-2 mb-3">
+                    <div className="flex items-end justify-between">
+                      <CVText
+                        variant="small"
+                        size={textSize}
+                        className="font-bold"
+                      >
+                        {`${item?.jobTitle || ''}, ${item?.company || ''}`}
+                      </CVText>
+                      <div className="flex-1 border-b border-dotted border-black mx-1 mb-[4.5px]"></div>
+                      <CVText
+                        variant="small"
+                        size={textSize}
+                        className="font-medium"
+                      >
+                        {`${moment(item?.startDate).format('MMMM, Do YYYY')} - ${item?.isCurrent ? 'Current' : moment(item?.endDate).format('MMMM, Do YYYY')}`}
+                      </CVText>
+                    </div>
+                    <CVText
+                      variant="tiny"
+                      size={textSize}
+                      className="font-light text-justify"
                     >
-                      {`${item?.jobTitle || ''}, ${item?.company || ''}`}
+                      {item?.descJob || ''}
                     </CVText>
-                    <div className="flex-1 border-b border-dotted border-black mx-1 mb-[4.5px]"></div>
-                    <CVText 
-                      variant="small" 
-                      size={textSize} 
-                      className="font-medium"
-                    >
-                      {`${moment(item?.startDate).format('MMMM, Do YYYY')} - ${item?.isCurrent ? 'Current' : moment(item?.endDate).format('MMMM, Do YYYY')}`}
-                    </CVText>
-                  </div>
-                  <CVText 
-                    variant="tiny" 
-                    size={textSize} 
-                    className="font-light text-justify"
-                  >
-                    {item?.descJob || ''}
-                  </CVText>
-                </li>
-              ))}
+                  </li>
+                ))}
             </ul>
           </div>
 
           {/* EDUCATION */}
           <div className="flex flex-col w-full gap-3">
-            <SectionHeader textSize={textSize}>EDUCATION</SectionHeader>
+            <SectionHeader textSize={textSize}>
+              EDUCATION
+            </SectionHeader>
             <ul className="list-none">
               {data?.education?.map((item: any, key: number) => (
                 <li key={key} className="grid gap-2 mb-3">
                   <div className="flex items-end justify-between">
-                    <CVText 
-                      variant="small" 
-                      size={textSize} 
+                    <CVText
+                      variant="small"
+                      size={textSize}
                       className="font-bold"
                     >
                       {`${item?.major || ''}, ${item?.university?.split('|')[1] || item?.university || ''}`}
                     </CVText>
                     <div className="flex-1 border-b border-dotted border-black mx-1 mb-[4.5px]"></div>
                     {item?.graduatedStatus ? (
-                      <CVText 
-                        variant="small" 
-                        size={textSize} 
+                      <CVText
+                        variant="small"
+                        size={textSize}
                         className="font-medium"
                       >
                         {`Graduated, ${moment(item?.graduated).format('MMMM, Do YYYY')}`}
                       </CVText>
                     ) : (
-                      <CVText 
-                        variant="small" 
-                        size={textSize} 
+                      <CVText
+                        variant="small"
+                        size={textSize}
                         className="font-normal text-gray-500"
                       >
                         Not Graduated Yet
                       </CVText>
                     )}
                   </div>
-                  <CVText 
-                    variant="tiny" 
-                    size={textSize} 
+                  <CVText
+                    variant="tiny"
+                    size={textSize}
                     className="font-light text-justify"
                   >
                     {item?.majorDesc || ''}
@@ -320,10 +368,13 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
             <SectionHeader textSize={textSize}>SKILLS</SectionHeader>
             <div className="grid grid-cols-2 gap-2 mb-3">
               {data?.skills?.map((item: any, key: number) => (
-                <div key={key} className="flex items-end justify-between">
-                  <CVText 
-                    variant="small" 
-                    size={textSize} 
+                <div
+                  key={key}
+                  className="flex items-end justify-between"
+                >
+                  <CVText
+                    variant="small"
+                    size={textSize}
                     className="font-normal"
                   >
                     {item?.name || ''}
@@ -336,7 +387,7 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
         </div>
       </div>
     )
-  }
+  },
 )
 
 Sample2.displayName = 'Sample2'

@@ -54,13 +54,17 @@ input::placeholder {
 }
 
 .custom-textfield .MuiInputBase-root .MuiInputBase-input,
-.custom-textfield .MuiInputBase-root .MuiInputBase-input::placeholder {
+.custom-textfield
+  .MuiInputBase-root
+  .MuiInputBase-input::placeholder {
   padding: 0;
   color: fieldtext;
   font-size: 0.875rem;
 }
 
-.custom-textfield .MuiInputBase-root .MuiOutlinedInput-notchedOutline {
+.custom-textfield
+  .MuiInputBase-root
+  .MuiOutlinedInput-notchedOutline {
   border-color: #d1d5db; /* gray-300 */
 }
 
@@ -69,12 +73,16 @@ input::placeholder {
   color: #9ca3af; /* gray-400 */
 }
 
-.custom-textfield .MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+.custom-textfield
+  .MuiInputBase-root.Mui-focused
+  .MuiOutlinedInput-notchedOutline {
   border-color: var(--tw-primary);
   border-width: 1px;
 }
 
-.custom-textfield .MuiInputBase-root.Mui-error .MuiOutlinedInput-notchedOutline {
+.custom-textfield
+  .MuiInputBase-root.Mui-error
+  .MuiOutlinedInput-notchedOutline {
   border-color: var(--tw-error);
 }
 
@@ -166,7 +174,8 @@ input::placeholder {
   cursor: pointer;
 }
 
-.react-datepicker-picker__button:disabled .react-datepicker-picker__button__icon {
+.react-datepicker-picker__button:disabled
+  .react-datepicker-picker__button__icon {
   stroke: #6d6d6d;
 }
 

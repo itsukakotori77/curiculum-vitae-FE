@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { HTMLMotionProps, motion, Variants } from 'framer-motion'
 import { cva, VariantProps } from 'class-variance-authority'
 import { joinClass } from '@/utils/common'
@@ -61,7 +61,9 @@ const dropIn = {
   },
 } as const satisfies Variants
 
-export interface ModalProps extends HTMLMotionProps<'div'>, VariantProps<typeof variants> {
+export interface ModalProps
+  extends HTMLMotionProps<'div'>,
+    VariantProps<typeof variants> {
   isOpen: boolean
   handleClose: (val?: any) => void
   children?: React.ReactNode
@@ -79,11 +81,24 @@ const Modal = ({
   size,
   ...props
 }: ModalProps) => {
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        handleClose()
+      }
+    }
+    window.addEventListener('keydown', handleEsc)
+    return () => window.removeEventListener('keydown', handleEsc)
+  }, [isOpen, handleClose])
+
   return (
     <>
       {/* Overlay */}
       <motion.div
-        className={joinClass('fixed inset-0 bg-black/50 z-40', classNameOverlay)}
+        className={joinClass(
+          'fixed inset-0 bg-black/50 z-40',
+          classNameOverlay,
+        )}
         initial={{ opacity: 0, pointerEvents: 'none' }}
         animate={{
           opacity: isOpen ? 1 : 0,

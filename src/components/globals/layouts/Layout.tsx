@@ -8,7 +8,11 @@ interface IProps {
   useHeader?: boolean
 }
 
-export default function Layout({ title, children, useHeader = true }: IProps) {
+export default function Layout({
+  title,
+  children,
+  useHeader = true,
+}: IProps) {
   return (
     <>
       {/* <Loading isLoading/> */}

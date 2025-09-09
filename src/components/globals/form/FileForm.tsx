@@ -1,47 +1,38 @@
 import React, { HTMLProps } from 'react'
 import Label, { LabelProps } from './Label'
 import { Control, Controller } from 'react-hook-form'
-import RatingInput from './RatingInput'
+import { FileInputProps } from './FileInput'
+import FileInput from './FileInput'
 
-interface RatingFormProps extends HTMLProps<HTMLDivElement> {
+interface IProps extends HTMLProps<HTMLDivElement>, FileInputProps {
   fieldLabel: LabelProps
   control: Control<any>
   name: string
-  className?: string
-  label?: string
-  disabled?: boolean
 }
 
-const RatingForm: React.FC<RatingFormProps> = ({
+const FileForm: React.FC<IProps> = ({
   fieldLabel,
   control,
   name,
-  className,
-  label,
-  disabled,
   ...props
 }) => {
   return (
-    <div {...props}>
+    <div>
       <Label {...fieldLabel} />
       <Controller
-        defaultValue={0 || null}
+        defaultValue={''}
         control={control}
         name={name}
         render={({
-          field,
+          field: { value, name, onChange },
           formState: { errors },
-          fieldState: { error, invalid },
         }) => (
           <>
-            <RatingInput
-              {...field}
-              label={label || 'Rate your experience'}
-              required
+            <FileInput
+              value={value}
               name={name}
-              isDisabled={disabled}
-              isInvalid={invalid}
-              error={error}
+              onUpdateFiles={onChange}
+              {...props}
             />
             {errors?.[name]?.message && (
               <span className="text-xs text-error">
@@ -54,5 +45,3 @@ const RatingForm: React.FC<RatingFormProps> = ({
     </div>
   )
 }
-
-export default RatingForm

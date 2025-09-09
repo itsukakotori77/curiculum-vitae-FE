@@ -16,7 +16,9 @@ const httpRequest = (baseURL: string, token?: string) => {
   instance.interceptors.request.use(
     (config) => {
       const accessToken = token ?? ''
-      config.headers.Authorization = accessToken ? `Bearer ${accessToken}` : ''
+      config.headers.Authorization = accessToken
+        ? `Bearer ${accessToken}`
+        : ''
       return config
     },
     (error) => {

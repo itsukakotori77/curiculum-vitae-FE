@@ -12,15 +12,9 @@ export default function Page() {
   console.log(sample)
   return (
     <>
-      {sample === '1' && (
-        <Sample1 data={biodataCurr} />
-      )}
-      {sample === '2' && (
-        <Sample2 data={biodataCurr} />
-      )}
-      {sample === '3' && (
-        <Sample3 data={biodataCurr} />
-      )}
+      {sample === '1' && <Sample1 data={biodataCurr} />}
+      {sample === '2' && <Sample2 data={biodataCurr} />}
+      {sample === '3' && <Sample3 data={biodataCurr} />}
     </>
   )
 }

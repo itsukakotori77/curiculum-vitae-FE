@@ -1,7 +1,6 @@
 import { RgbaColor } from 'react-colorful'
 import { LabelValueProps } from './select'
 
-
 export interface IFilterCur {
   head?: LabelValueProps | any | null
   style?: LabelValueProps | any | null
@@ -138,8 +137,8 @@ export interface IGeneratorStep4 {
   certificateName: string | any
   company?: string | null | any
   certificateDate?: Date | string | null | any
-  skillName: string | null | any 
-  isHasLevel: boolean | null | any 
+  skillName: string | null | any
+  isHasLevel: boolean | null | any
   level: number | null | any
 }
 
@@ -157,9 +156,10 @@ export interface IGeneratorStep5 {
 }
 
 export interface ISettingCurr {
-  sidebarColor?: RgbaColor 
-  primaryColor?: RgbaColor 
-  skiilColor?: RgbaColor 
+  id?: number
+  sidebarColor?: RgbaColor
+  primaryColor?: RgbaColor
+  skiilColor?: RgbaColor
 }
 
 export interface CVStep1Store {
@@ -196,8 +196,8 @@ export interface CVStep5Store {
 
 export interface CVSettingStore {
   data: ISettingCurr | null | undefined
-  updateData: (data: ISettingCurr) => void 
-  clearData: () => void 
+  updateData: (data: ISettingCurr) => void
+  clearData: () => void
 }
 
 export interface CVNavigationStore {

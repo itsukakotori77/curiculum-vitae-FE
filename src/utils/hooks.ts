@@ -1,7 +1,17 @@
 'use client'
 
-import { DependencyList, Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query'
+import {
+  DependencyList,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react'
+import {
+  useQuery,
+  UseQueryOptions,
+  UseQueryResult,
+} from '@tanstack/react-query'
 import {
   useCVMainStore,
   useCVStep1Store,
@@ -23,7 +33,14 @@ export const useCVData = () => {
   // Update final CV whenever any step data changes
   useEffect(() => {
     updateFinalCV()
-  }, [step1Data, step2Data, step3Data, step4Data, step5Data, updateFinalCV])
+  }, [
+    step1Data,
+    step2Data,
+    step3Data,
+    step4Data,
+    step5Data,
+    updateFinalCV,
+  ])
 
   return {
     step1Data,
@@ -91,7 +108,11 @@ export const useWindowSize = () => {
 //    return [result, state, setState]
 //  }
 
-export const useDebounceEffect = (fn: () => void, waitTime: number, deps?: DependencyList) => {
+export const useDebounceEffect = (
+  fn: () => void,
+  waitTime: number,
+  deps?: DependencyList,
+) => {
   useEffect(() => {
     const t = setTimeout(() => {
       fn.apply(undefined, deps as any)

@@ -8,7 +8,9 @@ interface IUseModalConfirm {
   loading?: boolean
 }
 
-export function useModalConfirm({ loading = false }: IUseModalConfirm = {}) {
+export function useModalConfirm({
+  loading = false,
+}: IUseModalConfirm = {}) {
   const openModal = useCallback((modalContent: TypeModalConfirm) => {
     emitter.emit('open-modal-confirm', modalContent)
   }, [])

@@ -50,6 +50,10 @@ export const transformToCurrPayload = (
   step3Data?: IGeneratorStep3[],
   step4Data?: IGeneratorStep4[],
   step5Data?: IGeneratorStep5,
+  data?: {
+    user_id: number
+    setting_id: number
+  },
 ): PayloadCv => {
   return {
     name: `${step1Data?.firstName || ''} ${step1Data?.lastName || ''}`,
@@ -57,8 +61,8 @@ export const transformToCurrPayload = (
     phone: step5Data?.phone || '',
     address: step5Data?.address || '',
     summary: step1Data?.profile || '',
-    user_id: 1,
-    cvitae_setting_id: 1,
+    user_id: data?.user_id!,
+    cvitae_setting_id: data?.setting_id!,
     curEducation: Array.isArray(step3Data)
       ? step3Data?.map((val: any) => {
           return {

@@ -4,7 +4,7 @@ import httpRequest from '@/libs/httpsRequest'
 const api = httpRequest(URL!)
 
 export async function apiGetById(id: number) {
-  const res = await api.get<any, any>(`/api/curiculumVitae/`, {
+  const res = await api.get<any, any>(`/api/v1/curiculumVitae`, {
     params: { id },
   })
 
@@ -12,7 +12,10 @@ export async function apiGetById(id: number) {
 }
 
 export async function apiPostCurr(payload: any) {
-  const res = await api.post<any, any>(`/api/curiculumVitae`, payload)
+  const res = await api.post<any, any>(
+    `/api/v1/curiculumVitae`,
+    payload,
+  )
 
   return res
 }
