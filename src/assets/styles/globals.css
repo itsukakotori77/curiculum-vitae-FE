@@ -42,6 +42,7 @@
   --sidebar-accent-foreground: hsl(0, 0%, 20.5%);
   --sidebar-border: hsl(0, 0%, 92.2%);
   --sidebar-ring: hsl(0, 0%, 70.8%);
+  --filepond-bg: #dbdbdb;
 }
 
 /* @theme inline {

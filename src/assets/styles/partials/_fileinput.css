@@ -1,10 +1,10 @@
 .filepond--wrapper {
-  background-color: #fff;
+  background-color: var(--filepond-bg);
   font-family: var(--font-montserrat);
 }
 
 .filepond--panel .filepond--panel-root {
-  background-color: #fff;
+  background-color: var(--filepond-bg);
 }
 
 .filepond--credits {
