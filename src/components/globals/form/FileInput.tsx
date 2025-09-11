@@ -307,7 +307,7 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
             server={server}
             name="files"
             imagePreviewMinHeight={100}
-            onremovefile={(fileItem: any) => {
+            onremovefile={(error, fileItem) => {
               if (!fileItem) return
               const fileId = fileItem.id
             
@@ -348,7 +348,7 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
 
             <div className="flex-1 overflow-hidden p-4">
               {currentImage && (
-                <div className="w-full min-h-[400px] max-h-[60vh]">
+                <div className="w-full min-h-[400px] max-h-[90vh]">
                   <div className="flex gap-4 h-full">
                     {/* Cropper (left) */}
                     <div className="flex-1 border rounded-xl overflow-hidden">
