@@ -155,3 +155,18 @@ export const decodeToken = (token: string) => {
   const decoded = jwtDecode(token)
   return decoded
 }
+
+export const canvasToBlob = (
+  canvas: HTMLCanvasElement,
+  quality: number = 0.95,
+): Promise<Blob> => {
+  return new Promise((resolve) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob)
+      },
+      'image/jpeg',
+      quality,
+    )
+  })
+}

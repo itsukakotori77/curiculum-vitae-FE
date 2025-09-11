@@ -30,7 +30,7 @@ const CheckBoxInput: React.FC<CheckBoxProps> = forwardRef(
     return (
       <>
         <div className="form-control">
-          <label className="flex items-start gap-3 cursor-pointer items-center justify-center">
+          <label className="flex gap-3 cursor-pointer items-center justify-center">
             <motion.input
               type="checkbox"
               ref={ref}

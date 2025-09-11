@@ -1,0 +1,26 @@
+.filepond--wrapper {
+  background-color: #fff;
+  font-family: var(--font-montserrat);
+}
+
+.filepond--panel .filepond--panel-root {
+  background-color: #fff;
+}
+
+.filepond--credits {
+  display: none !important;
+}
+
+.filepond--drop-label .filepond--browser-sqkd365d6 {
+  cursor: pointer !important;
+}
+
+/* Apply Montserrat to all FilePond text elements */
+.filepond--drop-label,
+.filepond--label-action,
+.filepond--file-info,
+.filepond--file-status,
+.filepond--progress-indicator,
+.filepond--list-scroller {
+  font-family: var(--font-montserrat);
+}

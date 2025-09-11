@@ -10,6 +10,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useRef,
+  useState,
 } from 'react'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
@@ -17,6 +18,12 @@ import TextForm from '@/components/globals/form/TextForm'
 import TextareaForm from '@/components/globals/form/TextareaForm'
 import Button from '@/components/CultUI/Button'
 import Card from '@/components/CultUI/Card'
+import FileForm from '@/components/globals/form/FileForm'
+import {
+  ActualFileObject,
+  FilePondFile,
+  FilePondInitialFile,
+} from 'filepond'
 
 interface FormGeneratorStep1 {
   data?: IGeneratorStep1
@@ -77,7 +84,14 @@ const GeneratorForm1 = forwardRef<
     })
 
     const watchedValues = watch()
+    const [files, setFiles] = useState<
+      (string | Blob | FilePondInitialFile | ActualFileObject)[]
+    >([])
     const prevValuesRef = useRef<IGeneratorStep1>(null)
+
+    const handleUpdateFiles = (fileItems: FilePondFile[]) => {
+      setFiles(fileItems.map((fileItem) => fileItem.file))
+    }
 
     useEffect(() => {
       const hasChanged =
@@ -154,6 +168,25 @@ const GeneratorForm1 = forwardRef<
             fieldInput={{ maxLength: 100 }}
             name="role"
             control={control}
+          />
+
+          <FileForm
+            control={control}
+            name="profileImage"
+            fieldLabel={{
+              children: 'Profile Image',
+              required: true,
+            }}
+            fileInput={{
+              enableCrop: true,
+              cropAspectRatio: 1,
+              acceptedFileTypes: ['image/*'],
+              maxFiles: 1,
+              labelIdle:
+                'Drop your profile image here or <span class="font-bold">Browse</span>',
+            }}
+            className="mb-4"
+            onChangeFile={(file: any) => console.log('file', file)}
           />
 
           <TextareaForm

@@ -6,33 +6,39 @@ import FileInput from './FileInput'
 
 interface IProps extends HTMLProps<HTMLDivElement>, FileInputProps {
   fieldLabel: LabelProps
+  fileInput: FileInputProps
   control: Control<any>
   name: string
+  onChangeFile?: (File: any[]) => void
 }
 
 const FileForm: React.FC<IProps> = ({
   fieldLabel,
+  fileInput,
   control,
   name,
+  onChangeFile,
   ...props
 }) => {
   return (
-    <div>
+    <div {...props}>
       <Label {...fieldLabel} />
       <Controller
-        defaultValue={''}
+        defaultValue={[]}
         control={control}
         name={name}
         render={({
-          field: { value, name, onChange },
+          field: { value, name },
           formState: { errors },
+          fieldState: { invalid },
         }) => (
           <>
             <FileInput
-              value={value}
+              value={value || []}
               name={name}
-              onUpdateFiles={onChange}
-              {...props}
+              onUpdateFiles={onChangeFile}
+              isInvalid={invalid}
+              {...fileInput}
             />
             {errors?.[name]?.message && (
               <span className="text-xs text-error">
@@ -45,3 +51,5 @@ const FileForm: React.FC<IProps> = ({
     </div>
   )
 }
+
+export default FileForm

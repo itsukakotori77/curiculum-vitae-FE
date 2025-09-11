@@ -22,7 +22,7 @@ export default function Navbar() {
         console.log(res)
       },
       onError: (error: any) => {
-        toast.error(error.response?.message)
+        toast.error(error.response?.data?.message)
       },
     })
   }
