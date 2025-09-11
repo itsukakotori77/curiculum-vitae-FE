@@ -307,6 +307,22 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
             server={server}
             name="files"
             imagePreviewMinHeight={100}
+            onremovefile={(fileItem: any) => {
+              if (!fileItem) return
+              const fileId = fileItem.id
+            
+              // Remove from processedFiles set
+              const newProcessedFiles = new Set(processedFiles)
+              newProcessedFiles.delete(fileId)
+              setProcessedFiles(newProcessedFiles)
+            
+              // Update FilePond files state
+              const updatedFiles = filePondFiles.filter((f) => f !== fileItem.file)
+              setFilePondFiles(updatedFiles)
+            
+              // Sync with parent
+              onUpdateFiles?.(updatedFiles)
+            }}
             className=""
             labelIdle={
               labelIdle ||
