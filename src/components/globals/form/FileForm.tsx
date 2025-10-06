@@ -1,7 +1,7 @@
 import React, { HTMLProps } from 'react'
 import Label, { LabelProps } from './Label'
 import { Control, Controller } from 'react-hook-form'
-import { FileInputProps } from './FileInput'
+import { FileInputProps, FileMetadata } from './FileInput'
 import FileInput from './FileInput'
 
 interface IProps extends HTMLProps<HTMLDivElement>, FileInputProps {
@@ -9,7 +9,8 @@ interface IProps extends HTMLProps<HTMLDivElement>, FileInputProps {
   fileInput: FileInputProps
   control: Control<any>
   name: string
-  onChangeFile?: (File: any[]) => void
+  filesMetadata?: Map<string, FileMetadata>
+  onChangeFile?: (files: any[]) => void
 }
 
 const FileForm: React.FC<IProps> = ({
@@ -17,6 +18,7 @@ const FileForm: React.FC<IProps> = ({
   fileInput,
   control,
   name,
+  filesMetadata,
   onChangeFile,
   ...props
 }) => {
@@ -28,7 +30,7 @@ const FileForm: React.FC<IProps> = ({
         control={control}
         name={name}
         render={({
-          field: { value, name },
+          field: { value, name, onChange },
           formState: { errors },
           fieldState: { invalid },
         }) => (
@@ -36,7 +38,11 @@ const FileForm: React.FC<IProps> = ({
             <FileInput
               value={value || []}
               name={name}
-              onUpdateFiles={onChangeFile}
+              filesMetadata={filesMetadata}
+              onUpdateFiles={(files: any) => {
+                onChange(files)
+                onChangeFile?.(files)
+              }}
               isInvalid={invalid}
               {...fileInput}
             />

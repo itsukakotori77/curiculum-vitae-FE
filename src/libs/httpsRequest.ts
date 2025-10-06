@@ -6,7 +6,7 @@ const httpRequest = (baseURL: string, token?: string) => {
   const instance = axios.create({
     baseURL,
     headers: {
-      Authorization: accessToken ? `Bearer ${accessToken}` : '',
+      Authorization: accessToken ? `Bearer ${accessToken}` : '', 
       'Content-Type': 'application/json',
     },
     timeout: 60000,

@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  IGeneratorStep1,
-  IGeneratorStep2,
-} from '@/interface/curiculumVitae'
+import { IGeneratorStep1, IGeneratorStep2 } from '@/interface/curiculumVitae'
 import { yupResolver } from '@hookform/resolvers/yup'
 import React, {
   useEffect,
@@ -19,11 +16,11 @@ import TextareaForm from '@/components/globals/form/TextareaForm'
 import Button from '@/components/CultUI/Button'
 import Card from '@/components/CultUI/Card'
 import FileForm from '@/components/globals/form/FileForm'
-import {
-  ActualFileObject,
-  FilePondFile,
-  FilePondInitialFile,
-} from 'filepond'
+import { ActualFileObject, FilePondFile, FilePondInitialFile } from 'filepond'
+import { useDeleteFile, usePostFile } from '@/services/master/file/mutation'
+import { toast } from 'react-toastify'
+import { useFileManager } from '@/libs/fileManager'
+import { useModalConfirm } from '@/libs/modalConfirm'
 
 interface FormGeneratorStep1 {
   data?: IGeneratorStep1
@@ -31,9 +28,7 @@ interface FormGeneratorStep1 {
   onSubmit: (val: IGeneratorStep1) => void
   onCancel: (val: IGeneratorStep1) => void
   onChange?: (val: IGeneratorStep1) => void
-  setState?: React.Dispatch<
-    React.SetStateAction<IGeneratorStep1 | undefined>
-  >
+  setState?: React.Dispatch<React.SetStateAction<IGeneratorStep1 | undefined>>
 }
 
 // Define the ref methods that will be exposed
@@ -41,10 +36,7 @@ export interface GeneratorForm1Ref {
   submitForm: () => void
   resetForm: () => void
   getCurrentValues: () => IGeneratorStep1
-  setFieldValue: (
-    fieldName: keyof IGeneratorStep1,
-    value: string,
-  ) => void
+  setFieldValue: (fieldName: keyof IGeneratorStep1, value: string) => void
 }
 
 const Schema = Yup.object().shape({
@@ -55,14 +47,8 @@ const Schema = Yup.object().shape({
   profile: Yup.string().required('profile is required'),
 })
 
-const GeneratorForm1 = forwardRef<
-  GeneratorForm1Ref,
-  FormGeneratorStep1
->(
-  (
-    { data, loading, onSubmit, onChange, onCancel, setState },
-    ref,
-  ) => {
+const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
+  ({ data, loading, onSubmit, onChange, onCancel, setState }, ref) => {
     const {
       handleSubmit,
       control,
@@ -84,20 +70,75 @@ const GeneratorForm1 = forwardRef<
     })
 
     const watchedValues = watch()
+    const fileManager = useFileManager()
+    const { openModal, closeModal } = useModalConfirm()
     const [files, setFiles] = useState<
       (string | Blob | FilePondInitialFile | ActualFileObject)[]
     >([])
     const prevValuesRef = useRef<IGeneratorStep1>(null)
+    const { mutate: fileAdd, isPending: isLoadingAddFile } = usePostFile()
+    const { mutate: fileDelete, isPending: isLoadingDeleteFile } =
+      useDeleteFile()
 
     const handleUpdateFiles = (fileItems: FilePondFile[]) => {
       setFiles(fileItems.map((fileItem) => fileItem.file))
     }
 
+    const handleAddFile = (file: File) => {
+      if (!file) return
+
+      const formData = new FormData()
+      formData.append('file', file)
+
+      fileAdd(formData, {
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.message)
+          fileManager.setFileError(file, err?.response?.data?.message)
+        },
+        onSuccess: (res: any) => {
+          console.log(res?.message)
+          toast.success(res?.message)
+
+          fileManager.setFiles([file])
+
+          fileManager.updateFileMetadata(file, {
+            id: res.data.id,
+            url: res.data.url,
+            public_id: res.data.public_id,
+          })
+        },
+      })
+    }
+
+    const handleDeleteFile = (file: File) => {
+      const fileEntry = fileManager.getFileEntry(file)
+
+      if (!fileEntry) {
+        console.warn('File entry not found in file manager')
+        toast.error('File not found')
+        return
+      }
+      const param = {
+        id: fileEntry!.id!,
+        public_id: fileEntry!.public_id,
+        folder: 'default',
+        resourceType: 'image',
+      }
+
+      fileDelete(param, {
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.message)
+        },
+        onSuccess: (res: any) => {
+          toast.success(res?.message)
+        },
+      })
+    }
+
     useEffect(() => {
       const hasChanged =
         !prevValuesRef.current ||
-        JSON.stringify(prevValuesRef.current) !==
-          JSON.stringify(watchedValues)
+        JSON.stringify(prevValuesRef.current) !== JSON.stringify(watchedValues)
 
       if (hasChanged) {
         prevValuesRef.current = watchedValues
@@ -124,10 +165,7 @@ const GeneratorForm1 = forwardRef<
         getCurrentValues: () => {
           return getValues()
         },
-        setFieldValue: (
-          fieldName: keyof IGeneratorStep1,
-          value: string,
-        ) => {
+        setFieldValue: (fieldName: keyof IGeneratorStep1, value: string) => {
           setValue(fieldName, value)
         },
       }),
@@ -143,13 +181,19 @@ const GeneratorForm1 = forwardRef<
         >
           <div className="grid grid-cols-2 gap-5">
             <TextForm
-              fieldLabel={{ children: 'Firstname', required: true }}
+              fieldLabel={{
+                children: 'Firstname',
+                required: true,
+              }}
               fieldInput={{ maxLength: 100 }}
               name="firstName"
               control={control}
             />
             <TextForm
-              fieldLabel={{ children: 'Lastname', required: true }}
+              fieldLabel={{
+                children: 'Lastname',
+                required: true,
+              }}
               fieldInput={{ maxLength: 100 }}
               name="lastName"
               control={control}
@@ -157,7 +201,10 @@ const GeneratorForm1 = forwardRef<
           </div>
 
           <TextForm
-            fieldLabel={{ children: 'Nickname', required: true }}
+            fieldLabel={{
+              children: 'Nickname',
+              required: true,
+            }}
             fieldInput={{ maxLength: 100 }}
             name="nickname"
             control={control}
@@ -186,8 +233,8 @@ const GeneratorForm1 = forwardRef<
                 'Drop your profile image here or <span class="font-bold">Browse</span>',
             }}
             className="mb-4"
-            onChangeFile={(file: any) => console.log('file', file)}
           />
+          {/* <Button type="button" onClick={() => handleDeleteFile}>Example</Button> */}
 
           <TextareaForm
             fieldLabel={{ children: 'Profile', required: true }}

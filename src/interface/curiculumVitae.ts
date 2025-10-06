@@ -110,7 +110,7 @@ export interface IGeneratorStep1 {
   nickname: string | any
   role: string | any
   profile: string | any
-  // profilePicture?: string | null
+  profilePicture?: string | null
 }
 
 export interface IGeneratorStep2 {

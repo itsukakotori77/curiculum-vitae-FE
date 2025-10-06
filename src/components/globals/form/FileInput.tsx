@@ -5,22 +5,32 @@ import { FilePond, registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
-import {
-  Cropper,
-  CropperRef,
-  CropperPreview,
-} from 'react-advanced-cropper'
+import { Cropper, CropperRef, CropperPreview } from 'react-advanced-cropper'
 import 'react-advanced-cropper/dist/style.css'
 import { PropsWithRef } from 'react'
 import { canvasToBlob, joinClass } from '@/utils/common'
 import Modal from '../modal'
 import Button from '@/components/CultUI/Button'
+import { useModalConfirm } from '@/libs/modalConfirm'
+import { usePostFile, useDeleteFile } from '@/services/master/file/mutation'
+import { toast } from 'react-toastify'
+import { useFileManager } from '@/libs/fileManager'
 
 registerPlugin(FilePondPluginImagePreview)
+
+export interface FileMetadata {
+  id?: string
+  url?: string
+  publicId?: string
+  public_id?: string
+  uploadStatus?: 'pending' | 'uploading' | 'success' | 'error'
+  [key: string]: any
+}
 
 export interface FileInputProps extends PropsWithRef<any> {
   className?: string
   files?: any[]
+  filesMetadata?: Map<string, FileMetadata>
   onUpdateFiles?: (files: any[]) => void
   allowMultiple?: boolean
   acceptedFileTypes?: string[]
@@ -30,6 +40,9 @@ export interface FileInputProps extends PropsWithRef<any> {
   isValid?: boolean
   isInvalid?: boolean
   enableCrop?: boolean
+  enableAutoUpload?: boolean
+  uploadFolder?: string
+  uploadResourceType?: string
   cropAspectRatio?: number | null
   cropMinWidth?: number
   cropMinHeight?: number
@@ -38,13 +51,11 @@ export interface FileInputProps extends PropsWithRef<any> {
   [key: string]: any
 }
 
-const FileInput: React.FC<FileInputProps> = forwardRef<
-  any,
-  FileInputProps
->(
+const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
   (
     {
       files = [],
+      filesMetadata,
       onUpdateFiles,
       allowMultiple = false,
       acceptedFileTypes = [],
@@ -56,6 +67,9 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
       isValid,
       isInvalid,
       enableCrop = false,
+      enableAutoUpload = true,
+      uploadFolder = 'default',
+      uploadResourceType = 'image',
       cropAspectRatio,
       cropMinWidth = 100,
       cropMinHeight = 100,
@@ -68,19 +82,113 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
     const [cropModalOpen, setCropModalOpen] = useState(false)
     const [currentImage, setCurrentImage] = useState<string>('')
     const [pendingFile, setPendingFile] = useState<File | null>(null)
+    const [pendingDeleteFile, setPendingDeleteFile] = useState<any>(null)
     const [filePondFiles, setFilePondFiles] = useState<any[]>([])
     const [isProcessingCrop, setIsProcessingCrop] = useState(false)
     const [coordinates, setCoordinates] = useState<any>(null)
-    const [processedFiles, setProcessedFiles] = useState<Set<string>>(
-      new Set(),
-    )
+    const [processedFiles, setProcessedFiles] = useState<Set<string>>(new Set())
     const cropperRef = useRef<CropperRef>(null)
     const filePondRef = useRef<any>(null)
     const lastProcessedFileRef = useRef<string | null>(null)
+    const { openModal, closeModal } = useModalConfirm()
+
+    // File manager and mutations
+    const fileManager = useFileManager()
+    const { mutate: fileAdd, isPending: isLoadingAddFile } = usePostFile()
+    const { mutate: fileDelete, isPending: isLoadingDeleteFile } =
+      useDeleteFile()
 
     // Create a unique file identifier
-    const getFileId = (file: File) =>
+    const getFileId = (file: File | any) =>
       `${file.name}-${file.size}-${file.lastModified}`
+
+    // Handle file upload
+    const handleUploadFile = (file: File) => {
+      if (!file || !enableAutoUpload) return
+
+      const existingEntry = fileManager.getFileEntry(file)
+      if (!existingEntry) {
+        fileManager.addFile(file)
+      }
+
+      fileManager.setFileUploading(file)
+
+      const formData = new FormData()
+      formData.append('file', file)
+
+      fileAdd(formData, {
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.message || 'Failed to upload file')
+          fileManager.setFileError(file, err?.response?.data?.message)
+        },
+        onSuccess: (res: any) => {
+          console.log('Upload success:', res?.message)
+          toast.success(res?.message || 'File uploaded successfully')
+
+          fileManager.setFiles([file])
+
+          fileManager.updateFileMetadata(file, {
+            id: res.data.id,
+            url: res.data.url,
+            public_id: res.data.public_id,
+          })
+        },
+      })
+    }
+
+    const handleDeleteFile = (fileItem: any, metadata?: FileMetadata) => {
+      const file = fileItem.file || fileItem
+
+      console.log('Delete attempt - File:', file, 'Metadata:', metadata)
+
+      if (!metadata?.id) {
+        console.error('Cannot delete: No metadata or ID found for file')
+        toast.error('Cannot delete file: Missing file information')
+        return
+      }
+
+      if (!enableAutoUpload) {
+        console.log('Auto-upload disabled, skipping server delete')
+        return
+      }
+
+      const fileId = getFileId(file)
+
+      console.log('fileItem', fileItem)
+      console.log('fileManger', fileManager.getFileEntry(fileItem))
+
+      const param = {
+        id: metadata.id,
+        public_id: metadata.public_id || metadata.publicId,
+        folder: uploadFolder,
+        resourceType: uploadResourceType,
+      }
+
+      console.log('Deleting file with params:', param)
+
+      fileDelete(param, {
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.message || 'Failed to delete file')
+        },
+        onSuccess: (res: any) => {
+          // ✅ Remove from FilePond after successful delete
+          const updatedFiles = filePondFiles.filter(
+            (f) => getFileId(f) !== fileId,
+          )
+          setFilePondFiles(updatedFiles)
+
+          // Remove from processedFiles set
+          const newProcessedFiles = new Set(processedFiles)
+          newProcessedFiles.delete(fileId)
+          setProcessedFiles(newProcessedFiles)
+
+          // Sync with parent
+          onUpdateFiles?.(updatedFiles)
+
+          toast.success(res?.message || 'File deleted successfully')
+        },
+      })
+    }
 
     // Handle FilePond file updates
     const handleFilePondUpdate = (fileItems: any[]) => {
@@ -88,9 +196,7 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
 
       // Prevent processing during crop operations
       if (isProcessingCrop) {
-        console.log(
-          '⚠️ Skipping update because crop is already processing',
-        )
+        console.log('⚠️ Skipping update because crop is already processing')
         return
       }
 
@@ -98,18 +204,14 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
       if (enableCrop) {
         console.log('🔍 Enable crop active, checking files...')
         const newImageFile = newFiles.find((file) => {
-          if (
-            !(file instanceof File) ||
-            !file.type.startsWith('image/')
-          ) {
+          if (!(file instanceof File) || !file.type.startsWith('image/')) {
             console.log('⏭️ Not an image file:', file)
             return false
           }
 
           const fileId = getFileId(file)
           const isProcessed = processedFiles.has(fileId)
-          const isLastProcessed =
-            fileId === lastProcessedFileRef.current
+          const isLastProcessed = fileId === lastProcessedFileRef.current
           const isAlreadyInFiles = files.some(
             (existingFile: any) =>
               existingFile instanceof File &&
@@ -143,9 +245,7 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
           console.log('🛑 Returning early to prevent onUpdateFiles')
           return // Don't update files yet
         } else {
-          console.log(
-            '❌ No new image file found, continuing to next step',
-          )
+          console.log('❌ No new image file found, continuing to next step')
         }
       }
 
@@ -162,13 +262,9 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
 
         const croppedBlob = await canvasToBlob(canvas)
 
-        const croppedFile = new File(
-          [croppedBlob],
-          pendingFile.name,
-          {
-            type: 'image/jpeg',
-          },
-        )
+        const croppedFile = new File([croppedBlob], pendingFile.name, {
+          type: 'image/jpeg',
+        })
 
         console.log('Cropped file created:', croppedFile)
 
@@ -199,6 +295,9 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
 
         // Update parent state first
         onUpdateFiles?.(updatedFiles)
+
+        // Upload file to server
+        handleUploadFile(croppedFile)
 
         // Use setTimeout to sync FilePond
         setTimeout(() => {
@@ -244,26 +343,41 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
       // Close modal and reset states
       setCropModalOpen(false)
       setCurrentImage('')
+      const fileToUpload = pendingFile
       setPendingFile(null)
 
       // Update parent state first
       onUpdateFiles?.(updatedFiles)
 
+      // Upload file to server
+      handleUploadFile(fileToUpload)
+
       // Use setTimeout to ensure FilePond updates after parent state
       setTimeout(() => {
         setFilePondFiles(updatedFiles)
-        setIsProcessingCrop(false) // Reset processing flag after FilePond update
+        setIsProcessingCrop(false)
       }, 0)
     }
 
-    // Initialize filePondFiles with files prop
-    if (
-      filePondFiles.length === 0 &&
-      files.length > 0 &&
-      !isProcessingCrop
-    ) {
-      setFilePondFiles([...files])
+    // Handle modal close (when user cancels deletion)
+    const handleCancelDelete = () => {
+      if (pendingDeleteFile) {
+        pendingDeleteFile.resolve(false)
+        setPendingDeleteFile(null)
+      }
+      closeModal()
     }
+
+    // Track previous files length to detect external changes
+    // const prevFilesLengthRef = useRef(files.length)
+
+    // React.useEffect(() => {
+    //   // Only sync if files changed externally (not from our internal updates)
+    //   if (files.length !== prevFilesLengthRef.current && !isProcessingCrop) {
+    //     setFilePondFiles([...files])
+    //     prevFilesLengthRef.current = files.length
+    //   }
+    // }, [files.length, isProcessingCrop])
 
     // Stencil props for cropping constraints
     const stencilProps = {
@@ -272,7 +386,6 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
       resizable: true,
       lines: true,
       handlers: true,
-      // overlayClassName: 'cropper-overlay',
     }
 
     return (
@@ -307,21 +420,41 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
             server={server}
             name="files"
             imagePreviewMinHeight={100}
+            beforeRemoveFile={(fileItem) => {
+              return new Promise((resolve) => {
+                // Get the file and its ID
+                const file = fileItem.file
+                const fileId = getFileId(file)
+
+                // Look up metadata from filesMetadata map or fileManager
+                const metadata =
+                  filesMetadata?.get(fileId) ||
+                  fileManager.getFileMetadata(file as any)
+
+                console.log(
+                  'Attempting to delete file:',
+                  fileId,
+                  'Metadata:',
+                  metadata,
+                )
+
+                setPendingDeleteFile({ fileItem, resolve })
+                openModal({
+                  title: 'Attention !',
+                  description: 'Are you sure you want to delete this image?',
+                  onConfirm: () => {
+                    closeModal()
+                    handleDeleteFile(fileItem, metadata) // Pass metadata here
+                    setPendingDeleteFile(null)
+                    resolve(true)
+                  },
+                })
+              })
+            }}
             onremovefile={(error, fileItem) => {
-              if (!fileItem) return
-              const fileId = fileItem.id
-            
-              // Remove from processedFiles set
-              const newProcessedFiles = new Set(processedFiles)
-              newProcessedFiles.delete(fileId)
-              setProcessedFiles(newProcessedFiles)
-            
-              // Update FilePond files state
-              const updatedFiles = filePondFiles.filter((f) => f !== fileItem.file)
-              setFilePondFiles(updatedFiles)
-            
-              // Sync with parent
-              onUpdateFiles?.(updatedFiles)
+              if (pendingDeleteFile) {
+                setPendingDeleteFile(null)
+              }
             }}
             className=""
             labelIdle={
@@ -341,8 +474,8 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
             <div className="p-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold">Crop Image</h3>
               <p className="text-sm text-gray-600 mt-1">
-                Adjust the crop area and click "Apply Crop" to
-                continue, or "Skip Crop" to use the original image.
+                Adjust the crop area and click "Apply Crop" to continue, or
+                "Skip Crop" to use the original image.
               </p>
             </div>
 
@@ -404,7 +537,16 @@ const FileInput: React.FC<FileInputProps> = forwardRef<
                 <Button
                   type="button"
                   intent="success"
-                  onClick={handleCropConfirm}
+                  onClick={() => {
+                    openModal({
+                      title: 'Attention !',
+                      description: 'Are you sure want to apply the crop?',
+                      onConfirm: () => {
+                        closeModal()
+                        handleCropConfirm()
+                      },
+                    })
+                  }}
                   className="w-40"
                 >
                   Apply Crop
