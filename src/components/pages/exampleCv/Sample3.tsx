@@ -1,4 +1,4 @@
-import { ChevronRight, User } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import React, { forwardRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -13,6 +13,7 @@ import { CVProps, ICurrVitae } from '@/interface/curiculumVitae'
 import moment from 'moment'
 import { cva, VariantProps } from 'class-variance-authority'
 import { cn } from '@/utils/common'
+import Image from 'next/image'
 
 // Define variants using CVA
 const cvVariants = cva(
@@ -46,12 +47,7 @@ const cvVariants = cva(
           'print:py-0',
           'print:px-0',
         ],
-        noPrint: [
-          'min-h-screen',
-          'flex',
-          'justify-center',
-          'items-start',
-        ],
+        noPrint: ['min-h-screen', 'flex', 'justify-center', 'items-start'],
       },
     },
     defaultVariants: {
@@ -179,11 +175,7 @@ const CVText = ({
 } & React.HtmlHTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
-      className={cn(
-        textVariants({ variant, size }),
-        'break-all',
-        className,
-      )}
+      className={cn(textVariants({ variant, size }), 'break-all', className)}
       {...props}
     >
       {children}
@@ -211,22 +203,16 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
     },
     ref,
   ) => {
+
     return (
       <>
         {/* PRINT STYLES */}
-        <div
-          ref={ref}
-          className={cn(cvVariants({ size, scale }), className)}
-        >
+        <div ref={ref} className={cn(cvVariants({ size, scale }), className)}>
           <div
-            className={cn(
-              cvVariants({ printable }),
-              childrenClassName,
-            )}
+            className={cn(cvVariants({ printable }), childrenClassName)}
             style={{
               transformOrigin: 'top center',
-              marginBottom:
-                scale === 'xs' || scale === 'sm' ? '10vh' : '0',
+              marginBottom: scale === 'xs' || scale === 'sm' ? '10vh' : '0',
             }}
           >
             {/* BIOGRAPHY */}
@@ -238,12 +224,21 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
               }}
             >
               <div className="flex justify-center p-4 flex-col">
-                <div
+                {/* <div
                   className="w-full aspect-square p-4 flex items-center 
                            justify-center max-w-[200px] mx-auto lg:max-w-none bg-blue-500 rounded-full"
                 >
-                  <User className="w-3/4 h-3/4" />
-                </div>
+                </div> */}
+                <Image
+                  src={data?.profilePicture! || '/User.png'}
+                  alt="profilePicture"
+                  width={500}
+                  height={500}
+                  className="w-full h-full aspect-square p-0 flex items-center 
+                           justify-center max-w-[200px] mx-auto lg:max-w-none rounded-full"
+                  key={data?.profilePicture} 
+                  unoptimized
+                />
 
                 {/* CONTACTS */}
                 <div className="flex flex-col my-4">
@@ -379,10 +374,7 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                   <div className="h-1.5 rounded-sm bg-[#403D3D]"></div>
                   <div className="grid my-2 gap-1.5">
                     {data?.skills?.map((item: any, key: number) => (
-                      <div
-                        className="flex flex-col items-start"
-                        key={key}
-                      >
+                      <div className="flex flex-col items-start" key={key}>
                         <CVText
                           variant="small"
                           size={textSize}
@@ -392,23 +384,19 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                           {item?.name}
                         </CVText>
                         <div className="grid grid-cols-5 w-full">
-                          {Array.from(
-                            { length: item?.level },
-                            (_, index) => (
-                              <div
-                                key={index}
-                                className={`h-3.5 w-full`}
-                                style={{
-                                  background: ` ${
-                                    item?.isHasLevel &&
-                                    index < item.level
-                                      ? skillColor
-                                      : ''
-                                  }`,
-                                }}
-                              ></div>
-                            ),
-                          )}
+                          {Array.from({ length: item?.level }, (_, index) => (
+                            <div
+                              key={index}
+                              className={`h-3.5 w-full`}
+                              style={{
+                                background: ` ${
+                                  item?.isHasLevel && index < item.level
+                                    ? skillColor
+                                    : ''
+                                }`,
+                              }}
+                            ></div>
+                          ))}
                         </div>
                       </div>
                     ))}
@@ -558,10 +546,9 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                 {/* EDUCATION */}
                 <div className="group flex gap-x-5 w-full">
                   <div className="relative">
-                    {data?.certification &&
-                      data?.certification.length > 1 && (
-                        <div className="absolute left-1/2 top-0 h-full w-[5px] -translate-x-1/2 bg-gray-500"></div>
-                      )}
+                    {data?.certification && data?.certification.length > 1 && (
+                      <div className="absolute left-1/2 top-0 h-full w-[5px] -translate-x-1/2 bg-gray-500"></div>
+                    )}
                     <span
                       style={{
                         borderColor: sidebarColor,
@@ -590,101 +577,96 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                     </div>
 
                     <ul className="list-disc pl-5 my-2">
-                      {data?.education?.map(
-                        (item: any, key: number) => (
-                          <li key={key}>
-                            <div className="flex flex-col gap-1">
-                              <CVText
-                                variant="tiny"
-                                size={textSize}
-                                className="font-bold"
-                              >
-                                {`${item?.degree} of ${item?.major} - ${item?.university.split('|')[0]}`}
-                              </CVText>
-                              {item?.graduatedStatus ? (
-                                <>
-                                  <CVText
-                                    variant="tiny"
-                                    size={textSize}
-                                    className="flex items-center font-medium text-gray-500"
-                                  >
-                                    {`Graduated, ${moment(item?.graduated).format('MMMM, Do YYYY')}`}
-                                  </CVText>
-                                  <CVText
-                                    variant="tiny"
-                                    size={textSize}
-                                    className="font-normal text-gray-500"
-                                  >
-                                    {`GPA: ${item?.gpa} - ${item?.gpaStatus}`}
-                                  </CVText>
-                                </>
-                              ) : (
+                      {data?.education?.map((item: any, key: number) => (
+                        <li key={key}>
+                          <div className="flex flex-col gap-1">
+                            <CVText
+                              variant="tiny"
+                              size={textSize}
+                              className="font-bold"
+                            >
+                              {`${item?.degree} of ${item?.major} - ${item?.university.split('|')[0]}`}
+                            </CVText>
+                            {item?.graduatedStatus ? (
+                              <>
                                 <CVText
-                                  variant="small"
+                                  variant="tiny"
+                                  size={textSize}
+                                  className="flex items-center font-medium text-gray-500"
+                                >
+                                  {`Graduated, ${moment(item?.graduated).format('MMMM, Do YYYY')}`}
+                                </CVText>
+                                <CVText
+                                  variant="tiny"
                                   size={textSize}
                                   className="font-normal text-gray-500"
                                 >
-                                  Not Graduated Yet
+                                  {`GPA: ${item?.gpa} - ${item?.gpaStatus}`}
                                 </CVText>
-                              )}
-                            </div>
-                          </li>
-                        ),
-                      )}
+                              </>
+                            ) : (
+                              <CVText
+                                variant="small"
+                                size={textSize}
+                                className="font-normal text-gray-500"
+                              >
+                                Not Graduated Yet
+                              </CVText>
+                            )}
+                          </div>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
 
                 {/* CERTIFICATIONS */}
-                {data?.certification &&
-                  data?.certification.length > 1 && (
-                    <div className="group flex gap-x-5 w-full">
-                      <div className="relative">
-                        <span
-                          style={{
-                            borderColor: sidebarColor,
-                            color: sidebarColor,
-                          }}
-                          className="relative z-10 grid h-10 w-10 place-items-center rounded-full 
+                {data?.certification && data?.certification.length > 1 && (
+                  <div className="group flex gap-x-5 w-full">
+                    <div className="relative">
+                      <span
+                        style={{
+                          borderColor: sidebarColor,
+                          color: sidebarColor,
+                        }}
+                        className="relative z-10 grid h-10 w-10 place-items-center rounded-full 
                                     bg-white border-4 
                                     font-extrabold text-lg"
-                        >
-                          4
-                        </span>
-                      </div>
-                      <div className="pb-8 text-slate-600 w-full">
-                        <div
-                          style={{ background: sidebarColor }}
-                          className="px-2 py-1 mt-1"
-                        >
-                          <CVText
-                            variant="small"
-                            size={textSize}
-                            style={{ color: primaryColor }}
-                            className="font-bold tracking-wide"
-                          >
-                            CERTIFICATIONS
-                          </CVText>
-                        </div>
-
-                        <ul className="space-y-0.5 list-disc pl-4 my-4">
-                          {data?.certification?.map(
-                            (item: any, key: number) => (
-                              <li key={key}>
-                                <CVText
-                                  variant="tiny"
-                                  size={textSize}
-                                  className="block font-medium text-gray-600"
-                                >
-                                  {`${item?.name} - ${item?.company}`}
-                                </CVText>
-                              </li>
-                            ),
-                          )}
-                        </ul>
-                      </div>
+                      >
+                        4
+                      </span>
                     </div>
-                  )}
+                    <div className="pb-8 text-slate-600 w-full">
+                      <div
+                        style={{ background: sidebarColor }}
+                        className="px-2 py-1 mt-1"
+                      >
+                        <CVText
+                          variant="small"
+                          size={textSize}
+                          style={{ color: primaryColor }}
+                          className="font-bold tracking-wide"
+                        >
+                          CERTIFICATIONS
+                        </CVText>
+                      </div>
+
+                      <ul className="space-y-0.5 list-disc pl-4 my-4">
+                        {data?.certification?.map((item: any, key: number) => (
+                          <li key={key}>
+                            <CVText
+                              variant="tiny"
+                              size={textSize}
+                              className="block font-medium text-gray-600"
+                            >
+                              {`${item?.name} - ${item?.company}`}
+                            </CVText>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

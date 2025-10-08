@@ -22,6 +22,7 @@ export const transformToICurrVitae = (
     nickname: step1Data?.nickname || '',
     role: step1Data?.role || '',
     profile: step1Data?.profile || '',
+    profilePicture: step1Data?.profilePicture || '',
 
     // Step 2: Transform array of experiences
     experience:

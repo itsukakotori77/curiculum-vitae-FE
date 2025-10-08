@@ -11,6 +11,10 @@ interface IProps extends HTMLProps<HTMLDivElement>, FileInputProps {
   name: string
   filesMetadata?: Map<string, FileMetadata>
   onChangeFile?: (files: any[]) => void
+  onSuccessUpload?: (response: any, file: File) => void
+  onErrorUpload?: (response: any) => void
+  onSuccessDelete?: (response: any) => void
+  onErrorDelete?: (response: any) => void
 }
 
 const FileForm: React.FC<IProps> = ({
@@ -20,6 +24,10 @@ const FileForm: React.FC<IProps> = ({
   name,
   filesMetadata,
   onChangeFile,
+  onSuccessUpload,
+  onErrorUpload,
+  onSuccessDelete,
+  onErrorDelete,
   ...props
 }) => {
   return (
@@ -43,6 +51,10 @@ const FileForm: React.FC<IProps> = ({
                 onChange(files)
                 onChangeFile?.(files)
               }}
+              onSuccessUpload={onSuccessUpload}
+              onErrorUpload={onErrorUpload}
+              onSuccessDelete={onSuccessDelete}
+              onErrorDelete={onErrorDelete}
               isInvalid={invalid}
               {...fileInput}
             />

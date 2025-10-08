@@ -163,7 +163,7 @@ export interface ISettingCurr {
 }
 
 export interface CVStep1Store {
-  data: IGeneratorStep1 | undefined
+  data: IGeneratorStep1 | undefined | null
   updateData: (data: IGeneratorStep1) => void
   clearData: () => void
 }

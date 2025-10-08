@@ -1,17 +1,7 @@
 'use client'
 
-import {
-  DependencyList,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react'
-import {
-  useQuery,
-  UseQueryOptions,
-  UseQueryResult,
-} from '@tanstack/react-query'
+import { DependencyList, useEffect, useState } from 'react'
+
 import {
   useCVMainStore,
   useCVStep1Store,
@@ -32,15 +22,9 @@ export const useCVData = () => {
 
   // Update final CV whenever any step data changes
   useEffect(() => {
+    console.log('step1 data', step1Data)
     updateFinalCV()
-  }, [
-    step1Data,
-    step2Data,
-    step3Data,
-    step4Data,
-    step5Data,
-    updateFinalCV,
-  ])
+  }, [step1Data, step2Data, step3Data, step4Data, step5Data, updateFinalCV])
 
   return {
     step1Data,
@@ -74,39 +58,6 @@ export const useWindowSize = () => {
   }, [])
   return windowSize
 }
-
-//  export default function useFetchQuery<Params, Response>(
-//    name: string,
-//    fetch: (params: Params) => Promise<Response>,
-//    params: Params,
-//    options?: Omit<
-//      UseQueryOptions<Response, unknown, Response, (string | any[])[]>,
-//      'queryKey' | 'queryFn'
-//    >,
-//    callback?: (value?: UseQueryResult<Response, any>) => void
-//  ): [
-//    UseQueryResult<Response, unknown>,
-//    Params,
-//    Dispatch<SetStateAction<Params>>
-//  ] {
-//    const [state, setState] = useState<Params>(params)
-//    const result = useQuery(
-//      [
-//        name,
-//        ...Object.values(state as any).filter(
-//          value => value !== undefined && value !== null
-//        ),
-//      ],
-//      () => fetch(state),
-//      options as any
-//    )
-
-//    if (callback) {
-//      callback(result)
-//    }
-
-//    return [result, state, setState]
-//  }
 
 export const useDebounceEffect = (
   fn: () => void,

@@ -20,6 +20,7 @@ import {
 import { transformToICurrVitae } from './parseToForm'
 import { transformToCurrPayload } from './parseToPayload'
 import { decodeToken, getToken } from './common'
+import { IFileManagerStore, MetadataFile } from '@/interface/fileManager'
 
 interface CVMainStore {
   finalCV: ICurrVitae | null
@@ -57,11 +58,11 @@ export const useCVMainStore = create<CVMainStore>((set, get) => ({
     const step5Data = useCVStep5Store.getState().contacts
 
     const finalCV = transformToICurrVitae(
-      step1Data,
-      step2Data,
-      step3Data,
-      step4Data,
-      step5Data,
+      step1Data!,
+      step2Data!,
+      step3Data!,
+      step4Data!,
+      step5Data!,
     )
 
     set({ finalCV })
@@ -78,11 +79,11 @@ export const useCVMainStore = create<CVMainStore>((set, get) => ({
     const user = decodeToken(getToken()!) as any
 
     const payloadCV = transformToCurrPayload(
-      step1Data,
-      step2Data,
-      step3Data,
-      step4Data,
-      step5Data,
+      step1Data!,
+      step2Data!,
+      step3Data!,
+      step4Data!,
+      step5Data!,
       {
         user_id: user?.id,
         setting_id: setting?.id!,
@@ -107,14 +108,14 @@ export const useCVMainStore = create<CVMainStore>((set, get) => ({
 export const useCVStep1Store = create<CVStep1Store>()(
   persist(
     (set) => ({
-      data: undefined,
+      data: null,
 
       updateData: (data: IGeneratorStep1) => {
         set({ data })
       },
 
       clearData: () => {
-        set({ data: undefined })
+        set({ data: null })
       },
     }),
     {
@@ -147,8 +148,7 @@ export const useCVStep2Store = create<CVStep2Store>()(
 
       remove: (index: number) => {
         set((state) => ({
-          experiences:
-            state.experiences!.filter((_, i) => i !== index) ?? [],
+          experiences: state.experiences!.filter((_, i) => i !== index) ?? [],
           currentEditIndex: null,
         }))
       },
@@ -197,8 +197,7 @@ export const useCVStep3Store = create<CVStep3Store>()(
 
       remove: (index: number) => {
         set((state) => ({
-          educations:
-            state.educations!.filter((_, i) => i !== index) ?? [],
+          educations: state.educations!.filter((_, i) => i !== index) ?? [],
         }))
       },
 
@@ -235,9 +234,7 @@ export const useCVStep4Store = create<CVStep4Store>()(
 
       update: (index: number, data: IGeneratorStep4) => {
         set((state) => ({
-          skills: state.skills!.map((skils, i) =>
-            i === index ? data : skils,
-          ),
+          skills: state.skills!.map((skils, i) => (i === index ? data : skils)),
           currentEditIndex: null,
         }))
       },
@@ -280,35 +277,117 @@ export const useCVStep5Store = create<CVStep5Store>()(
   ),
 )
 
-export const useCVNavigationStore = create<CVNavigationStore>(
-  (set, get) => ({
-    currentStep: 1,
-    showForm: false,
-    maxStep: 6,
+export const useCVNavigationStore = create<CVNavigationStore>((set, get) => ({
+  currentStep: 1,
+  showForm: false,
+  maxStep: 6,
 
-    setCurrentStep: (step: number) => {
-      const { maxStep } = get()
-      if (step >= 1 && step <= maxStep) {
-        set({ currentStep: step })
-      }
-    },
+  setCurrentStep: (step: number) => {
+    const { maxStep } = get()
+    if (step >= 1 && step <= maxStep) {
+      set({ currentStep: step })
+    }
+  },
 
-    setShowForm: (show: boolean) => {
-      set({ showForm: show })
-    },
+  setShowForm: (show: boolean) => {
+    set({ showForm: show })
+  },
 
-    nextStep: () => {
-      const { currentStep, maxStep } = get()
-      if (currentStep < maxStep) {
-        set({ currentStep: currentStep + 1 })
-      }
-    },
+  nextStep: () => {
+    const { currentStep, maxStep } = get()
+    if (currentStep < maxStep) {
+      set({ currentStep: currentStep + 1 })
+    }
+  },
 
-    previousStep: () => {
-      const { currentStep } = get()
-      if (currentStep > 1) {
-        set({ currentStep: currentStep - 1 })
-      }
-    },
-  }),
-)
+  previousStep: () => {
+    const { currentStep } = get()
+    if (currentStep > 1) {
+      set({ currentStep: currentStep - 1 })
+    }
+  },
+}))
+
+export const useFileManagerStore = create<IFileManagerStore>((set, get) => ({
+  fileEntries: [],
+  addFile: (file: File) => {
+    set((state) => ({
+      fileEntries: [
+        ...state.fileEntries,
+        {
+          file,
+          uploadStatus: 'pending' as const,
+        },
+      ],
+    }))
+  },
+
+  updateFileMetadata: (file: File, metadata: MetadataFile) => {
+    set((state) => ({
+      fileEntries: state.fileEntries.map((entry) =>
+        entry.file === file
+          ? { ...entry, ...metadata, uploadStatus: 'success' as const }
+          : entry,
+      ),
+    }))
+  },
+
+  setFileUploading: (file: File) => {
+    set((state) => ({
+      fileEntries: state.fileEntries.map((entry) =>
+        entry.file === file
+          ? { ...entry, uploadStatus: 'uploading' as const }
+          : entry,
+      ),
+    }))
+  },
+
+  setFileError: (file: File, error: string) => {
+    set((state) => ({
+      fileEntries: state.fileEntries.map((entry) =>
+        entry.file === file
+          ? { ...entry, uploadStatus: 'error' as const, error }
+          : entry,
+      ),
+    }))
+  },
+
+  getFileEntry: (file: File) => {
+    return get().fileEntries.find((entry) => entry.file === file)
+  },
+
+  getFileMetadata: (file: File) => {
+    const entry = get().fileEntries.find((entry) => entry.file === file)
+    if (!entry) return null
+
+    return {
+      id: entry.id,
+      url: entry.url,
+      public_id: entry.public_id,
+      uploadStatus: entry.uploadStatus,
+    }
+  },
+
+  removeFileFromState: (file: File) => {
+    set((state) => ({
+      fileEntries: state.fileEntries.filter((entry) => entry.file !== file),
+    }))
+  },
+
+  getFiles: () => {
+    return get().fileEntries.map((entry) => entry.file)
+  },
+
+  clearAllFiles: () => {
+    set({ fileEntries: [] })
+  },
+
+  setFiles: (files: File[]) => {
+    set({
+      fileEntries: files.map((file) => ({
+        file,
+        uploadStatus: 'pending' as const,
+      })),
+    })
+  },
+}))

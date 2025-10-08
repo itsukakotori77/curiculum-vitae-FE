@@ -1,12 +1,6 @@
 'use client'
 
-import React, {
-  useRef,
-  useCallback,
-  useMemo,
-  useState,
-  useEffect,
-} from 'react'
+import React, { useRef, useCallback, useMemo, useState, useEffect } from 'react'
 import StepperBubble from '@/components/globals/stepper/StepperBubble'
 import GeneratorForm1, { GeneratorForm1Ref } from './GeneratorForm1'
 import {
@@ -39,9 +33,7 @@ import GeneratorForm3, { GeneratorForm3Ref } from './GeneratorForm3'
 import moment from 'moment'
 import GeneratorForm4, { GeneratorForm4Ref } from './GeneratorForm4'
 import GeneratorForm5, { GeneratorForm5Ref } from './GeneratorForm5'
-import PreviewGenerator, {
-  PreviewGeneratorHandle,
-} from './PerviewGenerator'
+import PreviewGenerator, { PreviewGeneratorHandle } from './PerviewGenerator'
 import { toast } from 'react-toastify'
 import { convertColor } from '@/utils/common'
 import { usePostCurr } from '@/services/curivulumVitae/mutation'
@@ -68,7 +60,7 @@ export default function CurrVitaeGenerator() {
     nextStep,
     maxStep,
   } = useCVNavigationStore()
-  const { updateData: updateStep1Data } = useCVStep1Store()
+  const { data: profile, updateData: updateStep1Data } = useCVStep1Store()
   const {
     experiences,
     currentEditIndex: idxExp,
@@ -97,7 +89,6 @@ export default function CurrVitaeGenerator() {
   } = useCVStep4Store()
 
   const { contacts, update: updateContacts } = useCVStep5Store()
-
   const { data: dataSetting } = useCVSettingStore()
 
   // Combined CV data
@@ -122,7 +113,7 @@ export default function CurrVitaeGenerator() {
         },
       })
     },
-    [updateStep1Data, nextStep, openModal, closeModal],
+    [updateStep1Data, openModal, closeModal],
   )
 
   const handleStep2Submit = useCallback(
@@ -169,14 +160,7 @@ export default function CurrVitaeGenerator() {
         },
       })
     },
-    [
-      idxEdu,
-      updateEducation,
-      addEducation,
-      setShowForm,
-      openModal,
-      closeModal,
-    ],
+    [idxEdu, updateEducation, addEducation, setShowForm, openModal, closeModal],
   )
 
   const handleStep4Submit = useCallback(
@@ -195,14 +179,7 @@ export default function CurrVitaeGenerator() {
         },
       })
     },
-    [
-      idxSkill,
-      updateSkill,
-      addSkill,
-      setShowForm,
-      openModal,
-      closeModal,
-    ],
+    [idxSkill, updateSkill, addSkill, setShowForm, openModal, closeModal],
   )
 
   const handleStep5Submit = useCallback(
@@ -331,17 +308,13 @@ export default function CurrVitaeGenerator() {
                 {index + 1}
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-md">
-                  {experience.company}
-                </span>
+                <span className="font-bold text-md">{experience.company}</span>
                 <p className="text-sm">
                   {experience.jobTitle} | {experience.role}
                 </p>
                 <p className="text-sm">
                   {experience.date?.startDate} -{' '}
-                  {experience.isCurrent
-                    ? 'Present'
-                    : experience.date?.endDate}
+                  {experience.isCurrent ? 'Present' : experience.date?.endDate}
                 </p>
                 {experience.descJob && (
                   <p className="text-sm text-gray-600 mt-1">
@@ -381,21 +354,15 @@ export default function CurrVitaeGenerator() {
                 {index + 1}
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-md">
-                  {data.university}
-                </span>
-                <p className="text-sm font-medium">
-                  {data.major?.value}
-                </p>
+                <span className="font-bold text-md">{data.university}</span>
+                <p className="text-sm font-medium">{data.major?.value}</p>
                 <p className="text-sm">{`${
                   data.graduatedStatus === 'true'
                     ? `Graduated From ${moment(data?.graduated).format('MMMM, Do YYYY')}`
                     : `Undergraduated`
                 }`}</p>
                 <p className="text-sm">{`${data.gpa ? `GPA: ${data?.gpa}` : `Non GPA`}`}</p>
-                <p className="text-sm text-gray-600 mt-1">
-                  {data.majorDesc}
-                </p>
+                <p className="text-sm text-gray-600 mt-1">{data.majorDesc}</p>
               </div>
             </div>
             <div className="flex gap-2">
@@ -430,30 +397,20 @@ export default function CurrVitaeGenerator() {
               </div>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col">
-                  <span className="font-bold text-xl">
-                    Certificate
-                  </span>
+                  <span className="font-bold text-xl">Certificate</span>
                   <span className="font-bold text-md">
                     {data.certificateName}
                   </span>
-                  <p className="text-sm font-medium">
-                    {data?.company}
-                  </p>
+                  <p className="text-sm font-medium">{data?.company}</p>
                   <p className="text-sm">
-                    <span className="font-medium">
-                      Certificated Publish
-                    </span>{' '}
+                    <span className="font-medium">Certificated Publish</span>{' '}
                     {`${moment(data?.certificateDate).format('MMMM, Do YYYY')}`}
                   </p>
                 </div>
                 <div className="flex flex-col">
                   <span className="font-bold text-xl">Skills</span>
-                  <span className="font-bold text-md">
-                    {data.skillName}
-                  </span>
-                  <p className="text-sm font-medium">
-                    {data?.company}
-                  </p>
+                  <span className="font-bold text-md">{data.skillName}</span>
+                  <p className="text-sm font-medium">{data?.company}</p>
                   {data?.isHasLevel && (
                     <div className="grid grid-cols-5 gap-1">
                       {Array.from({ length: 5 }, (_, index) => (
@@ -521,7 +478,6 @@ export default function CurrVitaeGenerator() {
 
         try {
           await refPreview.current.downloadPng()
-          console.log('PNG downloaded successfully')
           closeModal()
         } catch (err: any) {
           toast.error(err?.message || err)
@@ -558,9 +514,7 @@ export default function CurrVitaeGenerator() {
             <StepperBubble
               size={maxStep}
               current={currentStep}
-              direction={
-                windowSize.width > 1024 ? 'vertical' : 'horizontal'
-              }
+              direction={windowSize.width > 1024 ? 'vertical' : 'horizontal'}
               onChangeCurr={(val: number) => setCurrentStep(val)}
               useNumber
               className="justify-center lg:justify-start lg:py-12"
@@ -585,7 +539,7 @@ export default function CurrVitaeGenerator() {
                 <div className="w-full max-w-3xl">
                   <GeneratorForm1
                     ref={form1Ref}
-                    data={useCVStep1Store.getState().data}
+                    data={useCVStep1Store.getState().data!}
                     onSubmit={handleStep1Submit}
                     onCancel={handleCancel}
                     onChange={updateStep1Data}
@@ -626,9 +580,7 @@ export default function CurrVitaeGenerator() {
                           className="lg:w-52"
                           onClick={() => setCurrentStep(1)}
                         >
-                          <span className="font-bold text-sm">
-                            Back
-                          </span>
+                          <span className="font-bold text-sm">Back</span>
                         </Button>
                         <Button
                           intent="success"
@@ -687,9 +639,7 @@ export default function CurrVitaeGenerator() {
                           className="lg:w-52"
                           onClick={() => setCurrentStep(1)}
                         >
-                          <span className="font-bold text-sm">
-                            Back
-                          </span>
+                          <span className="font-bold text-sm">Back</span>
                         </Button>
                         <Button
                           intent="success"
@@ -697,9 +647,7 @@ export default function CurrVitaeGenerator() {
                           onClick={nextStep}
                           disabled={experiences!.length === 0}
                         >
-                          <span className="font-bold text-sm">
-                            Next: Skill
-                          </span>
+                          <span className="font-bold text-sm">Next: Skill</span>
                         </Button>
                       </div>
                     </>
@@ -718,9 +666,7 @@ export default function CurrVitaeGenerator() {
               {/* Step 4 - Skiils */}
               {currentStep === 4 && (
                 <div className="flex flex-col w-full max-w-5xl mx-auto gap-4 overflow-y-auto h-[calc(100vh-8rem)] px-4 lg:px-6">
-                  <span className="font-semibold text-lg">
-                    Skills Summary
-                  </span>
+                  <span className="font-semibold text-lg">Skills Summary</span>
 
                   {!showForm ? (
                     <>
@@ -748,9 +694,7 @@ export default function CurrVitaeGenerator() {
                           className="lg:w-52"
                           onClick={() => setCurrentStep(1)}
                         >
-                          <span className="font-bold text-sm">
-                            Back
-                          </span>
+                          <span className="font-bold text-sm">Back</span>
                         </Button>
                         <Button
                           intent="success"
@@ -795,9 +739,7 @@ export default function CurrVitaeGenerator() {
             <div className="flex gap-8 w-full justify-between pr-5">
               <div className="w-full lg:w-3/4 xl:w-3/5 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-4 lg:p-6 overflow-hidden">
                 <div className="sticky top-0 bg-white pb-4 mb-4 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold">
-                    Live Preview
-                  </h3>
+                  <h3 className="text-lg font-semibold">Live Preview</h3>
                 </div>
                 <div
                   className="scale-75 lg:scale-90 origin-top -mt-20 cursor-pointer"
@@ -852,9 +794,7 @@ export default function CurrVitaeGenerator() {
           {currentStep === 1 && (
             <div className="w-full lg:w-1/3 xl:w-2/5 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-4 lg:p-6 overflow-hidden">
               <div className="sticky top-0 bg-white pb-4 mb-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold">
-                  Live Preview
-                </h3>
+                <h3 className="text-lg font-semibold">Live Preview</h3>
               </div>
               <div
                 className="scale-75 lg:scale-90 origin-top -mt-20 cursor-pointer"
@@ -880,7 +820,7 @@ export default function CurrVitaeGenerator() {
 
           <PreviewGenerator
             ref={refPreview}
-            data={finalCV}
+            data={finalCV || biodataCurr}
             isShowing={preview}
             onClose={() => setPreview(false)}
           />

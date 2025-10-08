@@ -2,11 +2,8 @@
 
 import React, { forwardRef, useState, useRef } from 'react'
 import { FilePond, registerPlugin } from 'react-filepond'
-import 'filepond/dist/filepond.min.css'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 import { Cropper, CropperRef, CropperPreview } from 'react-advanced-cropper'
-import 'react-advanced-cropper/dist/style.css'
 import { PropsWithRef } from 'react'
 import { canvasToBlob, joinClass } from '@/utils/common'
 import Modal from '../modal'
@@ -14,7 +11,10 @@ import Button from '@/components/CultUI/Button'
 import { useModalConfirm } from '@/libs/modalConfirm'
 import { usePostFile, useDeleteFile } from '@/services/master/file/mutation'
 import { toast } from 'react-toastify'
-import { useFileManager } from '@/libs/fileManager'
+import { useFileManagerStore } from '@/utils/store'
+import 'filepond/dist/filepond.min.css'
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
+import 'react-advanced-cropper/dist/style.css'
 
 registerPlugin(FilePondPluginImagePreview)
 
@@ -32,6 +32,10 @@ export interface FileInputProps extends PropsWithRef<any> {
   files?: any[]
   filesMetadata?: Map<string, FileMetadata>
   onUpdateFiles?: (files: any[]) => void
+  onSuccessUpload?: (response: any, file: File) => void
+  onErrorUpload?: (response: any) => void
+  onSuccessDelete?: (response: any) => void
+  onErrorDelete?: (response: any) => void
   allowMultiple?: boolean
   acceptedFileTypes?: string[]
   maxFiles?: number
@@ -57,6 +61,10 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
       files = [],
       filesMetadata,
       onUpdateFiles,
+      onSuccessUpload,
+      onErrorUpload,
+      onSuccessDelete,
+      onErrorDelete,
       allowMultiple = false,
       acceptedFileTypes = [],
       maxFiles = 1,
@@ -93,7 +101,7 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
     const { openModal, closeModal } = useModalConfirm()
 
     // File manager and mutations
-    const fileManager = useFileManager()
+    const fileManager = useFileManagerStore()
     const { mutate: fileAdd, isPending: isLoadingAddFile } = usePostFile()
     const { mutate: fileDelete, isPending: isLoadingDeleteFile } =
       useDeleteFile()
@@ -120,9 +128,12 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
         onError: (err: any) => {
           toast.error(err?.response?.data?.message || 'Failed to upload file')
           fileManager.setFileError(file, err?.response?.data?.message)
+
+          if (typeof onErrorUpload === 'function') {
+            onErrorUpload(err)
+          }
         },
         onSuccess: (res: any) => {
-          console.log('Upload success:', res?.message)
           toast.success(res?.message || 'File uploaded successfully')
 
           fileManager.setFiles([file])
@@ -132,6 +143,10 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
             url: res.data.url,
             public_id: res.data.public_id,
           })
+
+          if (typeof onSuccessUpload === 'function') {
+            onSuccessUpload(res, file)
+          }
         },
       })
     }
@@ -139,10 +154,7 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
     const handleDeleteFile = (fileItem: any, metadata?: FileMetadata) => {
       const file = fileItem.file || fileItem
 
-      console.log('Delete attempt - File:', file, 'Metadata:', metadata)
-
       if (!metadata?.id) {
-        console.error('Cannot delete: No metadata or ID found for file')
         toast.error('Cannot delete file: Missing file information')
         return
       }
@@ -153,10 +165,6 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
       }
 
       const fileId = getFileId(file)
-
-      console.log('fileItem', fileItem)
-      console.log('fileManger', fileManager.getFileEntry(fileItem))
-
       const param = {
         id: metadata.id,
         public_id: metadata.public_id || metadata.publicId,
@@ -164,11 +172,13 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
         resourceType: uploadResourceType,
       }
 
-      console.log('Deleting file with params:', param)
-
       fileDelete(param, {
         onError: (err: any) => {
           toast.error(err?.response?.data?.message || 'Failed to delete file')
+
+          if(typeof onErrorDelete === 'function') {
+            onErrorDelete(err)
+          }
         },
         onSuccess: (res: any) => {
           // ✅ Remove from FilePond after successful delete
@@ -186,6 +196,10 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
           onUpdateFiles?.(updatedFiles)
 
           toast.success(res?.message || 'File deleted successfully')
+
+          if(typeof onSuccessDelete === 'function'){
+            onSuccessDelete(res)
+          }
         },
       })
     }
@@ -196,16 +210,13 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
 
       // Prevent processing during crop operations
       if (isProcessingCrop) {
-        console.log('⚠️ Skipping update because crop is already processing')
         return
       }
 
       // Check if we need to trigger cropping for any new image files
       if (enableCrop) {
-        console.log('🔍 Enable crop active, checking files...')
         const newImageFile = newFiles.find((file) => {
           if (!(file instanceof File) || !file.type.startsWith('image/')) {
-            console.log('⏭️ Not an image file:', file)
             return false
           }
 
@@ -216,10 +227,6 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
             (existingFile: any) =>
               existingFile instanceof File &&
               getFileId(existingFile) === fileId,
-          )
-
-          console.log(
-            `Checking ${file.name} → processed=${isProcessed}, last=${isLastProcessed}, already=${isAlreadyInFiles}`,
           )
 
           return !isProcessed && !isLastProcessed && !isAlreadyInFiles
@@ -241,15 +248,11 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
             setCropModalOpen(true)
           }
           reader.readAsDataURL(newImageFile)
-
-          console.log('🛑 Returning early to prevent onUpdateFiles')
-          return // Don't update files yet
+          return 
         } else {
           console.log('❌ No new image file found, continuing to next step')
         }
       }
-
-      console.log('➡️ Updating files with onUpdateFiles')
       onUpdateFiles?.(newFiles)
     }
 
@@ -368,17 +371,6 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
       closeModal()
     }
 
-    // Track previous files length to detect external changes
-    // const prevFilesLengthRef = useRef(files.length)
-
-    // React.useEffect(() => {
-    //   // Only sync if files changed externally (not from our internal updates)
-    //   if (files.length !== prevFilesLengthRef.current && !isProcessingCrop) {
-    //     setFilePondFiles([...files])
-    //     prevFilesLengthRef.current = files.length
-    //   }
-    // }, [files.length, isProcessingCrop])
-
     // Stencil props for cropping constraints
     const stencilProps = {
       aspectRatio: cropAspectRatio,
@@ -444,7 +436,7 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
                   description: 'Are you sure you want to delete this image?',
                   onConfirm: () => {
                     closeModal()
-                    handleDeleteFile(fileItem, metadata) // Pass metadata here
+                    handleDeleteFile(fileItem, metadata)
                     setPendingDeleteFile(null)
                     resolve(true)
                   },
