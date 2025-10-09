@@ -224,11 +224,6 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
               }}
             >
               <div className="flex justify-center p-4 flex-col">
-                {/* <div
-                  className="w-full aspect-square p-4 flex items-center 
-                           justify-center max-w-[200px] mx-auto lg:max-w-none bg-blue-500 rounded-full"
-                >
-                </div> */}
                 <Image
                   src={data?.profilePicture! || '/User.png'}
                   alt="profilePicture"
