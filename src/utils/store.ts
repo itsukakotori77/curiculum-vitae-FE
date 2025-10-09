@@ -308,86 +308,107 @@ export const useCVNavigationStore = create<CVNavigationStore>((set, get) => ({
   },
 }))
 
-export const useFileManagerStore = create<IFileManagerStore>((set, get) => ({
-  fileEntries: [],
-  addFile: (file: File) => {
-    set((state) => ({
-      fileEntries: [
-        ...state.fileEntries,
-        {
-          file,
-          uploadStatus: 'pending' as const,
-        },
-      ],
-    }))
-  },
+export const useFileManagerStore = create<IFileManagerStore>()(
+  persist(
+    (set, get) => ({
+      fileEntries: [],
 
-  updateFileMetadata: (file: File, metadata: MetadataFile) => {
-    set((state) => ({
-      fileEntries: state.fileEntries.map((entry) =>
-        entry.file === file
-          ? { ...entry, ...metadata, uploadStatus: 'success' as const }
-          : entry,
-      ),
-    }))
-  },
+      addFile: (file: File) => {
+        set((state) => ({
+          fileEntries: [
+            ...state.fileEntries,
+            {
+              file,
+              uploadStatus: 'pending' as const,
+            },
+          ],
+        }))
+      },
 
-  setFileUploading: (file: File) => {
-    set((state) => ({
-      fileEntries: state.fileEntries.map((entry) =>
-        entry.file === file
-          ? { ...entry, uploadStatus: 'uploading' as const }
-          : entry,
-      ),
-    }))
-  },
+      updateFileMetadata: (file: File, metadata: MetadataFile) => {
+        set((state) => ({
+          fileEntries: state.fileEntries.map((entry) =>
+            entry.file === file
+              ? { ...entry, ...metadata, uploadStatus: 'success' as const }
+              : entry,
+          ),
+        }))
+      },
 
-  setFileError: (file: File, error: string) => {
-    set((state) => ({
-      fileEntries: state.fileEntries.map((entry) =>
-        entry.file === file
-          ? { ...entry, uploadStatus: 'error' as const, error }
-          : entry,
-      ),
-    }))
-  },
+      setFileUploading: (file: File) => {
+        set((state) => ({
+          fileEntries: state.fileEntries.map((entry) =>
+            entry.file === file
+              ? { ...entry, uploadStatus: 'uploading' as const }
+              : entry,
+          ),
+        }))
+      },
 
-  getFileEntry: (file: File) => {
-    return get().fileEntries.find((entry) => entry.file === file)
-  },
+      setFileError: (file: File, error: string) => {
+        set((state) => ({
+          fileEntries: state.fileEntries.map((entry) =>
+            entry.file === file
+              ? { ...entry, uploadStatus: 'error' as const, error }
+              : entry,
+          ),
+        }))
+      },
 
-  getFileMetadata: (file: File) => {
-    const entry = get().fileEntries.find((entry) => entry.file === file)
-    if (!entry) return null
+      getFileEntry: (file: File) => {
+        return get().fileEntries.find((entry) => entry.file === file)
+      },
 
-    return {
-      id: entry.id,
-      url: entry.url,
-      public_id: entry.public_id,
-      uploadStatus: entry.uploadStatus,
-    }
-  },
+      getFileMetadata: (file: File | any) => {
+        const entry = get().fileEntries.find(
+          (entry) => entry.filename === file.filename,
+        )
+        if (!entry) return null
 
-  removeFileFromState: (file: File) => {
-    set((state) => ({
-      fileEntries: state.fileEntries.filter((entry) => entry.file !== file),
-    }))
-  },
+        return {
+          id: entry.id,
+          url: entry.url,
+          public_id: entry.public_id,
+          uploadStatus: entry.uploadStatus,
+        }
+      },
 
-  getFiles: () => {
-    return get().fileEntries.map((entry) => entry.file)
-  },
+      removeFileFromState: (file: File) => {
+        set((state) => ({
+          fileEntries: state.fileEntries.filter((entry) => entry.file !== file),
+        }))
+      },
 
-  clearAllFiles: () => {
-    set({ fileEntries: [] })
-  },
+      getFiles: () => {
+        return get().fileEntries.map((entry) => entry.file)
+      },
 
-  setFiles: (files: File[]) => {
-    set({
-      fileEntries: files.map((file) => ({
-        file,
-        uploadStatus: 'pending' as const,
-      })),
-    })
-  },
-}))
+      clearAllFiles: () => {
+        set({ fileEntries: [] })
+      },
+
+      setFiles: (files: File[]) => {
+        set({
+          fileEntries: files.map((file) => ({
+            file,
+            uploadStatus: 'pending' as const,
+          })),
+        })
+      },
+    }),
+    {
+      name: 'file-manager-storage', // unique name for localStorage key
+      // Optional: customize what gets persisted
+      partialize: (state) => ({
+        fileEntries: state.fileEntries.map((entry) => ({
+          uploadStatus: entry.uploadStatus,
+          id: entry.id,
+          url: entry.url,
+          public_id: entry.public_id,
+          filename: entry.filename,
+          error: entry.error,
+        })),
+      }),
+    },
+  ),
+)

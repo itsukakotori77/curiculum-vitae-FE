@@ -7,6 +7,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useRef,
+  useMemo,
 } from 'react'
 import { set, useForm } from 'react-hook-form'
 import * as Yup from 'yup'
@@ -37,7 +38,7 @@ const Schema = Yup.object().shape({
   lastName: Yup.string().required('lastname is required'),
   nickname: Yup.string().required('nickname is required'),
   role: Yup.string().required('role is required'),
-  profile: Yup.string().required('profile is required')
+  profile: Yup.string().required('profile is required'),
 })
 
 const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
@@ -59,9 +60,17 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
         nickname: '',
         role: '',
         profile: '',
-        profilePicture: ''
+        profilePicture: '',
       },
     })
+
+    const profileImageFiles = useMemo(() => {
+      const url = watch('profilePicture')
+      if (url && typeof url === 'string' && url.trim() !== '') {
+        return [url] // Pass URL as array
+      }
+      return []
+    }, [watch('profilePicture')])
 
     const watchedValues = watch()
     const prevValuesRef = useRef<IGeneratorStep1>(null)
@@ -76,7 +85,6 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
 
         if (onChange) {
           onChange(watchedValues)
-          console.log('watchedValues', watchedValues)
         }
 
         if (setState) {
@@ -161,6 +169,7 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
               cropAspectRatio: 1,
               acceptedFileTypes: ['image/*'],
               maxFiles: 1,
+              files: profileImageFiles,
               labelIdle:
                 'Drop your profile image here or <span class="font-bold">Browse</span>',
             }}

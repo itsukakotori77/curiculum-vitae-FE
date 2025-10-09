@@ -3,6 +3,7 @@ export interface IFileEntry {
   id?: string
   url?: string
   public_id?: string
+  filename?: string
   uploadStatus: 'pending' | 'uploading' | 'success' | 'error'
   error?: string
 }
@@ -11,6 +12,7 @@ export interface MetadataFile {
   id: string
   url: string
   public_id: string
+  filename: string
 }
 
 export interface IFileManagerStore {

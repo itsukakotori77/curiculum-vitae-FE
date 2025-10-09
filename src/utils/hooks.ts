@@ -22,7 +22,6 @@ export const useCVData = () => {
 
   // Update final CV whenever any step data changes
   useEffect(() => {
-    console.log('step1 data', step1Data)
     updateFinalCV()
   }, [step1Data, step2Data, step3Data, step4Data, step5Data, updateFinalCV])
 

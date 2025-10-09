@@ -1,6 +1,6 @@
-import React, { HTMLProps } from 'react'
+import React, { HTMLProps, useMemo } from 'react'
 import Label, { LabelProps } from './Label'
-import { Control, Controller } from 'react-hook-form'
+import { Control, Controller, useController } from 'react-hook-form'
 import { FileInputProps, FileMetadata } from './FileInput'
 import FileInput from './FileInput'
 
@@ -30,6 +30,23 @@ const FileForm: React.FC<IProps> = ({
   onErrorDelete,
   ...props
 }) => {
+  const { field } = useController({ control, name })
+  
+  const initialFiles = useMemo(() => {
+    const value = field.value
+    if (value && typeof value === 'string') {
+      return [
+        {
+          source: value,
+          options: {
+            type: 'local',
+          },
+        },
+      ]
+    }
+    return []
+  }, [field.value])
+  
   return (
     <div {...props}>
       <Label {...fieldLabel} />
@@ -46,6 +63,7 @@ const FileForm: React.FC<IProps> = ({
             <FileInput
               value={value || []}
               name={name}
+              files={initialFiles}
               filesMetadata={filesMetadata}
               onUpdateFiles={(files: any) => {
                 onChange(files)

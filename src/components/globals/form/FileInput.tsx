@@ -1,6 +1,6 @@
 'use client'
 
-import React, { forwardRef, useState, useRef } from 'react'
+import React, { forwardRef, useState, useRef, useMemo } from 'react'
 import { FilePond, registerPlugin } from 'react-filepond'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import { Cropper, CropperRef, CropperPreview } from 'react-advanced-cropper'
@@ -23,6 +23,7 @@ export interface FileMetadata {
   url?: string
   publicId?: string
   public_id?: string
+  filename?: string
   uploadStatus?: 'pending' | 'uploading' | 'success' | 'error'
   [key: string]: any
 }
@@ -91,7 +92,6 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
     const [currentImage, setCurrentImage] = useState<string>('')
     const [pendingFile, setPendingFile] = useState<File | null>(null)
     const [pendingDeleteFile, setPendingDeleteFile] = useState<any>(null)
-    const [filePondFiles, setFilePondFiles] = useState<any[]>([])
     const [isProcessingCrop, setIsProcessingCrop] = useState(false)
     const [coordinates, setCoordinates] = useState<any>(null)
     const [processedFiles, setProcessedFiles] = useState<Set<string>>(new Set())
@@ -105,6 +105,63 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
     const { mutate: fileAdd, isPending: isLoadingAddFile } = usePostFile()
     const { mutate: fileDelete, isPending: isLoadingDeleteFile } =
       useDeleteFile()
+
+    const serverConfig = useMemo(() => {
+      if (server && typeof server === 'object') {
+        return {
+          ...server,
+          load: (
+            source: string,
+            load: any,
+            error: any,
+            progress: any,
+            abort: any,
+          ) => {
+            fetch(source)
+              .then((res) => {
+                console.log('res', res)
+                res.blob()
+              })
+              .then((blob) => load(blob))
+              .catch((err) => error(err.message))
+
+            return { abort: () => abort() }
+          },
+        }
+      }
+
+      return {
+        load: (
+          source: string,
+          load: any,
+          error: any,
+          progress: any,
+          abort: any,
+        ) => {
+          fetch(source)
+            .then((res) => res.blob())
+            .then((blob) => load(blob))
+            .catch((err) => error(err.message))
+
+          return { abort: () => abort() }
+        },
+      }
+    }, [server])
+
+    // ✅ Convert files prop to FilePond format (for display only)
+    const displayFiles = useMemo(() => {
+      return files.map((file: any) => {
+        if (typeof file === 'string') {
+          return {
+            source: file,
+            options: {
+              type: 'local',
+            },
+          }
+        }
+        return file
+      })
+    }, [files])
 
     // Create a unique file identifier
     const getFileId = (file: File | any) =>
@@ -137,11 +194,11 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
           toast.success(res?.message || 'File uploaded successfully')
 
           fileManager.setFiles([file])
-
           fileManager.updateFileMetadata(file, {
             id: res.data.id,
             url: res.data.url,
             public_id: res.data.public_id,
+            filename: res.data.filename
           })
 
           if (typeof onSuccessUpload === 'function') {
@@ -155,6 +212,7 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
       const file = fileItem.file || fileItem
 
       if (!metadata?.id) {
+        console.log('meta data', metadata)
         toast.error('Cannot delete file: Missing file information')
         return
       }
@@ -176,28 +234,22 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
         onError: (err: any) => {
           toast.error(err?.response?.data?.message || 'Failed to delete file')
 
-          if(typeof onErrorDelete === 'function') {
+          if (typeof onErrorDelete === 'function') {
             onErrorDelete(err)
           }
         },
         onSuccess: (res: any) => {
-          // ✅ Remove from FilePond after successful delete
-          const updatedFiles = filePondFiles.filter(
-            (f) => getFileId(f) !== fileId,
-          )
-          setFilePondFiles(updatedFiles)
+          // ✅ Notify parent to clear files
+          onUpdateFiles?.([])
 
           // Remove from processedFiles set
           const newProcessedFiles = new Set(processedFiles)
           newProcessedFiles.delete(fileId)
           setProcessedFiles(newProcessedFiles)
 
-          // Sync with parent
-          onUpdateFiles?.(updatedFiles)
-
           toast.success(res?.message || 'File deleted successfully')
 
-          if(typeof onSuccessDelete === 'function'){
+          if (typeof onSuccessDelete === 'function') {
             onSuccessDelete(res)
           }
         },
@@ -248,12 +300,11 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
             setCropModalOpen(true)
           }
           reader.readAsDataURL(newImageFile)
-          return 
+          return
         } else {
           console.log('❌ No new image file found, continuing to next step')
         }
       }
-      onUpdateFiles?.(newFiles)
     }
 
     const handleCropConfirm = async () => {
@@ -283,30 +334,15 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
         // Prevent FilePond from reopening modal again
         lastProcessedFileRef.current = croppedFileId
 
-        // Update the files array with the cropped file
-        let updatedFiles = [...files]
-        if (allowMultiple) {
-          updatedFiles.push(croppedFile)
-        } else {
-          updatedFiles = [croppedFile]
-        }
-
         // Close modal and reset states
         setCropModalOpen(false)
         setCurrentImage('')
         setPendingFile(null)
 
-        // Update parent state first
-        onUpdateFiles?.(updatedFiles)
-
         // Upload file to server
         handleUploadFile(croppedFile)
 
-        // Use setTimeout to sync FilePond
-        setTimeout(() => {
-          setFilePondFiles(updatedFiles)
-          setIsProcessingCrop(false)
-        }, 0)
+        setIsProcessingCrop(false)
       } catch (error) {
         console.error('Error cropping image:', error)
         handleCropCancel()
@@ -319,9 +355,6 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
       setPendingFile(null)
       setIsProcessingCrop(false)
       lastProcessedFileRef.current = null
-
-      // Reset FilePond to show current files
-      setFilePondFiles([...files])
     }
 
     const handleSkipCrop = () => {
@@ -335,40 +368,16 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
       newProcessedFiles.add(fileId)
       setProcessedFiles(newProcessedFiles)
 
-      // Add the original file without cropping
-      let updatedFiles = [...files]
-      if (allowMultiple) {
-        updatedFiles.push(pendingFile)
-      } else {
-        updatedFiles = [pendingFile]
-      }
-
       // Close modal and reset states
       setCropModalOpen(false)
       setCurrentImage('')
       const fileToUpload = pendingFile
       setPendingFile(null)
 
-      // Update parent state first
-      onUpdateFiles?.(updatedFiles)
-
       // Upload file to server
       handleUploadFile(fileToUpload)
 
-      // Use setTimeout to ensure FilePond updates after parent state
-      setTimeout(() => {
-        setFilePondFiles(updatedFiles)
-        setIsProcessingCrop(false)
-      }, 0)
-    }
-
-    // Handle modal close (when user cancels deletion)
-    const handleCancelDelete = () => {
-      if (pendingDeleteFile) {
-        pendingDeleteFile.resolve(false)
-        setPendingDeleteFile(null)
-      }
-      closeModal()
+      setIsProcessingCrop(false)
     }
 
     // Stencil props for cropping constraints
@@ -404,12 +413,12 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
                 ref.current = el
               }
             }}
-            files={filePondFiles}
+            files={displayFiles}
             onupdatefiles={handleFilePondUpdate}
             allowMultiple={allowMultiple}
             acceptedFileTypes={acceptedFileTypes}
             maxFiles={maxFiles}
-            server={server}
+            server={serverConfig}
             name="files"
             imagePreviewMinHeight={100}
             beforeRemoveFile={(fileItem) => {
@@ -421,7 +430,7 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
                 // Look up metadata from filesMetadata map or fileManager
                 const metadata =
                   filesMetadata?.get(fileId) ||
-                  fileManager.getFileMetadata(file as any)
+                  fileManager.getFileMetadata(fileItem as any)
 
                 console.log(
                   'Attempting to delete file:',

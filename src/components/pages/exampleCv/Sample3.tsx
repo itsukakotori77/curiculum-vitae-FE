@@ -235,7 +235,7 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                   width={500}
                   height={500}
                   className="w-full h-full aspect-square p-0 flex items-center 
-                           justify-center max-w-[200px] mx-auto lg:max-w-none rounded-full"
+                           justify-center max-w-[200px] mx-auto lg:max-w-none rounded-full object-cover"
                   key={data?.profilePicture} 
                   unoptimized
                 />
