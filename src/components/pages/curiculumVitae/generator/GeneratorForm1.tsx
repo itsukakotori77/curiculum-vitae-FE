@@ -184,7 +184,7 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
 
           <TextareaForm
             fieldLabel={{ children: 'Profile', required: true }}
-            fieldInput={{ maxLength: 500 }}
+            fieldInput={{ maxLength: 500, rows: 7 }}
             name="profile"
             control={control}
           />
