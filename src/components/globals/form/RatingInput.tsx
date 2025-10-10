@@ -1,3 +1,5 @@
+'use client'
+
 import React, { forwardRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Star } from 'lucide-react'
@@ -71,15 +73,11 @@ const RatingInput = forwardRef<HTMLDivElement, RatingInputProps>(
     const getBorderColor = (): string => {
       if (isInvalid || error) return 'border-red-300'
       if (isValid) return 'border-green-300'
-      return 'border-gray-200'
+      return 'border-black'
     }
 
     return (
-      <div
-        className={joinClass('w-full', className)}
-        ref={ref}
-        {...props}
-      >
+      <div className={joinClass('w-full', className)} ref={ref} {...props}>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -89,14 +87,12 @@ const RatingInput = forwardRef<HTMLDivElement, RatingInputProps>(
           {label && (
             <label className="block text-sm font-medium text-gray-700">
               {label}
-              {required && (
-                <span className="text-red-500 ml-1">*</span>
-              )}
+              {required && <span className="text-red-500 ml-1">*</span>}
             </label>
           )}
 
           <div
-            className={`flex space-x-1 p-3 rounded-lg border-2 transition-colors duration-200 ${getBorderColor()} ${
+            className={`flex space-x-1 p-3 rounded-lg border-2 border-black focus:border-gray-200 shadow-[3px_3px_0px_rgba(0,0,0,1)] transition-colors duration-200 ${getBorderColor()} ${
               isDisabled
                 ? 'opacity-50 cursor-not-allowed bg-gray-50'
                 : 'bg-white hover:border-blue-300'
@@ -129,8 +125,7 @@ const RatingInput = forwardRef<HTMLDivElement, RatingInputProps>(
                   animate={{
                     rotate:
                       !isDisabled &&
-                      (hoveredRating === starValue ||
-                        value === starValue)
+                      (hoveredRating === starValue || value === starValue)
                         ? 360
                         : 0,
                   }}
