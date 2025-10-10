@@ -43,6 +43,7 @@ const RadioInput: React.FC<RadioInputProps> = forwardRef(
               )}
               type="radio"
               autoComplete="off"
+              checked={checked}
               {...props}
             />
             <span

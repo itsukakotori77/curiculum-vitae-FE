@@ -51,25 +51,31 @@ const RadioForm: React.FC<RadioProps> = ({
                 classNameWrapper,
               )}
             >
-              {fieldInput.map((item, index) => (
-                <label
-                  key={`radio-item-${index}-${item.value}`}
-                  className="flex flex-row gap-1 items-center cursor-pointer"
-                >
-                  <RadioInput
-                    name={field.name}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                    value={item.value}
-                    checked={field.value === item.value}
-                    ref={field.ref}
-                    label={item.label}
-                    className={joinClass('max-h-[16px] max-w-[16px]')}
-                    labelClassName={labelClassName}
-                    isInvalid={Boolean(errors?.[name]?.message)}
-                  />
-                </label>
-              ))}
+              {fieldInput.map((item, index) => {
+                return (
+                  <label
+                    key={`radio-item-${index}-${item.value}`}
+                    className="flex flex-row gap-1 items-center cursor-pointer"
+                  >
+                    <RadioInput
+                      name={field.name}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      value={item.value}
+                      checked={
+                        typeof field.value === 'string'
+                          ? (field?.value === String(item.value))
+                          : (field?.value === item.value)
+                      }
+                      ref={field.ref}
+                      label={item.label}
+                      className={joinClass('max-h-[16px] max-w-[16px]')}
+                      labelClassName={labelClassName}
+                      isInvalid={Boolean(errors?.[name]?.message)}
+                    />
+                  </label>
+                )
+              })}
             </div>
             {errors?.[name]?.message && (
               <span className="text-xs text-error">
