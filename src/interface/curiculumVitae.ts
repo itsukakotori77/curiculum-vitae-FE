@@ -92,6 +92,7 @@ export interface IColorCurr {
   sidebarColor: RgbaColor
   primaryColor: RgbaColor
   skillColor?: RgbaColor
+  isUsingPhoto?: boolean | number 
 }
 
 export interface CVProps {
@@ -160,6 +161,7 @@ export interface ISettingCurr {
   sidebarColor?: RgbaColor
   primaryColor?: RgbaColor
   skiilColor?: RgbaColor
+  usingPicture?: boolean | number
 }
 
 export interface CVStep1Store {
