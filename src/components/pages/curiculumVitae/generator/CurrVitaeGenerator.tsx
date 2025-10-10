@@ -292,7 +292,7 @@ export default function CurrVitaeGenerator() {
     (val: any, step?: number) => {
       setShowForm(false)
       setEditIndexExp(null)
-      if (typeof step === 'number') {
+      if (step) {
         setCurrentStep(step)
       }
     },
@@ -645,7 +645,7 @@ export default function CurrVitaeGenerator() {
                         <Button
                           intent="default"
                           className="lg:w-52"
-                          onClick={() => setCurrentStep(1)}
+                          onClick={() => setCurrentStep(2)}
                         >
                           <span className="font-bold text-sm">Back</span>
                         </Button>
@@ -702,7 +702,7 @@ export default function CurrVitaeGenerator() {
                         <Button
                           intent="default"
                           className="lg:w-52"
-                          onClick={() => setCurrentStep(1)}
+                          onClick={() => setCurrentStep(3)}
                         >
                           <span className="font-bold text-sm">Back</span>
                         </Button>
@@ -739,7 +739,9 @@ export default function CurrVitaeGenerator() {
                     ref={form5Ref}
                     data={contacts}
                     onSubmit={handleStep5Submit}
-                    onCancel={handleFormCancel}
+                    onCancel={(val: any, step?: number) =>
+                      handleFormCancel(val, step)
+                    }
                     className="w-full"
                   />
                 </div>
