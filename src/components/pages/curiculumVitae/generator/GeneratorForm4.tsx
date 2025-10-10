@@ -18,7 +18,7 @@ interface FormGenerator4 {
   data?: IGeneratorStep4
   loading?: boolean
   onSubmit: (val: IGeneratorStep4) => void
-  onCancel: (val: IGeneratorStep4) => void
+  onCancel: (val: IGeneratorStep4, step?: number) => void
   onChange?: (val: IGeneratorStep4) => void
   setState?: React.Dispatch<
     React.SetStateAction<IGeneratorStep4 | undefined>
@@ -130,7 +130,7 @@ const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
               type="button"
               intent="default"
               className="w-40"
-              onClick={() => onCancel(watchedValues)}
+              onClick={() => onCancel(watchedValues, 4)}
             >
               <span className="font-bold">Cancel</span>
             </Button>

@@ -17,6 +17,7 @@ import Button from '@/components/CultUI/Button'
 import Card from '@/components/CultUI/Card'
 import FileForm from '@/components/globals/form/FileForm'
 import Image from 'next/image'
+import { useCVSettingStore } from '@/utils/store'
 
 interface FormGeneratorStep1 {
   data?: IGeneratorStep1
@@ -67,13 +68,14 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
     const profileImageFiles = useMemo(() => {
       const url = watch('profilePicture')
       if (url && typeof url === 'string' && url.trim() !== '') {
-        return [url] // Pass URL as array
+        return [url]
       }
       return []
     }, [watch('profilePicture')])
 
     const watchedValues = watch()
     const prevValuesRef = useRef<IGeneratorStep1>(null)
+    const usingPicture = useCVSettingStore((state) => state.data?.usingPicture)
 
     useEffect(() => {
       const hasChanged =
@@ -157,30 +159,32 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
             control={control}
           />
 
-          <FileForm
-            control={control}
-            name="image"
-            fieldLabel={{
-              children: 'Profile Image',
-              required: true,
-            }}
-            fileInput={{
-              enableCrop: true,
-              cropAspectRatio: 1,
-              acceptedFileTypes: ['image/*'],
-              maxFiles: 1,
-              files: profileImageFiles,
-              labelIdle:
-                'Drop your profile image here or <span class="font-bold">Browse</span>',
-            }}
-            className="mb-4"
-            onSuccessUpload={(res, file) => {
-              setValue('profilePicture', res.data.url)
-            }}
-            onSuccessDelete={() => {
-              setValue('profilePicture', '')
-            }}
-          />
+          {!!usingPicture && (
+            <FileForm
+              control={control}
+              name="image"
+              fieldLabel={{
+                children: 'Profile Image',
+                required: true,
+              }}
+              fileInput={{
+                enableCrop: true,
+                cropAspectRatio: 1,
+                acceptedFileTypes: ['image/*'],
+                maxFiles: 1,
+                files: profileImageFiles,
+                labelIdle:
+                  'Drop your profile image here or <span class="font-bold">Browse</span>',
+              }}
+              className="mb-4"
+              onSuccessUpload={(res, file) => {
+                setValue('profilePicture', res.data.url)
+              }}
+              onSuccessDelete={() => {
+                setValue('profilePicture', '')
+              }}
+            />
+          )}
 
           <TextareaForm
             fieldLabel={{ children: 'Profile', required: true }}

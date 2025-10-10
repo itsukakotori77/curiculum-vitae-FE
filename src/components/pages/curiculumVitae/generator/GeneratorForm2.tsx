@@ -19,8 +19,9 @@ interface FormGeneratorStep2 {
   data?: IGeneratorStep2
   loading?: boolean
   onSubmit: (val: IGeneratorStep2) => void
-  onCancel: (val: IGeneratorStep2) => void
+  onCancel: (val: IGeneratorStep2, step?: number) => void
   onChange?: (val: IGeneratorStep2) => void
+  onBackStep?: (step: number) => void 
   setState?: React.Dispatch<
     React.SetStateAction<IGeneratorStep2 | undefined>
   >
@@ -55,6 +56,7 @@ const GeneratorForm2 = forwardRef<
       onSubmit,
       onCancel,
       onChange,
+      onBackStep,
       setState,
       className,
     },
@@ -151,7 +153,7 @@ const GeneratorForm2 = forwardRef<
               type="button"
               intent="default"
               className="w-40"
-              onClick={() => onCancel(watchedValues)}
+              onClick={() => onCancel(watchedValues, 2)}
             >
               <span className="font-bold">Cancel</span>
             </Button>

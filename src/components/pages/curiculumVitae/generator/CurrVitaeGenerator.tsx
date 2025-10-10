@@ -288,10 +288,16 @@ export default function CurrVitaeGenerator() {
     router.back()
   }, [router])
 
-  const handleFormCancel = useCallback(() => {
-    setShowForm(false)
-    setEditIndexExp(null)
-  }, [setShowForm, setEditIndexExp])
+  const handleFormCancel = useCallback(
+    (val: any, step?: number) => {
+      setShowForm(false)
+      setEditIndexExp(null)
+      if (typeof step === 'number') {
+        setCurrentStep(step)
+      }
+    },
+    [setShowForm, setEditIndexExp, setCurrentStep],
+  )
 
   // Render experiences
   const experienceItems = useMemo(() => {
@@ -599,7 +605,9 @@ export default function CurrVitaeGenerator() {
                       ref={form2Ref}
                       data={currentExperienceData}
                       onSubmit={handleStep2Submit}
-                      onCancel={handleFormCancel}
+                      onCancel={(val: any, step?: number) =>
+                        handleFormCancel(val, step)
+                      }
                       className="w-full"
                     />
                   )}
@@ -656,7 +664,9 @@ export default function CurrVitaeGenerator() {
                       ref={form3Ref}
                       data={currentEducationData}
                       onSubmit={handleStep3Submit}
-                      onCancel={handleFormCancel}
+                      onCancel={(val: any, step?: number) =>
+                        handleFormCancel(val, step)
+                      }
                       className="w-full"
                     />
                   )}
@@ -713,7 +723,9 @@ export default function CurrVitaeGenerator() {
                       ref={form4Ref}
                       data={currentSkillData}
                       onSubmit={handleStep4Submit}
-                      onCancel={handleFormCancel}
+                      onCancel={(val: any, step?: number) =>
+                        handleFormCancel(val, step)
+                      }
                       className="w-full"
                     />
                   )}
