@@ -1,10 +1,6 @@
 'use client'
 
-import React, {
-  HTMLAttributeReferrerPolicy,
-  useRef,
-  useState,
-} from 'react'
+import React, { HTMLAttributeReferrerPolicy, useRef, useState } from 'react'
 import Card from '@/components/CultUI/Card'
 import Filter from './Filter'
 import Image from 'next/image'
@@ -38,6 +34,7 @@ export default function CuriculumVitae() {
 
   const [modal, setModal] = useState<boolean>(false)
   const [currStep, setCurrStep] = useState<number>(1)
+  const [usePhoto, setPhoto] = useState<boolean>(false)
   const { mutate: postSetting, isPending } = usePostSetting()
 
   const componentConfig = [
@@ -109,10 +106,12 @@ export default function CuriculumVitae() {
   ]
 
   const handleSubmit = (data: IColorCurr) => {
+    console.log('usephoto', usePhoto)
     const param = {
       primary_color: rgbaToHex(data.primaryColor),
       sidebar_color: rgbaToHex(data.sidebarColor),
       skill_color: rgbaToHex(data.skillColor!),
+      is_using_photo: +usePhoto,
     }
 
     openModal({
@@ -121,7 +120,7 @@ export default function CuriculumVitae() {
       onConfirm: () => {
         postSetting(param, {
           onSuccess: (res: any) => {
-            updateData({ id: res?.data?.id, ...data })
+            updateData({ id: res?.data?.id, ...data, usingPicture: +usePhoto })
             toast.success(res?.message)
             closeModal()
             router.push(`${pathname}/generate`)
@@ -141,11 +140,7 @@ export default function CuriculumVitae() {
         <div className="flex w-full h-auto gap-24">
           <div className="flex w-[20%] items-start justify-center">
             <div className="w-full sticky top-0">
-              <Filter
-                ref={filterRef}
-                filter={state}
-                setFilter={setState}
-              />
+              <Filter ref={filterRef} filter={state} setFilter={setState} />
             </div>
           </div>
 
@@ -197,15 +192,15 @@ export default function CuriculumVitae() {
               current={currStep}
               direction="horizontal"
               onChangeCurr={(index) => {
-                console.log(`Changed to step: ${index}`)
                 setCurrStep(index)
               }}
             />
 
             {currStep === 1 && (
               <CuriculumVItaeStep1
-                handleChange={(val) => {
+                onStepChange={(val, photo) => {
                   setCurrStep(val)
+                  setPhoto(photo)
                 }}
               />
             )}
@@ -214,6 +209,7 @@ export default function CuriculumVitae() {
               <CuriculumVitaeStep2
                 onSubmit={handleSubmit}
                 isLoading={isPending}
+                onStepChange={(val) => setCurrStep(val)}
               />
             )}
           </div>

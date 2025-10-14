@@ -63,6 +63,7 @@ export interface ICurrVitae {
     gpa?: string
     gpaStatus?: string
     majorDesc?: string
+    gpaCheck?: boolean
   }>
 
   // +=========+ STEP 4 +=========+ //
@@ -160,7 +161,7 @@ export interface ISettingCurr {
   id?: number
   sidebarColor?: RgbaColor
   primaryColor?: RgbaColor
-  skiilColor?: RgbaColor
+  skillColor?: RgbaColor
   usingPicture?: boolean | number
 }
 

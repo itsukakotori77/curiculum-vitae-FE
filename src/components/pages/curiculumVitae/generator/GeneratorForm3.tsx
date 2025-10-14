@@ -14,6 +14,7 @@ import TextareaForm from '@/components/globals/form/TextareaForm'
 import Button from '@/components/CultUI/Button'
 import RadioForm from '@/components/globals/form/RadioForm'
 import NumberInputForm from '@/components/globals/form/NumberInputForm'
+import moment from 'moment'
 
 interface FormGenerator3 {
   data?: IGeneratorStep3
@@ -89,7 +90,7 @@ const GeneratorForm3 = forwardRef<GeneratorForm3Ref, FormGenerator3>(
       mode: 'onChange',
       defaultValues: {
         ...data,
-        gpaCheck: 'false',
+        graduated: moment(data?.graduated)
       },
     })
 
@@ -119,11 +120,11 @@ const GeneratorForm3 = forwardRef<GeneratorForm3Ref, FormGenerator3>(
             fieldInput={[
               {
                 label: 'Yes',
-                value: 'true',
+                value: true,
               },
               {
                 label: 'No',
-                value: 'false',
+                value: false,
               },
             ]}
             name="gpaCheck"
@@ -157,11 +158,11 @@ const GeneratorForm3 = forwardRef<GeneratorForm3Ref, FormGenerator3>(
             fieldInput={[
               {
                 label: 'Yes',
-                value: 'true',
+                value: true,
               },
               {
                 label: 'No',
-                value: 'false',
+                value: false,
               },
             ]}
             name="graduatedStatus"
@@ -199,7 +200,7 @@ const GeneratorForm3 = forwardRef<GeneratorForm3Ref, FormGenerator3>(
               children: 'Major Description',
               required: false,
             }}
-            fieldInput={{ maxLength: 200 }}
+            fieldInput={{ maxLength: 200, rows: 4 }}
             name="majorDesc"
             control={control}
           />

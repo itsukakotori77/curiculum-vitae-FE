@@ -14,6 +14,7 @@ import moment from 'moment'
 import { cva, VariantProps } from 'class-variance-authority'
 import { cn } from '@/utils/common'
 import Image from 'next/image'
+import { useCVSettingStore } from '@/utils/store'
 
 // Define variants using CVA
 const cvVariants = cva(
@@ -203,6 +204,7 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
     },
     ref,
   ) => {
+    const { data: setting } = useCVSettingStore()
 
     return (
       <>
@@ -224,16 +226,18 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
               }}
             >
               <div className="flex justify-center p-4 flex-col">
-                <Image
-                  src={data?.profilePicture! || '/User.png'}
-                  alt="profilePicture"
-                  width={500}
-                  height={500}
-                  className="w-full h-full aspect-square p-0 flex items-center 
-                           justify-center max-w-[200px] mx-auto lg:max-w-none rounded-full object-cover"
-                  key={data?.profilePicture} 
-                  unoptimized
-                />
+                {!!setting?.usingPicture && (
+                  <Image
+                    src={data?.profilePicture! || '/User.png'}
+                    alt="profilePicture"
+                    width={500}
+                    height={500}
+                    className="w-full h-full aspect-square p-0 flex items-center 
+                             justify-center max-w-[200px] mx-auto lg:max-w-none rounded-full object-cover"
+                    key={data?.profilePicture}
+                    unoptimized
+                  />
+                )}
 
                 {/* CONTACTS */}
                 <div className="flex flex-col my-4">
@@ -378,14 +382,14 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                         >
                           {item?.name}
                         </CVText>
-                        <div className="grid grid-cols-5 w-full">
+                        <div className="grid grid-cols-5 w-full gap-0">
                           {Array.from({ length: item?.level }, (_, index) => (
                             <div
                               key={index}
-                              className={`h-3.5 w-full`}
+                              className={`h-3.5 w-full border-none`}
                               style={{
                                 background: ` ${
-                                  item?.isHasLevel && index < item.level
+                                  Boolean(item?.isHasLevel) && index < item.level
                                     ? skillColor
                                     : ''
                                 }`,

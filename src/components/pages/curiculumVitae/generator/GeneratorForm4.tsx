@@ -10,9 +10,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import React, { forwardRef, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
-import Switch from '@/components/globals/form/Switch'
 import SwitchForm from '@/components/globals/form/SwitchForm'
 import RatingForm from '@/components/globals/form/RatingForm'
+import moment from 'moment'
 
 interface FormGenerator4 {
   data?: IGeneratorStep4
@@ -20,9 +20,7 @@ interface FormGenerator4 {
   onSubmit: (val: IGeneratorStep4) => void
   onCancel: (val: IGeneratorStep4, step?: number) => void
   onChange?: (val: IGeneratorStep4) => void
-  setState?: React.Dispatch<
-    React.SetStateAction<IGeneratorStep4 | undefined>
-  >
+  setState?: React.Dispatch<React.SetStateAction<IGeneratorStep4 | undefined>>
   className?: string
 }
 
@@ -33,9 +31,7 @@ export interface GeneratorForm4Ref {
 }
 
 const Schema = Yup.object().shape({
-  certificateName: Yup.string().required(
-    'Certificate Name is required',
-  ),
+  certificateName: Yup.string().required('Certificate Name is required'),
   company: Yup.string().notRequired(),
   certificatedDate: Yup.string().notRequired(),
   skillName: Yup.string().required('Skillname is required'),
@@ -45,15 +41,7 @@ const Schema = Yup.object().shape({
 
 const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
   (
-    {
-      data,
-      loading,
-      onSubmit,
-      onCancel,
-      onChange,
-      setState,
-      className,
-    },
+    { data, loading, onSubmit, onCancel, onChange, setState, className },
     ref,
   ) => {
     const {
@@ -64,10 +52,14 @@ const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
     } = useForm<IGeneratorStep4 | any>({
       resolver: yupResolver(Schema),
       mode: 'onChange',
+      defaultValues: {
+        ...data,
+        certificateDate: moment(data?.certificateDate),
+      },
     })
 
     const watchedValues = watch()
-    const [checked, setChecked] = useState<boolean>(false)
+    const [checked, setChecked] = useState<boolean>(data?.isHasLevel || false)
 
     return (
       <Card

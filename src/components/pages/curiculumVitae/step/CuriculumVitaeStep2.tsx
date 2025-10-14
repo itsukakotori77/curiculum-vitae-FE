@@ -8,16 +8,19 @@ import { convertColor, hexToRgba } from '@/utils/common'
 import Sample3 from '../../exampleCv/Sample3'
 import { biodataCurr } from '@/data/cv'
 import { IColorCurr } from '@/interface/curiculumVitae'
+import { ChevronLeft } from 'lucide-react'
 interface IProps {
   className?: string
-  onSubmit: (val: IColorCurr) => void
   isLoading?: boolean
+  onSubmit: (val: IColorCurr) => void
+  onStepChange: (step: number, data?: any) => void
 }
 
 export default function CuriculumVitaeStep2({
   className,
   onSubmit,
   isLoading,
+  onStepChange,
 }: IProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { handleSubmit, control, watch } = useForm<IColorCurr>({
@@ -28,10 +31,14 @@ export default function CuriculumVitaeStep2({
     },
   })
 
+  const handleBackStep = (val: number) => {
+    onStepChange(val)
+  }
+
   return (
-    <>
-      <div className="flex gap-10 justify-between w-full max-h-screen">
-        <div className="w-full aspect-[4/5] max-h-screen">
+    <div className="flex flex-col gap-4">
+      <div className="flex gap-10 justify-between w-full h-auto">
+        <div className="w-full aspect-[4/5] h-auto">
           <Sample3
             ref={ref}
             data={biodataCurr}
@@ -39,21 +46,16 @@ export default function CuriculumVitaeStep2({
             textSize="xs"
             sidebarWidth={25}
             printable="noPrint"
-            primaryColor={
-              convertColor(watch('primaryColor')) || '#E3E9EF'
-            }
-            sidebarColor={
-              convertColor(watch('sidebarColor')) || '#5977AC'
-            }
-            skillColor={
-              convertColor(watch('skillColor')!) || '#262424'
-            }
+            primaryColor={convertColor(watch('primaryColor')) || '#E3E9EF'}
+            sidebarColor={convertColor(watch('sidebarColor')) || '#5977AC'}
+            skillColor={convertColor(watch('skillColor')!) || '#262424'}
             iconSize="xs"
             variantText="tiny"
             className="bg-transparent shadow-none p-0"
           />
         </div>
         <form
+          id="color-form"
           onSubmit={handleSubmit(onSubmit)}
           className="grid gap-4"
         >
@@ -81,15 +83,29 @@ export default function CuriculumVitaeStep2({
               required: 'Please select a color',
             }}
           />
-          <Button
-            type="submit"
-            intent="secondary"
-            isLoading={isLoading}
-          >
-            <span className="font-bold">Choose</span>
-          </Button>
+          <div className="flex w-full gap-2">
+            <Button
+              type="button"
+              intent="default"
+              className="w-1/4"
+              onClick={() => handleBackStep(1)}
+            >
+              <ChevronLeft className="font-bold" />
+            </Button>
+            <Button
+              type="submit"
+              form="color-form"
+              intent="info"
+              isLoading={isLoading}
+              className="w-3/4"
+            >
+              <span className="font-bold">Submit</span>
+            </Button>
+          </div>
         </form>
       </div>
-    </>
+
+      {/* Buttons now appear below the entire content */}
+    </div>
   )
 }

@@ -184,7 +184,7 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
               className="w-40"
               onClick={() => onCancel(watchedValues, 4)}
             >
-              <span className="font-bold">Cancel</span>
+              <span className="font-bold">Back</span>
             </Button>
             <Button
               type="submit"

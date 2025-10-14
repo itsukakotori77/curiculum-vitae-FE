@@ -304,18 +304,20 @@ export default function CurrVitaeGenerator() {
     return experiences!.map((experience: any, index: number) => (
       <div key={index} className="w-full">
         <div className="px-4 py-6 border rounded-lg border-gray-300 bg-white shadow-sm">
-          <div className="flex justify-between">
-            <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row justify-between gap-4">
+            <div className="flex gap-4 items-start flex-1">
               <div
                 className="bg-blue-400 rounded-br-xl rounded-tl-sm 
-                        w-18 h-10 text-white flex items-center 
-                        justify-center font-bold"
+                        w-10 h-10 text-white flex items-center 
+                        justify-center font-bold flex-shrink-0"
               >
                 {index + 1}
               </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-md">{experience.company}</span>
-                <p className="text-sm">
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="font-bold text-md break-words">
+                  {experience.company}
+                </span>
+                <p className="text-sm break-words">
                   {experience.jobTitle} | {experience.role}
                 </p>
                 <p className="text-sm">
@@ -323,19 +325,19 @@ export default function CurrVitaeGenerator() {
                   {experience.isCurrent ? 'Present' : experience.date?.endDate}
                 </p>
                 {experience.descJob && (
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-gray-600 mt-1 break-words">
                     {experience.descJob}
                   </p>
                 )}
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 sm:flex-col md:flex-row sm:self-start">
               <Trash
-                className="w-5 text-blue-400 hover:text-blue-700 cursor-pointer"
+                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
                 onClick={() => handleDeleteExperience(index)}
               />
               <Pencil
-                className="w-5 text-blue-400 hover:text-blue-700 cursor-pointer"
+                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
                 onClick={() => handleEditExperience(index)}
               />
             </div>
@@ -350,34 +352,42 @@ export default function CurrVitaeGenerator() {
     return educations!.map((data: any, index: number) => (
       <div key={index} className="w-full">
         <div className="px-4 py-6 border rounded-lg border-gray-300 bg-white shadow-sm">
-          <div className="flex justify-between">
-            <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row justify-between gap-4">
+            <div className="flex gap-4 items-start flex-1">
               <div
                 className="bg-blue-400 rounded-br-xl rounded-tl-sm 
-                        w-15 h-10 text-white flex items-center 
-                        justify-center font-bold"
+                        w-10 h-10 text-white flex items-center 
+                        justify-center font-bold flex-shrink-0"
               >
                 {index + 1}
               </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-md">{data.university}</span>
-                <p className="text-sm font-medium">{data.major?.value}</p>
-                <p className="text-sm">{`${
+              <div className="flex flex-col flex-1 min-w-0">
+                <span className="font-bold text-md break-words">
+                  {data.university}
+                </span>
+                <p className="text-sm font-medium break-words">
+                  {data.major?.value}
+                </p>
+                <p className="text-sm break-words">{`${
                   data.graduatedStatus === 'true'
                     ? `Graduated From ${moment(data?.graduated).format('MMMM, Do YYYY')}`
                     : `Undergraduated`
                 }`}</p>
                 <p className="text-sm">{`${data.gpa ? `GPA: ${data?.gpa}` : `Non GPA`}`}</p>
-                <p className="text-sm text-gray-600 mt-1">{data.majorDesc}</p>
+                {data.majorDesc && (
+                  <p className="text-sm text-gray-600 mt-1 break-words">
+                    {data.majorDesc}
+                  </p>
+                )}
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 sm:flex-col md:flex-row sm:self-start">
               <Trash
-                className="w-5 text-blue-400 hover:text-blue-700 cursor-pointer"
+                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
                 onClick={() => handleDeleteEducation(index)}
               />
               <Pencil
-                className="w-5 text-blue-400 hover:text-blue-700 cursor-pointer"
+                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
                 onClick={() => handleEditEducation(index)}
               />
             </div>
@@ -385,29 +395,31 @@ export default function CurrVitaeGenerator() {
         </div>
       </div>
     ))
-  }, [educations])
+  }, [educations, handleDeleteEducation, handleEditEducation])
 
   // Render skiils
   const skillsItem = useMemo(() => {
     return skills!.map((data: any, index: number) => (
-      <div key={index}>
+      <div key={index} className="w-full">
         <div className="px-4 py-6 border rounded-lg border-gray-300 bg-white shadow-sm">
-          <div className="flex justify-between">
-            <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row justify-between gap-4">
+            <div className="flex gap-4 items-start flex-1">
               <div
                 className="bg-blue-400 rounded-br-xl rounded-tl-sm 
                         w-10 h-10 text-white flex items-center 
-                        justify-center font-bold"
+                        justify-center font-bold flex-shrink-0"
               >
                 {index + 1}
               </div>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 flex-1 min-w-0">
                 <div className="flex flex-col">
                   <span className="font-bold text-xl">Certificate</span>
-                  <span className="font-bold text-md">
+                  <span className="font-bold text-md break-words">
                     {data.certificateName}
                   </span>
-                  <p className="text-sm font-medium">{data?.company}</p>
+                  <p className="text-sm font-medium break-words">
+                    {data?.company}
+                  </p>
                   <p className="text-sm">
                     <span className="font-medium">Certificated Publish</span>{' '}
                     {`${moment(data?.certificateDate).format('MMMM, Do YYYY')}`}
@@ -415,10 +427,14 @@ export default function CurrVitaeGenerator() {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-bold text-xl">Skills</span>
-                  <span className="font-bold text-md">{data.skillName}</span>
-                  <p className="text-sm font-medium">{data?.company}</p>
+                  <span className="font-bold text-md break-words">
+                    {data.skillName}
+                  </span>
+                  <p className="text-sm font-medium break-words">
+                    {data?.company}
+                  </p>
                   {data?.isHasLevel && (
-                    <div className="grid grid-cols-5 gap-1">
+                    <div className="grid grid-cols-5 gap-1 mt-1 max-w-xs">
                       {Array.from({ length: 5 }, (_, index) => (
                         <div
                           key={index}
@@ -426,7 +442,7 @@ export default function CurrVitaeGenerator() {
                             index + 1 <= data.level
                               ? 'bg-green-600'
                               : 'bg-gray-500'
-                          } w-full h-4 rounded-xs`}
+                          } w-full h-4 rounded-sm`}
                         ></div>
                       ))}
                     </div>
@@ -434,13 +450,13 @@ export default function CurrVitaeGenerator() {
                 </div>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 sm:flex-col md:flex-row sm:self-start">
               <Trash
-                className="w-5 text-blue-400 hover:text-blue-700 cursor-pointer"
+                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
                 onClick={() => handleRemoveSkill(index)}
               />
               <Pencil
-                className="w-5 text-blue-400 hover:text-blue-700 cursor-pointer"
+                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
                 onClick={() => handleEditSkill(index)}
               />
             </div>
@@ -448,7 +464,7 @@ export default function CurrVitaeGenerator() {
         </div>
       </div>
     ))
-  }, [skills])
+  }, [skills, handleRemoveSkill, handleEditSkill])
 
   // Get current experience data for editing
   const currentExperienceData = useMemo(() => {
@@ -467,26 +483,32 @@ export default function CurrVitaeGenerator() {
     () => ({
       primaryColor: convertColor(dataSetting?.primaryColor!),
       sidebarColor: convertColor(dataSetting?.sidebarColor!),
-      skillColor: convertColor(dataSetting?.skiilColor!),
+      skillColor: convertColor(dataSetting?.skillColor!),
     }),
     [dataSetting],
   )
 
   const downloadPng = useCallback(async () => {
     openModal({
-      title: 'Attention !',
-      description: 'Are you want to download the cv ?',
+      title: 'Download PDF',
+      description: 'Do you want to download your CV as a PDF document?',
       onConfirm: async () => {
         if (!refPreview.current) {
-          console.error('Reference is null')
+          toast.error('Preview reference not found')
+          closeModal()
           return
         }
-
+  
         try {
-          await refPreview.current.downloadPng()
+          setIsGenerating(true)
+          await refPreview.current.downloadPdf()
+          toast.success('PDF downloaded successfully!')
           closeModal()
         } catch (err: any) {
-          toast.error(err?.message || err)
+          console.error('PDF generation error:', err)
+          toast.error(err?.message || 'Failed to generate PDF')
+        } finally {
+          setIsGenerating(false)
         }
       },
     })

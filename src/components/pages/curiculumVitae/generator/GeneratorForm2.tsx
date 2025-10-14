@@ -21,10 +21,8 @@ interface FormGeneratorStep2 {
   onSubmit: (val: IGeneratorStep2) => void
   onCancel: (val: IGeneratorStep2, step?: number) => void
   onChange?: (val: IGeneratorStep2) => void
-  onBackStep?: (step: number) => void 
-  setState?: React.Dispatch<
-    React.SetStateAction<IGeneratorStep2 | undefined>
-  >
+  onBackStep?: (step: number) => void
+  setState?: React.Dispatch<React.SetStateAction<IGeneratorStep2 | undefined>>
   className?: string
 }
 
@@ -32,10 +30,7 @@ export interface GeneratorForm2Ref {
   submitForm: () => void
   resetForm: () => void
   getCurrentValues: () => IGeneratorStep2
-  setFieldValue: (
-    fieldName: keyof IGeneratorStep2,
-    value: string,
-  ) => void
+  setFieldValue: (fieldName: keyof IGeneratorStep2, value: string) => void
 }
 
 const Schema = Yup.object().shape({
@@ -45,10 +40,7 @@ const Schema = Yup.object().shape({
   date: Yup.array().required(),
 })
 
-const GeneratorForm2 = forwardRef<
-  GeneratorForm2Ref,
-  FormGeneratorStep2
->(
+const GeneratorForm2 = forwardRef<GeneratorForm2Ref, FormGeneratorStep2>(
   (
     {
       data,
@@ -70,15 +62,7 @@ const GeneratorForm2 = forwardRef<
     } = useForm<IGeneratorStep2 | any>({
       resolver: yupResolver(Schema),
       mode: 'onChange',
-      // defaultValues: {
-      //    jobTitle: '',
-      //    company: '',
-      //    role: '',
-      //    startDate: '',
-      //    endDate: '',
-      //    isCurrent: false,
-      //    descJob: ''
-      // }
+      defaultValues: data,
     })
 
     const watchedValues = watch()
@@ -143,7 +127,7 @@ const GeneratorForm2 = forwardRef<
                   value: false,
                 },
               ]}
-              name={`isCurrent`}
+              name="isCurrent"
               control={control}
             />
           </div>
