@@ -493,9 +493,9 @@ export default function CurrVitaeGenerator() {
       title: 'Download PDF',
       description: 'Do you want to download your CV as a PDF document?',
       onConfirm: async () => {
+        closeModal()
         if (!refPreview.current) {
           toast.error('Preview reference not found')
-          closeModal()
           return
         }
   
@@ -503,7 +503,6 @@ export default function CurrVitaeGenerator() {
           setIsGenerating(true)
           await refPreview.current.downloadPdf()
           toast.success('PDF downloaded successfully!')
-          closeModal()
         } catch (err: any) {
           console.error('PDF generation error:', err)
           toast.error(err?.message || 'Failed to generate PDF')

@@ -13,12 +13,14 @@ export default function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const [modal, setModal] = useState<boolean>(false)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const { mutate: login, isPending } = useLogin()
 
   const handleLogin = (data: any) => {
     login(data, {
       onSuccess: (res: any) => {
         toast.success(res?.message)
+        router.push('/curiculumVitae')
         console.log(res)
       },
       onError: (error: any) => {
@@ -37,9 +39,7 @@ export default function Navbar() {
             <li
               key={key}
               className={`text-md p-2 font-medium rounded-lg ${
-                pathname.includes(val?.url)
-                  ? 'bg-[#5C5C5C] text-white'
-                  : ''
+                pathname.includes(val?.url) ? 'bg-[#5C5C5C] text-white' : ''
               } hover:bg-[#5C5C5C] hover:text-white hover:cursor-pointer`}
               onClick={() => router.push(val?.url)}
             >
