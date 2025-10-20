@@ -177,7 +177,9 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
                   'Drop your profile image here or <span class="font-bold">Browse</span>',
               }}
               className="mb-4"
-              onSuccessUpload={(res, file) => {
+              onSuccessUpload={(res, file, fileManager) => {
+                const fileId = fileManager.getFileEntry(file).id
+                setValue('fileId', fileId)
                 setValue('profilePicture', res.data.url)
               }}
               onSuccessDelete={() => {

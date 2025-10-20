@@ -113,6 +113,7 @@ export interface IGeneratorStep1 {
   role: string | any
   profile: string | any
   profilePicture?: string | null
+  fileId?: number | string
 }
 
 export interface IGeneratorStep2 {

@@ -14,6 +14,7 @@ export interface PayloadCv {
   address: string
   summary: string
   user_id: number
+  file_id?: number | string
   cvitae_setting_id: number
   curEducation?: CurEducation[]
   curExperience?: CurExperience[]
@@ -62,6 +63,7 @@ export const transformToCurrPayload = (
     address: step5Data?.address || '',
     summary: step1Data?.profile || '',
     user_id: data?.user_id!,
+    file_id: +step1Data?.fileId! || '',
     cvitae_setting_id: data?.setting_id!,
     curEducation: Array.isArray(step3Data)
       ? step3Data?.map((val: any) => {

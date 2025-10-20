@@ -11,7 +11,7 @@ interface IProps extends HTMLProps<HTMLDivElement>, FileInputProps {
   name: string
   filesMetadata?: Map<string, FileMetadata>
   onChangeFile?: (files: any[]) => void
-  onSuccessUpload?: (response: any, file: File) => void
+  onSuccessUpload?: (response: any, file: File, fileManager?: any) => void
   onErrorUpload?: (response: any) => void
   onSuccessDelete?: (response: any) => void
   onErrorDelete?: (response: any) => void
@@ -31,7 +31,7 @@ const FileForm: React.FC<IProps> = ({
   ...props
 }) => {
   const { field } = useController({ control, name })
-  
+
   const initialFiles = useMemo(() => {
     const value = field.value
     if (value && typeof value === 'string') {
@@ -46,7 +46,7 @@ const FileForm: React.FC<IProps> = ({
     }
     return []
   }, [field.value])
-  
+
   return (
     <div {...props}>
       <Label {...fieldLabel} />

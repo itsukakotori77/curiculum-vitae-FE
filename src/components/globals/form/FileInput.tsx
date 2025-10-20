@@ -33,7 +33,7 @@ export interface FileInputProps extends PropsWithRef<any> {
   files?: any[]
   filesMetadata?: Map<string, FileMetadata>
   onUpdateFiles?: (files: any[]) => void
-  onSuccessUpload?: (response: any, file: File) => void
+  onSuccessUpload?: (response: any, file: File, fileManager?: any) => void
   onErrorUpload?: (response: any) => void
   onSuccessDelete?: (response: any) => void
   onErrorDelete?: (response: any) => void
@@ -198,11 +198,11 @@ const FileInput: React.FC<FileInputProps> = forwardRef<any, FileInputProps>(
             id: res.data.id,
             url: res.data.url,
             public_id: res.data.public_id,
-            filename: res.data.filename
+            filename: res.data.filename,
           })
 
           if (typeof onSuccessUpload === 'function') {
-            onSuccessUpload(res, file)
+            onSuccessUpload(res, file, fileManager)
           }
         },
       })
