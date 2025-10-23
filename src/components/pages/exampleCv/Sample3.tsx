@@ -191,7 +191,6 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
       size = 'md',
       scale = 'md',
       textSize = 'md',
-      sidebarWidth = 25,
       printable = 'noPrint',
       className,
       iconSize = 'md',
@@ -201,6 +200,16 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
       skillColor = '#262424',
       variantText = 'small',
       childrenClassName,
+      config = {
+        sidebarWidth: 25,
+        responsiveSidebar: false,
+        responsiveImage: false,
+        mobileSidebarWidth: 35,
+        tabletSidebarWidth: 30,
+        mobileImageSize: 120,
+        tabletImageSize: 150,
+        desktopImageSize: 200,
+      },
     },
     ref,
   ) => {
@@ -219,11 +228,25 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
           >
             {/* BIOGRAPHY */}
             <div
-              className="sidebar min-h-full lg:block"
-              style={{
-                width: `${sidebarWidth}%`,
-                background: sidebarColor,
-              }}
+              className={cn(
+                'sidebar min-h-full lg:block',
+                config.responsiveSidebar &&
+                  'w-[var(--sidebar-width-mobile)] sm:w-[var(--sidebar-width-tablet)] lg:w-[var(--sidebar-width-desktop)]',
+              )}
+              style={
+                config.responsiveSidebar
+                  ? ({
+                      '--sidebar-width-mobile': `${config.mobileSidebarWidth}%`,
+                      '--sidebar-width-tablet': `${config.tabletSidebarWidth}%`,
+                      '--sidebar-width-desktop': `${config.sidebarWidth!}%`,
+                      width: `${config.mobileSidebarWidth}%`,
+                      background: sidebarColor,
+                    } as React.CSSProperties)
+                  : {
+                      width: `${config.sidebarWidth}%`,
+                      background: sidebarColor,
+                    }
+              }
             >
               <div className="flex justify-center p-4 flex-col">
                 {!!setting?.usingPicture && (
@@ -232,11 +255,33 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                     alt="profilePicture"
                     width={500}
                     height={500}
-                    className="w-full h-full aspect-square p-0 flex items-center 
-                             justify-center max-w-[200px] mx-auto lg:max-w-none rounded-full object-cover"
+                    className="w-full h-full aspect-square p-0 flex items-center justify-center mx-auto rounded-full object-cover"
+                    style={
+                      config.responsiveImage
+                        ? {
+                            maxWidth: `${config.mobileImageSize}px`,
+                          }
+                        : {
+                            maxWidth: '200px',
+                          }
+                    }
                     key={data?.profilePicture}
                     unoptimized
                   />
+                )}
+                {config.responsiveImage && (
+                  <style jsx>{`
+                    @media (min-width: 640px) {
+                      img {
+                        max-width: ${config.tabletImageSize}px !important;
+                      }
+                    }
+                    @media (min-width: 1024px) {
+                      img {
+                        max-width: ${config.desktopImageSize}px !important;
+                      }
+                    }
+                  `}</style>
                 )}
 
                 {/* CONTACTS */}
@@ -389,7 +434,8 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                               className={`h-3.5 w-full border-none`}
                               style={{
                                 background: ` ${
-                                  Boolean(item?.isHasLevel) && index < item.level
+                                  Boolean(item?.isHasLevel) &&
+                                  index < item.level
                                     ? skillColor
                                     : ''
                                 }`,
@@ -404,7 +450,22 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
               </div>
             </div>
 
-            <div className="main-content lg:w-[75%] w-full">
+            <div
+              className={cn(
+                'main-content w-full',
+                config.responsiveSidebar &&
+                  'w-[var(--main-width-mobile)] sm:w-[var(--main-width-tablet)] lg:w-[75%]',
+              )}
+              style={
+                config.responsiveSidebar
+                  ? ({
+                      '--main-width-mobile': `${100 - config.mobileSidebarWidth!}%`,
+                      '--main-width-tablet': `${100 - config.tabletSidebarWidth!}%`,
+                      width: `${100 - config.mobileSidebarWidth!}%`,
+                    } as React.CSSProperties)
+                  : { width: '75%' }
+              }
+            >
               {/* DETAIL */}
               <div
                 className="border-t-4 border-b-4 border-r-4 p-4"
@@ -674,5 +735,7 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
     )
   },
 )
+
+Sample3.displayName = 'Sample3'
 
 export default Sample3
