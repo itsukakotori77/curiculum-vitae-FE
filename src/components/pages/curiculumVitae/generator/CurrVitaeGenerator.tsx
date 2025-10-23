@@ -1,25 +1,26 @@
 'use client'
 
-import React, { useRef, useCallback, useMemo, useState, useEffect } from 'react'
+import React, { useRef, useCallback, useMemo, useState } from 'react'
 import StepperBubble from '@/components/globals/stepper/StepperBubble'
 import GeneratorForm1, { GeneratorForm1Ref } from './GeneratorForm1'
-import {
-  CVStep5Store,
-  IGeneratorStep1,
-  IGeneratorStep2,
-  IGeneratorStep3,
-  IGeneratorStep4,
-  IGeneratorStep5,
-} from '@/interface/curiculumVitae'
-import { useRouter } from 'next/navigation'
-import Sample3 from '../../exampleCv/Sample3'
-import { biodataCurr } from '@/data/cv'
 import GeneratorForm2, { GeneratorForm2Ref } from './GeneratorForm2'
+import GeneratorForm3, { GeneratorForm3Ref } from './GeneratorForm3'
+import GeneratorForm4, { GeneratorForm4Ref } from './GeneratorForm4'
+import GeneratorForm5, { GeneratorForm5Ref } from './GeneratorForm5'
+import PreviewGenerator, { PreviewGeneratorHandle } from './PerviewGenerator'
+import Sample3 from '../../exampleCv/Sample3'
 import Button from '@/components/CultUI/Button'
-import { useCVData, useWindowSize } from '@/utils/hooks'
 import ProgressBar from '@/components/globals/progressBar'
 import { Pencil, Trash, CirclePlus } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
+import moment from 'moment'
+import { biodataCurr } from '@/data/cv'
+import { labels } from '@/data/menu'
+import { useCVData, useWindowSize } from '@/utils/hooks'
 import { useModalConfirm } from '@/libs/modalConfirm'
+import { convertColor } from '@/utils/common'
+import { usePostCurr } from '@/services/curivulumVitae/mutation'
 import {
   useCVNavigationStore,
   useCVSettingStore,
@@ -28,30 +29,263 @@ import {
   useCVStep3Store,
   useCVStep4Store,
   useCVStep5Store,
+  useCVMainStore,
 } from '@/utils/store'
-import GeneratorForm3, { GeneratorForm3Ref } from './GeneratorForm3'
-import moment from 'moment'
-import GeneratorForm4, { GeneratorForm4Ref } from './GeneratorForm4'
-import GeneratorForm5, { GeneratorForm5Ref } from './GeneratorForm5'
-import PreviewGenerator, { PreviewGeneratorHandle } from './PerviewGenerator'
-import { toast } from 'react-toastify'
-import { convertColor } from '@/utils/common'
-import { usePostCurr } from '@/services/curivulumVitae/mutation'
-import { useCVMainStore } from '@/utils/store'
-import { labels } from '@/data/menu'
+import {
+  IGeneratorStep1,
+  IGeneratorStep2,
+  IGeneratorStep3,
+  IGeneratorStep4,
+  IGeneratorStep5,
+} from '@/interface/curiculumVitae'
 
-export default function CurrVitaeGenerator() {
+// Types
+interface ItemCardProps {
+  index: number
+  children: React.ReactNode
+  onEdit: () => void
+  onDelete: () => void
+}
+
+interface ExperienceItemProps {
+  experience: IGeneratorStep2 | any
+  index: number
+  onEdit: () => void
+  onDelete: () => void
+}
+
+interface EducationItemProps {
+  education: IGeneratorStep3
+  index: number
+  onEdit: () => void
+  onDelete: () => void
+}
+
+interface SkillItemProps {
+  skill: IGeneratorStep4
+  index: number
+  onEdit: () => void
+  onDelete: () => void
+}
+
+interface AddItemButtonProps {
+  onClick: () => void
+  label: string
+}
+
+interface NavigationButtonsProps {
+  onBack: () => void
+  onNext: () => void
+  nextLabel: string
+  disabled?: boolean
+}
+
+interface ListContainerProps {
+  title: string
+  children: React.ReactNode
+}
+
+interface ColorProps {
+  primaryColor?: string
+  sidebarColor?: string
+  skillColor?: string
+}
+
+// Reusable Item Card Component
+const ItemCard: React.FC<ItemCardProps> = ({
+  index,
+  children,
+  onEdit,
+  onDelete,
+}) => (
+  <div className="w-full">
+    <div className="px-4 py-4 sm:py-6 border rounded-lg border-gray-300 bg-white shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between gap-4">
+        <div className="flex gap-3 sm:gap-4 items-start flex-1">
+          <div className="bg-blue-400 rounded-br-xl rounded-tl-sm w-10 h-10 text-white flex items-center justify-center font-bold flex-shrink-0">
+            {index + 1}
+          </div>
+          <div className="flex flex-col flex-1 min-w-0">{children}</div>
+        </div>
+        <div className="flex gap-2 sm:flex-col md:flex-row sm:self-start justify-end sm:justify-start">
+          <Trash
+            className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer transition-colors"
+            onClick={onDelete}
+          />
+          <Pencil
+            className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer transition-colors"
+            onClick={onEdit}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+)
+
+// Experience Item Component
+const ExperienceItem: React.FC<ExperienceItemProps> = ({
+  experience,
+  index,
+  onEdit,
+  onDelete,
+}) => (
+  <ItemCard index={index} onEdit={onEdit} onDelete={onDelete}>
+    <span className="font-bold text-sm sm:text-md break-words">
+      {experience.company}
+    </span>
+    <p className="text-xs sm:text-sm break-words">
+      {experience.jobTitle} | {experience.role}
+    </p>
+    <p className="text-xs sm:text-sm text-gray-600">
+      {experience.date?.startDate} -{' '}
+      {experience.isCurrent ? 'Present' : experience.date?.endDate}
+    </p>
+    {experience.descJob && (
+      <p className="text-xs sm:text-sm text-gray-600 mt-1 break-words">
+        {experience.descJob}
+      </p>
+    )}
+  </ItemCard>
+)
+
+// Education Item Component
+const EducationItem: React.FC<EducationItemProps> = ({
+  education,
+  index,
+  onEdit,
+  onDelete,
+}) => (
+  <ItemCard index={index} onEdit={onEdit} onDelete={onDelete}>
+    <span className="font-bold text-sm sm:text-md break-words">
+      {education.university}
+    </span>
+    <p className="text-xs sm:text-sm font-medium break-words">
+      {education.major?.value}
+    </p>
+    <p className="text-xs sm:text-sm text-gray-600">
+      {education.graduatedStatus === 'true'
+        ? `Graduated ${moment(education.graduated).format('MMMM, Do YYYY')}`
+        : 'Undergraduated'}
+    </p>
+    <p className="text-xs sm:text-sm text-gray-600">
+      {education.gpa ? `GPA: ${education.gpa}` : 'Non GPA'}
+    </p>
+    {education.majorDesc && (
+      <p className="text-xs sm:text-sm text-gray-600 mt-1 break-words">
+        {education.majorDesc}
+      </p>
+    )}
+  </ItemCard>
+)
+
+// Skill Item Component
+const SkillItem: React.FC<SkillItemProps> = ({
+  skill,
+  index,
+  onEdit,
+  onDelete,
+}) => (
+  <ItemCard index={index} onEdit={onEdit} onDelete={onDelete}>
+    <div className="flex flex-col gap-3 sm:gap-4">
+      <div className="flex flex-col">
+        <span className="font-bold text-lg sm:text-xl">Certificate</span>
+        <span className="font-bold text-sm sm:text-md break-words">
+          {skill.certificateName}
+        </span>
+        <p className="text-xs sm:text-sm font-medium break-words">
+          {skill.company}
+        </p>
+        <p className="text-xs sm:text-sm text-gray-600">
+          <span className="font-medium">Certificated Publish </span>
+          {moment(skill.certificateDate).format('MMMM, Do YYYY')}
+        </p>
+      </div>
+      <div className="flex flex-col">
+        <span className="font-bold text-lg sm:text-xl">Skills</span>
+        <span className="font-bold text-sm sm:text-md break-words">
+          {skill.skillName}
+        </span>
+        <p className="text-xs sm:text-sm font-medium break-words">
+          {skill.company}
+        </p>
+        {skill.isHasLevel && (
+          <div className="grid grid-cols-5 gap-1 mt-2 max-w-[200px] sm:max-w-xs">
+            {Array.from({ length: 5 }, (_, i) => (
+              <div
+                key={i}
+                className={`${
+                  i + 1 <= skill.level ? 'bg-green-600' : 'bg-gray-300'
+                } w-full h-3 sm:h-4 rounded-sm transition-colors`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </ItemCard>
+)
+
+// Add New Item Button
+const AddItemButton: React.FC<AddItemButtonProps> = ({ onClick, label }) => (
+  <div
+    className="px-4 py-4 sm:py-6 rounded-lg border-2 sm:border-3 border-gray-400 border-dashed 
+               flex justify-center items-center cursor-pointer hover:border-blue-400 
+               hover:bg-blue-50 transition-all"
+    onClick={onClick}
+  >
+    <div className="flex gap-1 sm:gap-2 items-center text-blue-600">
+      <CirclePlus className="w-4 h-4 sm:w-5 sm:h-5" />
+      <p className="font-bold text-xs sm:text-sm">{label}</p>
+    </div>
+  </div>
+)
+
+// Navigation Buttons
+const NavigationButtons: React.FC<NavigationButtonsProps> = ({
+  onBack,
+  onNext,
+  nextLabel,
+  disabled = false,
+}) => (
+  <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
+    <Button
+      intent="default"
+      className="w-full sm:w-auto sm:min-w-[200px]"
+      onClick={onBack}
+    >
+      <span className="font-bold text-sm">Back</span>
+    </Button>
+    <Button
+      intent="success"
+      className="w-full sm:w-auto sm:min-w-[200px]"
+      onClick={onNext}
+      disabled={disabled}
+    >
+      <span className="font-bold text-sm">{nextLabel}</span>
+    </Button>
+  </div>
+)
+
+// List Container
+const ListContainer: React.FC<ListContainerProps> = ({ title, children }) => (
+  <div className="flex flex-col w-full max-w-5xl mx-auto gap-3 sm:gap-4 overflow-y-auto h-[calc(100vh-10rem)] sm:h-[calc(100vh-8rem)] px-3 sm:px-4 lg:px-6 py-2">
+    <span className="font-semibold text-base sm:text-lg sticky top-0 bg-white py-2 z-10">
+      {title}
+    </span>
+    {children}
+  </div>
+)
+
+// Main Component
+const CurrVitaeGenerator: React.FC = () => {
   const router = useRouter()
-  const ref = useRef<HTMLDivElement>(null)
+  const previewRef = useRef<HTMLDivElement>(null)
   const refPreview = useRef<PreviewGeneratorHandle>(null)
+  const windowSize = useWindowSize()
+  const [preview, setPreview] = useState<boolean>(false)
+  const [isGenerating, setIsGenerating] = useState<boolean>(false)
 
-  // Form refs
-  const form1Ref = useRef<GeneratorForm1Ref>(null)
-  const form2Ref = useRef<GeneratorForm2Ref>(null)
-  const form3Ref = useRef<GeneratorForm3Ref>(null)
-  const form4Ref = useRef<GeneratorForm4Ref>(null)
-  const form5Ref = useRef<GeneratorForm5Ref>(null)
-
+  // Stores
   const {
     currentStep,
     showForm,
@@ -64,422 +298,35 @@ export default function CurrVitaeGenerator() {
   const {
     experiences,
     currentEditIndex: idxExp,
-    add: addExperience,
-    update: updateExperience,
-    remove: removeExperience,
-    setEditIndex: setEditIndexExp,
+    add: addExp,
+    update: updateExp,
+    remove: removeExp,
+    setEditIndex: setIdxExp,
   } = useCVStep2Store()
-
   const {
     educations,
     currentEditIndex: idxEdu,
-    add: addEducation,
-    update: updateEducation,
-    remove: removeEducation,
-    setEditIndex: setEditIndexEdu,
+    add: addEdu,
+    update: updateEdu,
+    remove: removeEdu,
+    setEditIndex: setIdxEdu,
   } = useCVStep3Store()
-
   const {
     skills,
     currentEditIndex: idxSkill,
     add: addSkill,
     update: updateSkill,
     remove: removeSkill,
-    setEditIndex: setEditIndexSkill,
+    setEditIndex: setIdxSkill,
   } = useCVStep4Store()
-
   const { contacts, update: updateContacts } = useCVStep5Store()
   const { data: dataSetting } = useCVSettingStore()
-
-  // Combined CV data
-  const { finalCV } = useCVData()
   const { updatePayloadCV } = useCVMainStore()
+  const { finalCV } = useCVData()
   const { openModal, closeModal } = useModalConfirm()
-  const [preview, setPreview] = useState<boolean>(false)
-  const [isGenerating, setIsGenerating] = useState<boolean>(false)
-  const windowSize = useWindowSize()
   const { mutate: postCurr, isPending } = usePostCurr()
 
-  // Form submission handlers
-  const handleStep1Submit = useCallback(
-    (val: IGeneratorStep1) => {
-      openModal({
-        title: 'Attention !',
-        description: 'Are you sure to save this data ?',
-        onConfirm: () => {
-          updateStep1Data(val)
-          nextStep()
-          closeModal()
-        },
-      })
-    },
-    [updateStep1Data, openModal, closeModal],
-  )
-
-  const handleStep2Submit = useCallback(
-    (val: IGeneratorStep2) => {
-      openModal({
-        title: 'Attention !',
-        description: 'Are you sure to save this data ?',
-        onConfirm: () => {
-          if (idxExp !== null) {
-            // Update existing experience
-            updateExperience(idxExp, val)
-          } else {
-            // Add new experience
-            addExperience(val)
-          }
-          setShowForm(false)
-          closeModal()
-        },
-      })
-    },
-    [
-      idxExp,
-      updateExperience,
-      addExperience,
-      setShowForm,
-      openModal,
-      closeModal,
-    ],
-  )
-
-  const handleStep3Submit = useCallback(
-    (val: IGeneratorStep3) => {
-      openModal({
-        title: 'Attention !',
-        description: 'Are you sure to save this data ?',
-        onConfirm: () => {
-          if (idxEdu !== null) {
-            updateEducation(idxEdu, val)
-          } else {
-            addEducation(val)
-          }
-          setShowForm(false)
-          closeModal()
-        },
-      })
-    },
-    [idxEdu, updateEducation, addEducation, setShowForm, openModal, closeModal],
-  )
-
-  const handleStep4Submit = useCallback(
-    (val: IGeneratorStep4) => {
-      openModal({
-        title: 'Attenion !',
-        description: 'Are you sure to save this data ?',
-        onConfirm: () => {
-          if (idxSkill !== null) {
-            updateSkill(idxSkill, val)
-          } else {
-            addSkill(val)
-          }
-          setShowForm(false)
-          closeModal()
-        },
-      })
-    },
-    [idxSkill, updateSkill, addSkill, setShowForm, openModal, closeModal],
-  )
-
-  const handleStep5Submit = useCallback(
-    (val: IGeneratorStep5) => {
-      openModal({
-        title: 'Attention !',
-        description: 'Are you sure to save this data ?',
-        onConfirm: () => {
-          updateContacts(val)
-          nextStep()
-          closeModal()
-        },
-      })
-    },
-    [contacts],
-  )
-
-  // +==================+ EXPERIENCE +==================+ //
-  const handleEditExperience = useCallback(
-    (index: number) => {
-      setEditIndexExp(index)
-      setShowForm(true)
-    },
-    [setEditIndexExp, setShowForm],
-  )
-
-  const handleDeleteExperience = useCallback(
-    (index: number) => {
-      openModal({
-        title: 'Delete Experience',
-        description: 'Are you sure want to delete this experience?',
-        onConfirm: () => {
-          removeExperience(index)
-          closeModal()
-        },
-      })
-    },
-    [removeExperience, openModal, closeModal],
-  )
-
-  const handleAddNewExperience = useCallback(() => {
-    setEditIndexExp(null)
-    setShowForm(true)
-  }, [setEditIndexExp, setShowForm])
-
-  // +==================+ EDUCATION +==================+ //
-  const handleEditEducation = useCallback(
-    (index: number) => {
-      setEditIndexEdu(index)
-      setShowForm(true)
-    },
-    [setEditIndexEdu, setShowForm],
-  )
-
-  const handleDeleteEducation = useCallback(
-    (index: number) => {
-      openModal({
-        title: 'Delete Experience',
-        description: 'Are you sure want to delete this education ?',
-        onConfirm: () => {
-          removeEducation(index)
-          closeModal()
-        },
-      })
-    },
-    [removeEducation, openModal, closeModal],
-  )
-
-  const handleAddNewEducation = useCallback(() => {
-    setEditIndexEdu(null)
-    setShowForm(true)
-  }, [setEditIndexEdu, setShowForm])
-
-  // +==================+ SKILLS & CERTIFICATE +==================+ //
-  const handleEditSkill = useCallback(
-    (index: number) => {
-      setEditIndexSkill(index)
-      setShowForm(true)
-    },
-    [setEditIndexSkill, setShowForm],
-  )
-
-  const handleRemoveSkill = useCallback(
-    (index: number) => {
-      openModal({
-        title: 'Delete Experience',
-        description: 'Are you sure want to delete this education ?',
-        onConfirm: () => {
-          removeSkill(index)
-          closeModal()
-        },
-      })
-    },
-    [setEditIndexSkill, setShowForm],
-  )
-
-  const handleAddNewSkill = useCallback(() => {
-    setEditIndexSkill(null)
-    setShowForm(true)
-  }, [setEditIndexSkill, setShowForm])
-
-  // +==================+ CONTACTS +==================+ //
-
-  // Cancel handler
-  const handleCancel = useCallback(() => {
-    router.back()
-  }, [router])
-
-  const handleFormCancel = useCallback(
-    (val: any, step?: number) => {
-      setShowForm(false)
-      setEditIndexExp(null)
-      if (step) {
-        setCurrentStep(step)
-      }
-    },
-    [setShowForm, setEditIndexExp, setCurrentStep],
-  )
-
-  // Render experiences
-  const experienceItems = useMemo(() => {
-    return experiences!.map((experience: any, index: number) => (
-      <div key={index} className="w-full">
-        <div className="px-4 py-6 border rounded-lg border-gray-300 bg-white shadow-sm">
-          <div className="flex flex-col sm:flex-row justify-between gap-4">
-            <div className="flex gap-4 items-start flex-1">
-              <div
-                className="bg-blue-400 rounded-br-xl rounded-tl-sm 
-                        w-10 h-10 text-white flex items-center 
-                        justify-center font-bold flex-shrink-0"
-              >
-                {index + 1}
-              </div>
-              <div className="flex flex-col flex-1 min-w-0">
-                <span className="font-bold text-md break-words">
-                  {experience.company}
-                </span>
-                <p className="text-sm break-words">
-                  {experience.jobTitle} | {experience.role}
-                </p>
-                <p className="text-sm">
-                  {experience.date?.startDate} -{' '}
-                  {experience.isCurrent ? 'Present' : experience.date?.endDate}
-                </p>
-                {experience.descJob && (
-                  <p className="text-sm text-gray-600 mt-1 break-words">
-                    {experience.descJob}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="flex gap-2 sm:flex-col md:flex-row sm:self-start">
-              <Trash
-                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
-                onClick={() => handleDeleteExperience(index)}
-              />
-              <Pencil
-                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
-                onClick={() => handleEditExperience(index)}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    ))
-  }, [experiences, handleDeleteExperience, handleEditExperience])
-
-  // Render Educations
-  const educationItems = useMemo(() => {
-    return educations!.map((data: any, index: number) => (
-      <div key={index} className="w-full">
-        <div className="px-4 py-6 border rounded-lg border-gray-300 bg-white shadow-sm">
-          <div className="flex flex-col sm:flex-row justify-between gap-4">
-            <div className="flex gap-4 items-start flex-1">
-              <div
-                className="bg-blue-400 rounded-br-xl rounded-tl-sm 
-                        w-10 h-10 text-white flex items-center 
-                        justify-center font-bold flex-shrink-0"
-              >
-                {index + 1}
-              </div>
-              <div className="flex flex-col flex-1 min-w-0">
-                <span className="font-bold text-md break-words">
-                  {data.university}
-                </span>
-                <p className="text-sm font-medium break-words">
-                  {data.major?.value}
-                </p>
-                <p className="text-sm break-words">{`${
-                  data.graduatedStatus === 'true'
-                    ? `Graduated From ${moment(data?.graduated).format('MMMM, Do YYYY')}`
-                    : `Undergraduated`
-                }`}</p>
-                <p className="text-sm">{`${data.gpa ? `GPA: ${data?.gpa}` : `Non GPA`}`}</p>
-                {data.majorDesc && (
-                  <p className="text-sm text-gray-600 mt-1 break-words">
-                    {data.majorDesc}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="flex gap-2 sm:flex-col md:flex-row sm:self-start">
-              <Trash
-                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
-                onClick={() => handleDeleteEducation(index)}
-              />
-              <Pencil
-                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
-                onClick={() => handleEditEducation(index)}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    ))
-  }, [educations, handleDeleteEducation, handleEditEducation])
-
-  // Render skiils
-  const skillsItem = useMemo(() => {
-    return skills!.map((data: any, index: number) => (
-      <div key={index} className="w-full">
-        <div className="px-4 py-6 border rounded-lg border-gray-300 bg-white shadow-sm">
-          <div className="flex flex-col sm:flex-row justify-between gap-4">
-            <div className="flex gap-4 items-start flex-1">
-              <div
-                className="bg-blue-400 rounded-br-xl rounded-tl-sm 
-                        w-10 h-10 text-white flex items-center 
-                        justify-center font-bold flex-shrink-0"
-              >
-                {index + 1}
-              </div>
-              <div className="flex flex-col gap-4 flex-1 min-w-0">
-                <div className="flex flex-col">
-                  <span className="font-bold text-xl">Certificate</span>
-                  <span className="font-bold text-md break-words">
-                    {data.certificateName}
-                  </span>
-                  <p className="text-sm font-medium break-words">
-                    {data?.company}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-medium">Certificated Publish</span>{' '}
-                    {`${moment(data?.certificateDate).format('MMMM, Do YYYY')}`}
-                  </p>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold text-xl">Skills</span>
-                  <span className="font-bold text-md break-words">
-                    {data.skillName}
-                  </span>
-                  <p className="text-sm font-medium break-words">
-                    {data?.company}
-                  </p>
-                  {data?.isHasLevel && (
-                    <div className="grid grid-cols-5 gap-1 mt-1 max-w-xs">
-                      {Array.from({ length: 5 }, (_, index) => (
-                        <div
-                          key={index}
-                          className={`${
-                            index + 1 <= data.level
-                              ? 'bg-green-600'
-                              : 'bg-gray-500'
-                          } w-full h-4 rounded-sm`}
-                        ></div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-2 sm:flex-col md:flex-row sm:self-start">
-              <Trash
-                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
-                onClick={() => handleRemoveSkill(index)}
-              />
-              <Pencil
-                className="w-5 h-5 text-blue-400 hover:text-blue-700 cursor-pointer"
-                onClick={() => handleEditSkill(index)}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    ))
-  }, [skills, handleRemoveSkill, handleEditSkill])
-
-  // Get current experience data for editing
-  const currentExperienceData = useMemo(() => {
-    return idxExp !== null ? experiences![idxExp] : undefined
-  }, [idxExp, experiences])
-
-  const currentEducationData = useMemo(() => {
-    return idxEdu !== null ? educations![idxEdu] : undefined
-  }, [idxEdu, educations])
-
-  const currentSkillData = useMemo(() => {
-    return idxSkill !== null ? skills![idxSkill] : undefined
-  }, [idxSkill, skills])
-
-  const colorProps = useMemo(
+  const colorProps: ColorProps = useMemo(
     () => ({
       primaryColor: convertColor(dataSetting?.primaryColor!),
       sidebarColor: convertColor(dataSetting?.sidebarColor!),
@@ -488,20 +335,143 @@ export default function CurrVitaeGenerator() {
     [dataSetting],
   )
 
+  // Generic confirmation handler
+  const confirmAction = useCallback(
+    (title: string, description: string, onConfirm: () => void) => {
+      openModal({
+        title,
+        description,
+        onConfirm: () => {
+          onConfirm()
+          closeModal()
+        },
+      })
+    },
+    [openModal, closeModal],
+  )
+
+  // Form submissions
+  const handleStep1Submit = useCallback(
+    (val: IGeneratorStep1) => {
+      confirmAction('Attention!', 'Are you sure to save this data?', () => {
+        updateStep1Data(val)
+        nextStep()
+      })
+    },
+    [updateStep1Data, nextStep, confirmAction],
+  )
+
+  const handleStep2Submit = useCallback(
+    (val: IGeneratorStep2) => {
+      confirmAction('Attention!', 'Are you sure to save this data?', () => {
+        idxExp !== null ? updateExp(idxExp, val) : addExp(val)
+        setShowForm(false)
+      })
+    },
+    [idxExp, updateExp, addExp, setShowForm, confirmAction],
+  )
+
+  const handleStep3Submit = useCallback(
+    (val: IGeneratorStep3) => {
+      confirmAction('Attention!', 'Are you sure to save this data?', () => {
+        idxEdu !== null ? updateEdu(idxEdu, val) : addEdu(val)
+        setShowForm(false)
+      })
+    },
+    [idxEdu, updateEdu, addEdu, setShowForm, confirmAction],
+  )
+
+  const handleStep4Submit = useCallback(
+    (val: IGeneratorStep4) => {
+      confirmAction('Attention!', 'Are you sure to save this data?', () => {
+        idxSkill !== null ? updateSkill(idxSkill, val) : addSkill(val)
+        setShowForm(false)
+      })
+    },
+    [idxSkill, updateSkill, addSkill, setShowForm, confirmAction],
+  )
+
+  const handleStep5Submit = useCallback(
+    (val: IGeneratorStep5) => {
+      confirmAction('Attention!', 'Are you sure to save this data?', () => {
+        updateContacts(val)
+        nextStep()
+      })
+    },
+    [updateContacts, nextStep, confirmAction],
+  )
+
+  // Generic handlers
+  const handleEdit = useCallback(
+    (setIndex: (index: number | null) => void, index: number) => {
+      setIndex(index)
+      setShowForm(true)
+    },
+    [setShowForm],
+  )
+
+  const handleDelete = useCallback(
+    (remove: (index: number) => void, index: number, itemType: string) => {
+      confirmAction(
+        `Delete ${itemType}`,
+        `Are you sure you want to delete this ${itemType.toLowerCase()}?`,
+        () => remove(index),
+      )
+    },
+    [confirmAction],
+  )
+
+  const handleAddNew = useCallback(
+    (setIndex: (index: number | null) => void) => {
+      setIndex(null)
+      setShowForm(true)
+    },
+    [setShowForm],
+  )
+
+  const handleFormCancel = useCallback(() => {
+    setShowForm(false)
+    setIdxExp(null)
+    setIdxEdu(null)
+    setIdxSkill(null)
+  }, [setShowForm, setIdxExp, setIdxEdu, setIdxSkill])
+
+  const downloadPdf = useCallback(async () => {
+    confirmAction(
+      'Download PDF',
+      'Do you want to download your CV as a PDF document?',
+      async () => {
+        if (!refPreview.current) {
+          toast.error('Preview reference not found')
+          return
+        }
+        try {
+          setIsGenerating(true)
+          await refPreview.current.downloadPdf()
+          toast.success('PDF downloaded successfully!')
+        } catch (err: any) {
+          toast.error(err?.message || 'Failed to generate PDF')
+        } finally {
+          setIsGenerating(false)
+        }
+      },
+    )
+  }, [confirmAction])
+
   const downloadPng = useCallback(async () => {
-    openModal({
-      title: 'Download PDF',
-      description: 'Do you want to download your CV as a PDF document?',
-      onConfirm: async () => {
+    confirmAction(
+      'Download PNG',
+      'Do you want to download your CV as a PDF document?',
+      async () => {
         closeModal()
         if (!refPreview.current) {
           toast.error('Preview reference not found')
           return
         }
-  
+
         try {
           setIsGenerating(true)
-          await refPreview.current.downloadPdf()
+          await refPreview.current.downloadPng()
           toast.success('PDF downloaded successfully!')
         } catch (err: any) {
           console.error('PDF generation error:', err)
@@ -510,45 +480,48 @@ export default function CurrVitaeGenerator() {
           setIsGenerating(false)
         }
       },
-    })
+    )
   }, [])
 
-  const handleSaveCurr = () => {
-    openModal({
-      title: 'Attention !',
-      description: 'Are you sure want to save this data ?',
-      onConfirm: () => {
-        const currentPayload = updatePayloadCV()
-        postCurr(currentPayload, {
-          onSuccess: (res: any) => {
-            toast.success(res?.message)
-            closeModal()
-          },
-          onError: (error: any) => {
-            toast.error(error?.response?.message)
-          },
+  const handleSaveCurr = useCallback(() => {
+    confirmAction(
+      'Attention!',
+      'Are you sure you want to save this data?',
+      () => {
+        postCurr(updatePayloadCV(), {
+          onSuccess: (res: any) => toast.success(res?.message),
+          onError: (error: any) => toast.error(error?.response?.message),
         })
       },
-    })
-  }
+    )
+  }, [postCurr, updatePayloadCV, confirmAction])
+
+  const currentData = useMemo(
+    () => ({
+      experience: idxExp !== null ? experiences![idxExp] : undefined,
+      education: idxEdu !== null ? educations![idxEdu] : undefined,
+      skill: idxSkill !== null ? skills![idxSkill] : undefined,
+    }),
+    [idxExp, idxEdu, idxSkill, experiences, educations, skills],
+  )
 
   return (
     <div className="min-h-screen lg:h-screen">
       <div className="flex flex-col lg:flex-row h-full">
-        {/* Sidebar - Responsive */}
-        <div className="bg-[#FFDFD2] lg:w-64 xl:w-80 flex flex-col pb-16 px-5 lg:h-auto">
-          <div className="flex-1 p-4 lg:p-6">
+        {/* Sidebar */}
+        <div className="bg-[#FFDFD2] lg:w-64 xl:w-80 flex flex-col pb-12 sm:pb-16 px-3 sm:px-5">
+          <div className="flex-1 p-3 sm:p-4 lg:p-6">
             <StepperBubble
               size={maxStep}
               current={currentStep}
               direction={windowSize.width > 1024 ? 'vertical' : 'horizontal'}
-              onChangeCurr={(val: number) => setCurrentStep(val)}
+              onChangeCurr={setCurrentStep}
               useNumber
               className="justify-center lg:justify-start lg:py-12"
               labels={labels}
             />
           </div>
-          <div className="h-8">
+          <div className="h-8 px-2">
             <ProgressBar
               current={currentStep}
               total={maxStep}
@@ -557,238 +530,172 @@ export default function CurrVitaeGenerator() {
           </div>
         </div>
 
-        {/* Content Area - Responsive */}
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden lg:h-full p-0">
-          {/* Form Section */}
-          {[1, 2, 3, 4, 5].includes(currentStep) && (
-            <div className="flex-1 p-4 lg:p-6 overflow-y-auto flex items-center justify-center lg:h-full">
-              {currentStep === 1 && (
-                <div className="w-full max-w-3xl">
-                  <GeneratorForm1
-                    ref={form1Ref}
-                    data={useCVStep1Store.getState().data!}
-                    onSubmit={handleStep1Submit}
-                    onCancel={handleCancel}
-                    onChange={updateStep1Data}
+        {/* Content Area */}
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden lg:h-full">
+          {/* Forms */}
+          {currentStep === 1 && (
+            <div className="flex-1 p-3 sm:p-4 lg:p-6 overflow-y-auto flex items-center justify-center">
+              <div className="w-full max-w-3xl">
+                <GeneratorForm1
+                  data={profile!}
+                  onSubmit={handleStep1Submit}
+                  onCancel={() => router.back()}
+                  onChange={updateStep1Data}
+                />
+              </div>
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <div className="flex-1 overflow-y-auto">
+              {!showForm ? (
+                <ListContainer title="Work History Summary">
+                  {experiences!.map((exp, i) => (
+                    <ExperienceItem
+                      key={i}
+                      experience={exp}
+                      index={i}
+                      onEdit={() => handleEdit(setIdxExp, i)}
+                      onDelete={() => handleDelete(removeExp, i, 'Experience')}
+                    />
+                  ))}
+                  <AddItemButton
+                    onClick={() => handleAddNew(setIdxExp)}
+                    label="Add Experience"
                   />
-                </div>
-              )}
-
-              {/* Step 2 - Work Experience */}
-              {currentStep === 2 && (
-                <div className="flex flex-col w-full max-w-5xl mx-auto gap-4 overflow-y-auto h-[calc(100vh-8rem)] px-4 lg:px-6">
-                  <span className="font-semibold text-lg">
-                    Work History Summary
-                  </span>
-
-                  {!showForm ? (
-                    <>
-                      {/* Display existing experiences */}
-                      {experienceItems}
-
-                      {/* Add new experience button */}
-                      <div
-                        className="px-4 py-6 rounded-lg border-3 border-gray-400 border-dashed 
-                                 flex justify-center items-center mt-4 cursor-pointer"
-                        onClick={handleAddNewExperience}
-                      >
-                        <div className="flex gap-1 items-center text-blue-600 hover:underline">
-                          <CirclePlus className="w-5 h-5" />
-                          <p className="font-bold text-sm mt-1">
-                            Add Experience
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Navigation buttons */}
-                      <div className="my-2 flex justify-end flex-row gap-2">
-                        <Button
-                          intent="default"
-                          className="lg:w-52"
-                          onClick={() => setCurrentStep(1)}
-                        >
-                          <span className="font-bold text-sm">Back</span>
-                        </Button>
-                        <Button
-                          intent="success"
-                          className="lg:w-52"
-                          onClick={nextStep}
-                          disabled={experiences!.length === 0}
-                        >
-                          <span className="font-bold text-sm">
-                            Next: Education
-                          </span>
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <GeneratorForm2
-                      ref={form2Ref}
-                      data={currentExperienceData}
-                      onSubmit={handleStep2Submit}
-                      onCancel={(val: any, step?: number) =>
-                        handleFormCancel(val, step)
-                      }
-                      className="w-full"
-                    />
-                  )}
-                </div>
-              )}
-
-              {/* Step 3 - Educations */}
-              {currentStep === 3 && (
-                <div className="flex flex-col w-full max-w-5xl mx-auto gap-4 overflow-y-auto h-[calc(100vh-8rem)] px-4 lg:px-6">
-                  <span className="font-semibold text-lg">
-                    Education History Summary
-                  </span>
-
-                  {!showForm ? (
-                    <>
-                      {/* Display existing education */}
-                      {educationItems}
-
-                      {/* Add new education button */}
-                      <div
-                        className="px-4 py-6 rounded-lg border-3 border-gray-400 border-dashed 
-                                 flex justify-center items-center mt-4 cursor-pointer"
-                        onClick={handleAddNewEducation}
-                      >
-                        <div className="flex gap-1 items-center text-blue-600 hover:underline">
-                          <CirclePlus className="w-5 h-5" />
-                          <p className="font-bold text-sm mt-1">
-                            Add Education
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Navigation buttons */}
-                      <div className="my-2 flex justify-end flex-row gap-2">
-                        <Button
-                          intent="default"
-                          className="lg:w-52"
-                          onClick={() => setCurrentStep(2)}
-                        >
-                          <span className="font-bold text-sm">Back</span>
-                        </Button>
-                        <Button
-                          intent="success"
-                          className="lg:w-52"
-                          onClick={nextStep}
-                          disabled={experiences!.length === 0}
-                        >
-                          <span className="font-bold text-sm">Next: Skill</span>
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <GeneratorForm3
-                      ref={form3Ref}
-                      data={currentEducationData}
-                      onSubmit={handleStep3Submit}
-                      onCancel={(val: any, step?: number) =>
-                        handleFormCancel(val, step)
-                      }
-                      className="w-full"
-                    />
-                  )}
-                </div>
-              )}
-
-              {/* Step 4 - Skiils */}
-              {currentStep === 4 && (
-                <div className="flex flex-col w-full max-w-5xl mx-auto gap-4 overflow-y-auto h-[calc(100vh-8rem)] px-4 lg:px-6">
-                  <span className="font-semibold text-lg">Skills Summary</span>
-
-                  {!showForm ? (
-                    <>
-                      {/* Display existing skills */}
-                      {skillsItem}
-
-                      {/* Add new skill button */}
-                      <div
-                        className="px-4 py-6 rounded-lg border-3 border-gray-400 border-dashed 
-                              flex justify-center items-center mt-4 cursor-pointer"
-                        onClick={handleAddNewSkill}
-                      >
-                        <div className="flex gap-1 items-center text-blue-600 hover:underline">
-                          <CirclePlus className="w-5 h-5" />
-                          <p className="font-bold text-sm mt-1">
-                            Add Skills & Certificated
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Navigation buttons */}
-                      <div className="my-2 flex justify-end flex-row gap-2">
-                        <Button
-                          intent="default"
-                          className="lg:w-52"
-                          onClick={() => setCurrentStep(3)}
-                        >
-                          <span className="font-bold text-sm">Back</span>
-                        </Button>
-                        <Button
-                          intent="success"
-                          className="lg:w-52"
-                          onClick={nextStep}
-                          disabled={experiences!.length === 0}
-                        >
-                          <span className="font-bold text-sm">
-                            Next: Contact
-                          </span>
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <GeneratorForm4
-                      ref={form4Ref}
-                      data={currentSkillData}
-                      onSubmit={handleStep4Submit}
-                      onCancel={(val: any, step?: number) =>
-                        handleFormCancel(val, step)
-                      }
-                      className="w-full"
-                    />
-                  )}
-                </div>
-              )}
-
-              {/* Step 5 - Contacts */}
-              {currentStep === 5 && (
-                <div className="flex flex-col w-full max-w-5xl mx-auto gap-4 overflow-y-auto h-[calc(100vh-8rem)] px-4 lg:px-6">
-                  <GeneratorForm5
-                    ref={form5Ref}
-                    data={contacts}
-                    onSubmit={handleStep5Submit}
-                    onCancel={(val: any, step?: number) =>
-                      handleFormCancel(val, step)
-                    }
-                    className="w-full"
+                  <NavigationButtons
+                    onBack={() => setCurrentStep(1)}
+                    onNext={nextStep}
+                    nextLabel="Next: Education"
+                    disabled={experiences!.length === 0}
+                  />
+                </ListContainer>
+              ) : (
+                <div className="p-4 lg:p-20">
+                  <GeneratorForm2
+                    data={currentData.experience}
+                    onSubmit={handleStep2Submit}
+                    onCancel={handleFormCancel}
                   />
                 </div>
               )}
             </div>
           )}
 
+          {currentStep === 3 && (
+            <div className="flex-1 overflow-y-auto">
+              {!showForm ? (
+                <ListContainer title="Education History Summary">
+                  {educations!.map((edu, i) => (
+                    <EducationItem
+                      key={i}
+                      education={edu}
+                      index={i}
+                      onEdit={() => handleEdit(setIdxEdu, i)}
+                      onDelete={() => handleDelete(removeEdu, i, 'Education')}
+                    />
+                  ))}
+                  <AddItemButton
+                    onClick={() => handleAddNew(setIdxEdu)}
+                    label="Add Education"
+                  />
+                  <NavigationButtons
+                    onBack={() => setCurrentStep(2)}
+                    onNext={nextStep}
+                    nextLabel="Next: Skills"
+                    disabled={educations!.length === 0}
+                  />
+                </ListContainer>
+              ) : (
+                <div className="p-4 lg:p-20">
+                  <GeneratorForm3
+                    data={currentData.education}
+                    onSubmit={handleStep3Submit}
+                    onCancel={handleFormCancel}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {currentStep === 4 && (
+            <div className="flex-1 overflow-y-auto">
+              {!showForm ? (
+                <ListContainer title="Skills Summary">
+                  {skills!.map((skill, i) => (
+                    <SkillItem
+                      key={i}
+                      skill={skill}
+                      index={i}
+                      onEdit={() => handleEdit(setIdxSkill, i)}
+                      onDelete={() => handleDelete(removeSkill, i, 'Skill')}
+                    />
+                  ))}
+                  <AddItemButton
+                    onClick={() => handleAddNew(setIdxSkill)}
+                    label="Add Skills & Certificate"
+                  />
+                  <NavigationButtons
+                    onBack={() => setCurrentStep(3)}
+                    onNext={nextStep}
+                    nextLabel="Next: Contact"
+                    disabled={skills!.length === 0}
+                  />
+                </ListContainer>
+              ) : (
+                <div className="p-4 lg:p-20">
+                  <GeneratorForm4
+                    data={currentData.skill}
+                    onSubmit={handleStep4Submit}
+                    onCancel={handleFormCancel}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {currentStep === 5 && (
+            <div className="flex-1 p-3 sm:p-4 lg:p-20 overflow-y-auto">
+              <div className="w-full max-w-5xl mx-auto">
+                <GeneratorForm5
+                  data={contacts}
+                  onSubmit={handleStep5Submit}
+                  onCancel={() => setCurrentStep(4)}
+                />
+              </div>
+            </div>
+          )}
+
           {currentStep === 6 && (
-            <div className="flex gap-8 w-full justify-between pr-5">
-              <div className="w-full lg:w-3/4 xl:w-3/5 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-4 lg:p-6 overflow-hidden">
-                <div className="sticky top-0 bg-white pb-4 mb-4 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold">Live Preview</h3>
+            <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 w-full p-3 sm:p-4 lg:p-6">
+              <div className="w-full lg:w-2/5 xl:w-3/6 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-3 sm:p-4 lg:p-6 overflow-auto">
+                <div className="sticky top-0 bg-white pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-gray-200">
+                  <h3 className="text-base sm:text-lg font-semibold">
+                    Live Preview
+                  </h3>
                 </div>
                 <div
-                  className="scale-75 lg:scale-90 origin-top -mt-20 cursor-pointer"
+                  className="sm:scale-100 lg:scale-90 origin-top md:-mt-16 -mt-20 cursor-pointer"
                   onClick={() => setPreview(true)}
                 >
                   <Sample3
-                    ref={ref}
+                    ref={previewRef}
                     data={finalCV || biodataCurr}
                     scale="sm"
                     size="xs"
                     textSize="xs"
                     iconSize="xs"
                     variantText="tiny"
-                    sidebarWidth={28}
+                    config={{
+                      sidebarWidth: 10,
+                      mobileSidebarWidth: 35,
+                      tabletSidebarWidth: 30,
+                      responsiveImage: true,
+                      mobileImageSize: 120,
+                      tabletImageSize: 150,
+                      desktopImageSize: 200,
+                      responsiveSidebar: true,
+                    }}
                     printable="noPrint"
                     {...colorProps}
                     className="bg-transparent shadow-none p-0"
@@ -796,38 +703,44 @@ export default function CurrVitaeGenerator() {
                   />
                 </div>
               </div>
-              <div className="flex flex-col gap-4 lg:w-1/3 xl:w-3/5 py-10">
+              <div className="flex flex-col gap-3 sm:gap-4 lg:w-1/3 xl:w-2/5 py-4 sm:py-6 lg:py-10">
                 <Button
                   intent="secondary"
                   isLoading={isGenerating}
-                  onClick={() => downloadPng()}
+                  onClick={downloadPng}
                   className="w-full"
                 >
-                  <span className="font-bold">Generate PNG</span>
+                  <span className="font-bold text-sm sm:text-base">
+                    Generate PNG
+                  </span>
                 </Button>
                 <Button
                   intent="secondary"
                   isLoading={isGenerating}
-                  onClick={() => downloadPng()}
+                  onClick={downloadPdf}
                   className="w-full"
                 >
-                  <span className="font-bold">Generate PDF</span>
+                  <span className="font-bold text-sm sm:text-base">
+                    Generate PDF
+                  </span>
                 </Button>
                 <Button
                   intent="secondary"
                   isLoading={isPending}
-                  onClick={() => handleSaveCurr()}
+                  onClick={handleSaveCurr}
                   className="w-full"
                 >
-                  <span className="font-bold">Save Data</span>
+                  <span className="font-bold text-sm sm:text-base">
+                    Save Data
+                  </span>
                 </Button>
               </div>
             </div>
           )}
 
-          {/* Preview Section */}
+          {/* Preview Sidebar (Step 1 only) */}
           {currentStep === 1 && (
-            <div className="w-full lg:w-1/3 xl:w-2/5 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-4 lg:p-6 overflow-hidden">
+            <div className="hidden lg:block w-1/3 xl:w-2/5 bg-white border-l border-gray-200 p-4 lg:p-6 overflow-hidden">
               <div className="sticky top-0 bg-white pb-4 mb-4 border-b border-gray-200">
                 <h3 className="text-lg font-semibold">Live Preview</h3>
               </div>
@@ -836,14 +749,16 @@ export default function CurrVitaeGenerator() {
                 onClick={() => setPreview(true)}
               >
                 <Sample3
-                  ref={ref}
+                  ref={previewRef}
                   data={finalCV || biodataCurr}
                   scale="sm"
                   size="xs"
                   textSize="xs"
                   iconSize="xs"
                   variantText="tiny"
-                  sidebarWidth={28}
+                  config={{
+                    sidebarWidth: 28,
+                  }}
                   printable="noPrint"
                   {...colorProps}
                   className="bg-transparent shadow-none p-0"
@@ -852,15 +767,17 @@ export default function CurrVitaeGenerator() {
               </div>
             </div>
           )}
-
-          <PreviewGenerator
-            ref={refPreview}
-            data={finalCV || biodataCurr}
-            isShowing={preview}
-            onClose={() => setPreview(false)}
-          />
         </div>
       </div>
+
+      <PreviewGenerator
+        ref={refPreview}
+        data={finalCV || biodataCurr}
+        isShowing={preview}
+        onClose={() => setPreview(false)}
+      />
     </div>
   )
 }
+
+export default CurrVitaeGenerator

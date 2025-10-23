@@ -93,17 +93,26 @@ export interface IColorCurr {
   sidebarColor: RgbaColor
   primaryColor: RgbaColor
   skillColor?: RgbaColor
-  isUsingPhoto?: boolean | number 
+  isUsingPhoto?: boolean | number
 }
 
 export interface CVProps {
   data?: ICurrVitae
-  sidebarWidth?: number
   className?: string
   sidebarColor?: string
   primaryColor?: string
   sidebarTextColor?: string
   skillColor?: string
+  config?: {
+    sidebarWidth?: number
+    responsiveSidebar?: boolean
+    responsiveImage?: boolean
+    mobileSidebarWidth?: number
+    tabletSidebarWidth?: number
+    mobileImageSize?: number
+    tabletImageSize?: number
+    desktopImageSize?: number
+  }
 }
 
 export interface IGeneratorStep1 {
