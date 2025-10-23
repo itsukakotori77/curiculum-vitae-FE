@@ -7,29 +7,25 @@ import TextForm from '@/components/globals/form/TextForm'
 import { IGeneratorStep5 } from '@/interface/curiculumVitae'
 import { joinClass } from '@/utils/common'
 import { yupResolver } from '@hookform/resolvers/yup'
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useImperativeHandle } from 'react'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faEnvelope,
-  faPhone,
-} from '@fortawesome/free-solid-svg-icons'
+import { faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons'
 import {
   faInstagram,
   faLinkedin,
   faTelegram,
 } from '@fortawesome/free-brands-svg-icons'
 import { regexNumeric } from '@/utils/regex'
+
 interface FormGenerator5 {
   data?: IGeneratorStep5
   loading?: boolean
   onSubmit: (val: IGeneratorStep5) => void
   onCancel: (val: IGeneratorStep5, step?: number) => void
   onChange?: (val: IGeneratorStep5) => void
-  setState?: React.Dispatch<
-    React.SetStateAction<IGeneratorStep5 | undefined>
-  >
+  setState?: React.Dispatch<React.SetStateAction<IGeneratorStep5 | undefined>>
   className?: string
 }
 
@@ -60,140 +56,221 @@ const Schema = Yup.object().shape({
 })
 
 const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
-  (
-    { data, loading, onSubmit, onCancel, setState, className },
-    ref,
-  ) => {
+  ({ data, loading, onSubmit, onCancel, setState, className }, ref) => {
     const {
       handleSubmit,
       control,
       watch,
+      reset,
+      getValues,
       formState: { isValid },
     } = useForm<IGeneratorStep5 | any>({
       resolver: yupResolver(Schema),
       mode: 'onChange',
-      defaultValues: data ?? {},
+      defaultValues: data ?? {
+        phone: '',
+        email: '',
+        telegram: '',
+        instagram: '',
+        linkedin: '',
+        address: '',
+      },
     })
 
     const watchedValues = watch()
 
+    useImperativeHandle(
+      ref,
+      () => ({
+        submitForm: () => {
+          handleSubmit(onSubmit)()
+        },
+        resetForm: () => {
+          reset()
+        },
+        getCurrentValues: () => {
+          return getValues()
+        },
+      }),
+      [handleSubmit, onSubmit, reset, getValues],
+    )
+
     return (
       <Card
         title="Contacts"
-        className={joinClass('', className)}
+        className={joinClass('w-full max-w-full overflow-hidden', className)}
         useShadow={false}
       >
         <form
           noValidate
-          className="grid gap-2 py-3 px-3"
+          className="grid gap-3 sm:gap-4 py-3 sm:py-4 px-2 sm:px-4 md:px-6"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <TextForm
-            fieldLabel={{ children: 'Phone', required: true }}
-            fieldInput={{
-              maxLength: 15,
-              icon: (
-                <span className="text-lg">
-                  <FontAwesomeIcon
-                    icon={faPhone}
-                    className="w-5 h-5 text-gray-400"
-                  />
-                </span>
-              ),
-            }}
-            name="phone"
-            control={control}
-            regexReplace={regexNumeric}
-          />
-          <TextForm
-            fieldLabel={{ children: 'Email', required: true }}
-            fieldInput={{
-              maxLength: 50,
-              type: 'email',
-              icon: (
-                <span className="text-lg">
-                  <FontAwesomeIcon
-                    icon={faEnvelope}
-                    className="w-5 h-5 text-gray-400"
-                  />
-                </span>
-              ),
-            }}
-            name="email"
-            control={control}
-          />
-          <TextForm
-            fieldLabel={{ children: 'Telegram', required: false }}
-            fieldInput={{
-              maxLength: 15,
-              icon: (
-                <span className="text-lg">
-                  <FontAwesomeIcon
-                    icon={faTelegram}
-                    className="w-5 h-5 text-gray-400"
-                  />
-                </span>
-              ),
-            }}
-            name="telegram"
-            control={control}
-          />
-          <TextForm
-            fieldLabel={{ children: 'Instagram', required: false }}
-            fieldInput={{
-              maxLength: 15,
-              icon: (
-                <span className="text-lg">
-                  <FontAwesomeIcon
-                    icon={faInstagram}
-                    className="w-5 h-5 text-gray-400"
-                  />
-                </span>
-              ),
-            }}
-            name="instagram"
-            control={control}
-          />
-          <TextForm
-            fieldLabel={{ children: 'Linkedin', required: false }}
-            fieldInput={{
-              maxLength: 15,
-              icon: (
-                <span className="text-lg">
-                  <FontAwesomeIcon
-                    icon={faLinkedin}
-                    className="w-5 h-5 text-gray-400"
-                  />
-                </span>
-              ),
-            }}
-            name="linkedin"
-            control={control}
-          />
-          <TextareaForm
-            fieldLabel={{ children: 'Address', required: false }}
-            fieldInput={{ maxLength: 255 }}
-            name="address"
-            control={control}
-          />
+          {/* Primary Contact Fields - Responsive Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 w-full">
+            {/* Phone Field */}
+            <div className="w-full">
+              <TextForm
+                fieldLabel={{
+                  children: 'Phone',
+                  required: true,
+                }}
+                fieldInput={{
+                  maxLength: 15,
+                  placeholder: '+62 or 08xx-xxxx-xxxx',
+                  icon: (
+                    <span className="text-base sm:text-lg">
+                      <FontAwesomeIcon
+                        icon={faPhone}
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400"
+                      />
+                    </span>
+                  ),
+                }}
+                name="phone"
+                control={control}
+                regexReplace={regexNumeric}
+              />
+            </div>
 
-          <div className="flex justify-end gap-5 w-full mt-4">
+            {/* Email Field */}
+            <div className="w-full">
+              <TextForm
+                fieldLabel={{
+                  children: 'Email',
+                  required: true,
+                }}
+                fieldInput={{
+                  maxLength: 50,
+                  type: 'email',
+                  placeholder: 'example@email.com',
+                  icon: (
+                    <span className="text-base sm:text-lg">
+                      <FontAwesomeIcon
+                        icon={faEnvelope}
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400"
+                      />
+                    </span>
+                  ),
+                }}
+                name="email"
+                control={control}
+              />
+            </div>
+          </div>
+
+          {/* Social Media Fields - Responsive Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 w-full">
+            {/* Telegram Field */}
+            <div className="w-full">
+              <TextForm
+                fieldLabel={{
+                  children: 'Telegram',
+                  required: false,
+                }}
+                fieldInput={{
+                  maxLength: 15,
+                  placeholder: '@username',
+                  icon: (
+                    <span className="text-base sm:text-lg">
+                      <FontAwesomeIcon
+                        icon={faTelegram}
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400"
+                      />
+                    </span>
+                  ),
+                }}
+                name="telegram"
+                control={control}
+              />
+            </div>
+
+            {/* Instagram Field */}
+            <div className="w-full">
+              <TextForm
+                fieldLabel={{
+                  children: 'Instagram',
+                  required: false,
+                }}
+                fieldInput={{
+                  maxLength: 15,
+                  placeholder: 'username',
+                  icon: (
+                    <span className="text-base sm:text-lg">
+                      <FontAwesomeIcon
+                        icon={faInstagram}
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400"
+                      />
+                    </span>
+                  ),
+                }}
+                name="instagram"
+                control={control}
+              />
+            </div>
+
+            {/* LinkedIn Field */}
+            <div className="w-full sm:col-span-2 lg:col-span-1">
+              <TextForm
+                fieldLabel={{
+                  children: 'LinkedIn',
+                  required: false,
+                }}
+                fieldInput={{
+                  maxLength: 15,
+                  placeholder: 'username',
+                  icon: (
+                    <span className="text-base sm:text-lg">
+                      <FontAwesomeIcon
+                        icon={faLinkedin}
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400"
+                      />
+                    </span>
+                  ),
+                }}
+                name="linkedin"
+                control={control}
+              />
+            </div>
+          </div>
+
+          {/* Address Field - Full Width */}
+          <div className="w-full">
+            <TextareaForm
+              fieldLabel={{
+                children: 'Address',
+                required: false,
+              }}
+              fieldInput={{
+                maxLength: 255,
+                rows: 3,
+                placeholder: 'Enter your full address...',
+              }}
+              name="address"
+              control={control}
+            />
+          </div>
+
+          {/* Action Buttons - Responsive Layout */}
+          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 md:gap-5 w-full mt-2 sm:mt-4">
             <Button
               type="button"
               intent="default"
-              className="w-40"
+              className="w-full sm:w-32 md:w-40 order-2 sm:order-1"
               onClick={() => onCancel(watchedValues, 4)}
             >
-              <span className="font-bold">Back</span>
+              <span className="font-bold text-sm sm:text-base">Back</span>
             </Button>
             <Button
               type="submit"
               intent="info"
-              className="w-40"
+              className="w-full sm:w-32 md:w-40 order-1 sm:order-2"
               isLoading={loading}
               disabled={!isValid}
             >
-              <span className="font-bold">Submit</span>
+              <span className="font-bold text-sm sm:text-base">
+                {loading ? 'Submitting...' : 'Submit'}
+              </span>
             </Button>
           </div>
         </form>

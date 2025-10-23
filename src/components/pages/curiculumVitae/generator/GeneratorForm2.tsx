@@ -3,14 +3,13 @@
 import DatepickerForm from '@/components/globals/form/DatepickerForm'
 import TextForm from '@/components/globals/form/TextForm'
 import { IGeneratorStep2 } from '@/interface/curiculumVitae'
-import React, { forwardRef, useEffect, useRef, useState } from 'react'
-import { useForm, useFieldArray } from 'react-hook-form'
+import React, { forwardRef, useImperativeHandle } from 'react'
+import { useForm } from 'react-hook-form'
 import Button from '@/components/CultUI/Button'
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import TextareaForm from '@/components/globals/form/TextareaForm'
 import RadioForm from '@/components/globals/form/RadioForm'
-import { Plus, Trash2 } from 'lucide-react'
 import Card from '@/components/CultUI/Card'
 import { joinClass } from '@/utils/common'
 import DaterangepickerForm from '@/components/globals/form/DaterangepickerForm'
@@ -34,10 +33,12 @@ export interface GeneratorForm2Ref {
 }
 
 const Schema = Yup.object().shape({
-  jobTitle: Yup.string().required(),
-  company: Yup.string().required(),
-  role: Yup.string().required(),
-  date: Yup.array().required(),
+  jobTitle: Yup.string().required('Job title is required'),
+  company: Yup.string().required('Company is required'),
+  role: Yup.string().required('Role is required'),
+  date: Yup.array().required('Employment date is required'),
+  descJob: Yup.string().required('Job description is required'),
+  isCurrent: Yup.string().required('Please select if you still work here'),
 })
 
 const GeneratorForm2 = forwardRef<GeneratorForm2Ref, FormGeneratorStep2>(
@@ -58,72 +59,130 @@ const GeneratorForm2 = forwardRef<GeneratorForm2Ref, FormGeneratorStep2>(
       handleSubmit,
       watch,
       control,
-      formState: { isDirty },
+      reset,
+      setValue,
+      getValues,
+      formState: { isDirty, isValid },
     } = useForm<IGeneratorStep2 | any>({
       resolver: yupResolver(Schema),
       mode: 'onChange',
-      defaultValues: data,
+      defaultValues: data || {
+        jobTitle: '',
+        company: '',
+        role: '',
+        date: [],
+        descJob: '',
+        isCurrent: '',
+      },
     })
 
     const watchedValues = watch()
 
+    useImperativeHandle(
+      ref,
+      () => ({
+        submitForm: () => {
+          handleSubmit(onSubmit)()
+        },
+        resetForm: () => {
+          reset()
+        },
+        getCurrentValues: () => {
+          return getValues()
+        },
+        setFieldValue: (fieldName: keyof IGeneratorStep2, value: string) => {
+          setValue(fieldName, value)
+        },
+      }),
+      [handleSubmit, onSubmit, reset, getValues, setValue],
+    )
+
     return (
-      <Card title="Experience" className={joinClass('', className)}>
+      <Card
+        title="Work Experience"
+        className={joinClass('w-full max-w-full overflow-hidden', className)}
+      >
         <form
           noValidate
-          className="grid gap-4 py-3 px-3"
+          className="grid gap-3 sm:gap-4 py-3 sm:py-4 px-2 sm:px-4 md:px-6"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className="grid gap-2">
+          {/* Job Title & Company - Responsive Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 w-full">
+            <div className="w-full">
+              <TextForm
+                fieldLabel={{
+                  children: 'Job Title',
+                  required: true,
+                }}
+                fieldInput={{
+                  maxLength: 100,
+                  placeholder: 'e.g., Software Engineer, Product Manager',
+                }}
+                name="jobTitle"
+                control={control}
+              />
+            </div>
+            <div className="w-full">
+              <TextForm
+                fieldLabel={{
+                  children: 'Company',
+                  required: true,
+                }}
+                fieldInput={{
+                  maxLength: 100,
+                  placeholder: 'Company name',
+                }}
+                name="company"
+                control={control}
+              />
+            </div>
+          </div>
+
+          {/* Role */}
+          <div className="w-full">
             <TextForm
-              fieldLabel={{ children: 'Job Title', required: true }}
-              fieldInput={{ maxLength: 100 }}
-              name="jobTitle"
-              control={control}
-            />
-            <TextForm
-              fieldLabel={{ children: 'Company', required: true }}
-              fieldInput={{ maxLength: 100 }}
-              name="company"
-              control={control}
-            />
-            <TextForm
-              fieldLabel={{ children: 'Role', required: true }}
-              fieldInput={{ maxLength: 100 }}
+              fieldLabel={{
+                children: 'Role',
+                required: true,
+              }}
+              fieldInput={{
+                maxLength: 100,
+                placeholder: 'e.g., Full-stack Developer, Team Lead',
+              }}
               name="role"
               control={control}
             />
+          </div>
 
+          {/* Employment Period */}
+          <div className="w-full">
             <DaterangepickerForm
-              fieldLabel={{ children: 'Entry Date' }}
+              fieldLabel={{
+                children: 'Employment Period',
+                required: true,
+              }}
               control={control}
               name="date"
               max={30}
               maxDate={new Date()}
             />
+          </div>
 
-            <TextareaForm
-              fieldLabel={{
-                children: 'Job Description',
-                required: true,
-              }}
-              fieldInput={{ maxLength: 255 }}
-              name="descJob"
-              control={control}
-            />
-
+          {/* Current Employment Status */}
+          <div className="w-full">
             <RadioForm
               fieldLabel={{
-                children: 'Is still work here ?',
+                children: 'Do you still work here?',
                 required: true,
               }}
               fieldInput={[
                 {
-                  label: 'Yes',
+                  label: 'Yes, I currently work here',
                   value: true,
                 },
                 {
-                  label: 'No',
+                  label: 'No, I left this position',
                   value: false,
                 },
               ]}
@@ -132,23 +191,57 @@ const GeneratorForm2 = forwardRef<GeneratorForm2Ref, FormGeneratorStep2>(
             />
           </div>
 
-          <div className="flex justify-end gap-5 w-full mt-4">
+          {/* Job Description */}
+          <div className="w-full">
+            <TextareaForm
+              fieldLabel={{
+                children: 'Job Description',
+                required: true,
+              }}
+              fieldInput={{
+                maxLength: 255,
+                rows: 4,
+                placeholder:
+                  'Describe your responsibilities, achievements, and key contributions...',
+              }}
+              name="descJob"
+              control={control}
+            />
+          </div>
+
+          {/* Helper Text */}
+          <div className="text-xs sm:text-sm text-gray-500 px-1 bg-blue-50 p-2 sm:p-3 rounded-lg border border-blue-200">
+            <p className="font-medium text-blue-900 mb-1">
+              💡 Tips for a great experience entry:
+            </p>
+            <ul className="list-disc list-inside space-y-0.5 text-blue-800">
+              <li>Use action verbs (developed, managed, led, created)</li>
+              <li>Quantify achievements when possible (increased by 30%)</li>
+              <li>Focus on impact and results</li>
+              <li>Keep it concise and relevant</li>
+            </ul>
+          </div>
+
+          {/* Action Buttons - Responsive */}
+          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 md:gap-5 w-full mt-2 sm:mt-4">
             <Button
               type="button"
               intent="default"
-              className="w-40"
+              className="w-full sm:w-32 md:w-40 order-2 sm:order-1"
               onClick={() => onCancel(watchedValues, 2)}
             >
-              <span className="font-bold">Cancel</span>
+              <span className="font-bold text-sm sm:text-base">Back</span>
             </Button>
             <Button
               type="submit"
               intent="info"
-              className="w-40"
+              className="w-full sm:w-32 md:w-40 order-1 sm:order-2"
               isLoading={loading}
-              disabled={!isDirty}
+              disabled={!isDirty || !isValid}
             >
-              <span className="font-bold">Submit</span>
+              <span className="font-bold text-sm sm:text-base">
+                {loading ? 'Submitting...' : 'Submit'}
+              </span>
             </Button>
           </div>
         </form>
@@ -157,6 +250,6 @@ const GeneratorForm2 = forwardRef<GeneratorForm2Ref, FormGeneratorStep2>(
   },
 )
 
-GeneratorForm2.displayName = 'GeneratorForm1'
+GeneratorForm2.displayName = 'GeneratorForm2'
 
 export default GeneratorForm2

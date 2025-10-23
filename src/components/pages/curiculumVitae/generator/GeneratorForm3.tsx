@@ -2,7 +2,7 @@
 
 import { IGeneratorStep3 } from '@/interface/curiculumVitae'
 import * as Yup from 'yup'
-import React, { forwardRef, useEffect } from 'react'
+import React, { forwardRef, useImperativeHandle } from 'react'
 import Card from '@/components/CultUI/Card'
 import { joinClass } from '@/utils/common'
 import { useForm } from 'react-hook-form'
@@ -22,9 +22,7 @@ interface FormGenerator3 {
   onSubmit: (val: IGeneratorStep3) => void
   onCancel: (val: IGeneratorStep3, step?: number) => void
   onChange?: (val: IGeneratorStep3) => void
-  setState?: React.Dispatch<
-    React.SetStateAction<IGeneratorStep3 | undefined>
-  >
+  setState?: React.Dispatch<React.SetStateAction<IGeneratorStep3 | undefined>>
   className?: string
 }
 
@@ -34,16 +32,16 @@ export interface GeneratorForm3Ref {
   getCurrentValues: () => IGeneratorStep3
 }
 
-const Schema = Yup.object().shape({
-  degree: Yup.string().required(),
-  major: Yup.object().required(),
-  gpaCheck: Yup.string().required(),
-  graduatedStatus: Yup.string().required(),
-  university: Yup.string().required(),
+const Schema3 = Yup.object().shape({
+  degree: Yup.string().required('Degree is required'),
+  major: Yup.object().required('Major is required'),
+  gpaCheck: Yup.string().required('GPA check is required'),
+  graduatedStatus: Yup.string().required('Graduation status is required'),
+  university: Yup.string().required('University is required'),
 
-  graduated: Yup.string().when('graudatedStatus', {
+  graduated: Yup.string().when('graduatedStatus', {
     is: (val: string | any) => val === 'true',
-    then: (schema) => schema.required(),
+    then: (schema) => schema.required('Graduation date is required'),
     otherwise: (schema) => schema.notRequired(),
   }),
 
@@ -59,24 +57,14 @@ const Schema = Yup.object().shape({
   gpaStatus: Yup.string().when('gpaCheck', {
     is: (val: string | any) => val === 'true',
     then: (schema) =>
-      schema.required(
-        'GPA Status is required when GPA check is enabled',
-      ),
+      schema.required('GPA Status is required when GPA check is enabled'),
     otherwise: (schema) => schema.notRequired(),
   }),
 })
 
-const GeneratorForm3 = forwardRef<GeneratorForm3Ref, FormGenerator3>(
+export const GeneratorForm3 = forwardRef<GeneratorForm3Ref, FormGenerator3>(
   (
-    {
-      data,
-      loading,
-      onSubmit,
-      onCancel,
-      onChange,
-      setState,
-      className,
-    },
+    { data, loading, onSubmit, onCancel, onChange, setState, className },
     ref,
   ) => {
     const {
@@ -84,143 +72,215 @@ const GeneratorForm3 = forwardRef<GeneratorForm3Ref, FormGenerator3>(
       control,
       setValue,
       watch,
+      reset,
+      getValues,
       formState: { isValid },
     } = useForm<IGeneratorStep3 | any>({
-      resolver: yupResolver(Schema),
+      resolver: yupResolver(Schema3),
       mode: 'onChange',
       defaultValues: {
         ...data,
-        graduated: moment(data?.graduated)
+        graduated: moment(data?.graduated),
       },
     })
 
     const watchedValues = watch()
 
+    useImperativeHandle(
+      ref,
+      () => ({
+        submitForm: () => {
+          handleSubmit(onSubmit)()
+        },
+        resetForm: () => {
+          reset()
+        },
+        getCurrentValues: () => {
+          return getValues()
+        },
+      }),
+      [handleSubmit, onSubmit, reset, getValues],
+    )
+
     return (
-      <Card title="Education" className={joinClass('', className)}>
+      <Card
+        title="Education"
+        className={joinClass('w-full max-w-full overflow-hidden', className)}
+      >
         <form
           noValidate
-          className="grid gap-4 py-3 px-3"
+          className="grid gap-3 sm:gap-4 py-3 sm:py-4 px-2 sm:px-4 md:px-6"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <TextForm
-            fieldLabel={{ children: 'Degree', required: true }}
-            fieldInput={{ maxLength: 200 }}
-            name="degree"
-            control={control}
-          />
-          <TextForm
-            fieldLabel={{ children: 'University', required: true }}
-            fieldInput={{ maxLength: 200 }}
-            name="university"
-            control={control}
-          />
-          <RadioForm
-            fieldLabel={{ children: 'Is Any GPA on Your school ?' }}
-            fieldInput={[
-              {
-                label: 'Yes',
-                value: true,
-              },
-              {
-                label: 'No',
-                value: false,
-              },
-            ]}
-            name="gpaCheck"
-            control={control}
-          />
-
-          {watchedValues.gpaCheck === 'true' && (
-            <>
-              <NumberInputForm
-                fieldLabel={{ children: 'GPA', required: true }}
-                fieldInput={{ maxLength: 4 }}
-                name="gpa"
-                control={control}
-                thousandSeparator=""
-                decimalSeparator="."
-              />
+          {/* Basic Info - Responsive Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 w-full">
+            <div className="w-full">
               <TextForm
                 fieldLabel={{
-                  children: 'Status GPA',
+                  children: 'Degree',
                   required: true,
                 }}
-                fieldInput={{ maxLength: 200 }}
-                name="gpaStatus"
+                fieldInput={{
+                  maxLength: 200,
+                  placeholder: 'e.g., Bachelor, Master, PhD',
+                }}
+                name="degree"
                 control={control}
               />
-            </>
-          )}
+            </div>
+            <div className="w-full">
+              <TextForm
+                fieldLabel={{
+                  children: 'University',
+                  required: true,
+                }}
+                fieldInput={{
+                  maxLength: 200,
+                  placeholder: 'Enter university name',
+                }}
+                name="university"
+                control={control}
+              />
+            </div>
+          </div>
 
-          <RadioForm
-            fieldLabel={{ children: 'Is you have been graduated ?' }}
-            fieldInput={[
-              {
-                label: 'Yes',
-                value: true,
-              },
-              {
-                label: 'No',
-                value: false,
-              },
-            ]}
-            name="graduatedStatus"
-            control={control}
-          />
-
-          {watchedValues.graduatedStatus === 'true' && (
-            <DatepickerForm
-              fieldLabel={{ children: 'Graduated', required: true }}
-              name="graduated"
+          {/* GPA Check Radio */}
+          <div className="w-full">
+            <RadioForm
+              fieldLabel={{ children: 'Is there any GPA in your school?' }}
+              fieldInput={[
+                { label: 'Yes', value: true },
+                { label: 'No', value: false },
+              ]}
+              name="gpaCheck"
               control={control}
-              placeholder="Graduated"
             />
+          </div>
+
+          {/* Conditional GPA Fields - Responsive Grid */}
+          {watchedValues.gpaCheck === 'true' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full">
+              <div className="w-full">
+                <NumberInputForm
+                  fieldLabel={{
+                    children: 'GPA',
+                    required: true,
+                  }}
+                  fieldInput={{
+                    maxLength: 4,
+                    placeholder: 'e.g., 3.85',
+                  }}
+                  name="gpa"
+                  control={control}
+                  thousandSeparator=""
+                  decimalSeparator="."
+                />
+              </div>
+              <div className="w-full">
+                <TextForm
+                  fieldLabel={{
+                    children: 'GPA Status',
+                    required: true,
+                  }}
+                  fieldInput={{
+                    maxLength: 200,
+                    placeholder: 'e.g., Cum Laude, Magna Cum Laude',
+                  }}
+                  name="gpaStatus"
+                  control={control}
+                />
+              </div>
+            </div>
           )}
 
-          <SelectForm
-            fieldLabel={{ children: 'major', required: true }}
-            fieldInput={{ isMulti: false }}
-            name="major"
-            control={control}
-            setValue={setValue}
-            options={[
-              {
-                label: 'Informatics',
-                value: 'informatics',
-              },
-              {
-                label: 'Phamacis',
-                value: 'phamacis',
-              },
-            ]}
-          />
-          <TextareaForm
-            fieldLabel={{
-              children: 'Major Description',
-              required: false,
-            }}
-            fieldInput={{ maxLength: 200, rows: 4 }}
-            name="majorDesc"
-            control={control}
-          />
-          <div className="flex justify-end gap-5 w-full mt-4">
+          {/* Graduation Status Radio */}
+          <div className="w-full">
+            <RadioForm
+              fieldLabel={{ children: 'Have you graduated?' }}
+              fieldInput={[
+                { label: 'Yes', value: true },
+                { label: 'No', value: false },
+              ]}
+              name="graduatedStatus"
+              control={control}
+            />
+          </div>
+
+          {/* Conditional Graduation Date */}
+          {watchedValues.graduatedStatus === 'true' && (
+            <div className="w-full sm:w-1/2">
+              <DatepickerForm
+                fieldLabel={{
+                  children: 'Graduation Date',
+                  required: true,
+                }}
+                name="graduated"
+                control={control}
+                placeholder="Select graduation date"
+              />
+            </div>
+          )}
+
+          {/* Major Selection */}
+          <div className="w-full">
+            <SelectForm
+              fieldLabel={{
+                children: 'Major',
+                required: true,
+              }}
+              fieldInput={{
+                isMulti: false,
+                placeholder: 'Select your major',
+              }}
+              name="major"
+              control={control}
+              setValue={setValue}
+              options={[
+                { label: 'Informatics', value: 'informatics' },
+                { label: 'Pharmacy', value: 'pharmacy' },
+                { label: 'Engineering', value: 'engineering' },
+                { label: 'Business', value: 'business' },
+              ]}
+            />
+          </div>
+
+          {/* Major Description */}
+          <div className="w-full">
+            <TextareaForm
+              fieldLabel={{
+                children: 'Major Description',
+                required: false,
+              }}
+              fieldInput={{
+                maxLength: 200,
+                rows: 4,
+                placeholder: 'Describe your major and specialization...',
+              }}
+              name="majorDesc"
+              control={control}
+            />
+          </div>
+
+          {/* Action Buttons - Responsive */}
+          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 md:gap-5 w-full mt-2 sm:mt-4">
             <Button
               type="button"
               intent="default"
-              className="w-40"
+              className="w-full sm:w-32 md:w-40 order-2 sm:order-1"
               onClick={() => onCancel(watchedValues, 3)}
             >
-              <span className="font-bold">Cancel</span>
+              <span className="font-bold text-sm sm:text-base">Back</span>
             </Button>
             <Button
               type="submit"
               intent="info"
-              className="w-40"
+              className="w-full sm:w-32 md:w-40 order-1 sm:order-2"
               isLoading={loading}
               disabled={!isValid}
             >
-              <span className="font-bold">Submit</span>
+              <span className="font-bold text-sm sm:text-base">
+                {loading ? 'Submitting...' : 'Submit'}
+              </span>
             </Button>
           </div>
         </form>

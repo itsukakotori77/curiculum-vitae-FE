@@ -9,14 +9,13 @@ import React, {
   useRef,
   useMemo,
 } from 'react'
-import { set, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
 import TextForm from '@/components/globals/form/TextForm'
 import TextareaForm from '@/components/globals/form/TextareaForm'
 import Button from '@/components/CultUI/Button'
 import Card from '@/components/CultUI/Card'
 import FileForm from '@/components/globals/form/FileForm'
-import Image from 'next/image'
 import { useCVSettingStore } from '@/utils/store'
 
 interface FormGeneratorStep1 {
@@ -27,6 +26,7 @@ interface FormGeneratorStep1 {
   onChange?: (val: IGeneratorStep1) => void
   setState?: React.Dispatch<React.SetStateAction<IGeneratorStep1 | undefined>>
 }
+
 export interface GeneratorForm1Ref {
   submitForm: () => void
   resetForm: () => void
@@ -35,11 +35,11 @@ export interface GeneratorForm1Ref {
 }
 
 const Schema = Yup.object().shape({
-  firstName: Yup.string().required('firstname is required'),
-  lastName: Yup.string().required('lastname is required'),
-  nickname: Yup.string().required('nickname is required'),
-  role: Yup.string().required('role is required'),
-  profile: Yup.string().required('profile is required'),
+  firstName: Yup.string().required('Firstname is required'),
+  lastName: Yup.string().required('Lastname is required'),
+  nickname: Yup.string().required('Nickname is required'),
+  role: Yup.string().required('Role is required'),
+  profile: Yup.string().required('Profile is required'),
 })
 
 const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
@@ -74,7 +74,7 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
     }, [watch('profilePicture')])
 
     const watchedValues = watch()
-    const prevValuesRef = useRef<IGeneratorStep1>(null)
+    const prevValuesRef = useRef<IGeneratorStep1 | null>(null)
     const usingPicture = useCVSettingStore((state) => state.data?.usingPicture)
 
     useEffect(() => {
@@ -99,7 +99,7 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
       ref,
       () => ({
         submitForm: () => {
-          handleSubmit(onSubmit)
+          handleSubmit(onSubmit)()
         },
         resetForm: () => {
           reset()
@@ -115,103 +115,145 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
     )
 
     return (
-      <Card title="Profile">
+      <Card title="Profile" className="w-full max-w-full overflow-hidden">
         <form
           onSubmit={handleSubmit(onSubmit)}
           noValidate
-          className="grid gap-2 py-3 px-2"
+          className="grid gap-3 sm:gap-4 py-3 sm:py-4 px-2 sm:px-4 md:px-6 w-full"
         >
-          <div className="grid grid-cols-2 gap-5">
+          {/* Name Fields - Responsive Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-5 w-full">
+            <div className="w-full">
+              <TextForm
+                fieldLabel={{
+                  children: 'Firstname',
+                  required: true,
+                }}
+                fieldInput={{
+                  maxLength: 100,
+                  placeholder: 'Enter your first name',
+                }}
+                name="firstName"
+                control={control}
+              />
+            </div>
+            <div className="w-full">
+              <TextForm
+                fieldLabel={{
+                  children: 'Lastname',
+                  required: true,
+                }}
+                fieldInput={{
+                  maxLength: 100,
+                  placeholder: 'Enter your last name',
+                }}
+                name="lastName"
+                control={control}
+              />
+            </div>
+          </div>
+
+          {/* Nickname Field */}
+          <div className="w-full">
             <TextForm
               fieldLabel={{
-                children: 'Firstname',
+                children: 'Nickname',
                 required: true,
               }}
-              fieldInput={{ maxLength: 100 }}
-              name="firstName"
-              control={control}
-            />
-            <TextForm
-              fieldLabel={{
-                children: 'Lastname',
-                required: true,
+              fieldInput={{
+                maxLength: 100,
+                placeholder: 'Enter your nickname',
               }}
-              fieldInput={{ maxLength: 100 }}
-              name="lastName"
+              name="nickname"
               control={control}
             />
           </div>
 
-          <TextForm
-            fieldLabel={{
-              children: 'Nickname',
-              required: true,
-            }}
-            fieldInput={{ maxLength: 100 }}
-            name="nickname"
-            control={control}
-          />
-
-          <TextForm
-            fieldLabel={{ children: 'Role', required: true }}
-            fieldInput={{ maxLength: 100 }}
-            name="role"
-            control={control}
-          />
-
-          {!!usingPicture && (
-            <FileForm
-              control={control}
-              name="image"
+          {/* Role Field */}
+          <div className="w-full">
+            <TextForm
               fieldLabel={{
-                children: 'Profile Image',
+                children: 'Role',
                 required: true,
               }}
-              fileInput={{
-                enableCrop: true,
-                cropAspectRatio: 1,
-                acceptedFileTypes: ['image/*'],
-                maxFiles: 1,
-                files: profileImageFiles,
-                labelIdle:
-                  'Drop your profile image here or <span class="font-bold">Browse</span>',
+              fieldInput={{
+                maxLength: 100,
+                placeholder: 'e.g., Software Engineer, Designer',
               }}
-              className="mb-4"
-              onSuccessUpload={(res, file, fileManager) => {
-                const fileId = fileManager.getFileEntry(file).id
-                setValue('fileId', fileId)
-                setValue('profilePicture', res.data.url)
-              }}
-              onSuccessDelete={() => {
-                setValue('profilePicture', '')
-              }}
+              name="role"
+              control={control}
             />
+          </div>
+
+          {/* Profile Image - Conditional */}
+          {!!usingPicture && (
+            <div className="w-full">
+              <FileForm
+                control={control}
+                name="image"
+                fieldLabel={{
+                  children: 'Profile Image',
+                  required: true,
+                }}
+                fileInput={{
+                  enableCrop: true,
+                  cropAspectRatio: 1,
+                  acceptedFileTypes: ['image/*'],
+                  maxFiles: 1,
+                  files: profileImageFiles,
+                  labelIdle:
+                    '<span class="text-xs sm:text-sm">Drop your profile image here or <span class="font-bold">Browse</span></span>',
+                }}
+                className="mb-2 sm:mb-4"
+                onSuccessUpload={(res, file, fileManager) => {
+                  const fileId = fileManager.getFileEntry(file).id
+                  setValue('fileId', fileId)
+                  setValue('profilePicture', res.data.url)
+                }}
+                onSuccessDelete={() => {
+                  setValue('profilePicture', '')
+                }}
+              />
+            </div>
           )}
 
-          <TextareaForm
-            fieldLabel={{ children: 'Profile', required: true }}
-            fieldInput={{ maxLength: 500, rows: 4 }}
-            name="profile"
-            control={control}
-          />
+          {/* Profile Textarea */}
+          <div className="w-full">
+            <TextareaForm
+              fieldLabel={{
+                children: 'Profile',
+                required: true,
+              }}
+              fieldInput={{
+                maxLength: 500,
+                rows: 4,
+                placeholder: 'Write a brief description about yourself...',
+              }}
+              name="profile"
+              control={control}
+            />
+          </div>
 
-          <div className="flex justify-end gap-5 w-full">
+          {/* Action Buttons - Responsive Layout */}
+          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 md:gap-5 w-full mt-2 sm:mt-4">
             <Button
               type="button"
               intent="default"
-              className="w-40"
+              className="w-full sm:w-32 md:w-40 order-2 sm:order-1"
               onClick={() => onCancel(watchedValues)}
             >
-              <span className="font-bold">Cancel</span>
+              <span className="font-bold text-sm sm:text-base">Cancel</span>
             </Button>
             <Button
               type="submit"
               intent="info"
-              className="w-40"
+              className="w-full sm:w-32 md:w-40 order-1 sm:order-2"
               isLoading={loading}
               disabled={!isValid}
             >
-              <span className="font-bold">Submit</span>
+              <span className="font-bold text-sm sm:text-base">
+                {loading ? 'Submitting...' : 'Submit'}
+              </span>
             </Button>
           </div>
         </form>
