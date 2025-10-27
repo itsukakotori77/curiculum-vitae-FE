@@ -17,15 +17,6 @@
     box-shadow: none !important;
     page-break-inside: avoid;
   }
-
-  .sidebar {
-    width: 25% !important;
-  }
-
-  .main-content {
-    width: 75% !important;
-  }
-
   .print-break {
     page-break-before: always;
   }
@@ -38,14 +29,6 @@
 @media screen and (max-width: 768px) {
   .cv-container {
     flex-direction: column !important;
-  }
-
-  .sidebar {
-    width: 100%;
-  }
-
-  .main-content {
-    width: 100% !important;
   }
 }
 

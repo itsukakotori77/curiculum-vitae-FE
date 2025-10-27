@@ -23,6 +23,7 @@ const cvVariants = cva(
   {
     variants: {
       size: {
+        xxs: 'max-w-xl',
         xs: 'max-w-2xl',
         sm: 'max-w-3xl',
         md: 'max-w-4xl',
@@ -31,8 +32,9 @@ const cvVariants = cva(
         full: 'max-w-full',
       },
       scale: {
+        xxs: 'scale-[0.4]',
         xs: 'scale-[0.6]',
-        sm: 'scale-[0.8]',
+        sm: 'scale-[1.0]',
         md: 'scale-[1.0]',
         lg: 'scale-[1.2]',
         xl: 'scale-[1.4]',
@@ -68,6 +70,7 @@ const textVariants = cva('', {
       tiny: '',
     },
     size: {
+      xxs: '',
       xs: '',
       sm: '',
       md: '',
@@ -77,6 +80,7 @@ const textVariants = cva('', {
   },
   compoundVariants: [
     // Title variants
+    { variant: 'title', size: 'xxs', class: 'text-lg font-bold' },
     { variant: 'title', size: 'xs', class: 'text-xl font-bold' },
     { variant: 'title', size: 'sm', class: 'text-2xl font-bold' },
     { variant: 'title', size: 'md', class: 'text-3xl font-bold' },
@@ -84,6 +88,11 @@ const textVariants = cva('', {
     { variant: 'title', size: 'xl', class: 'text-5xl font-bold' },
 
     // Subtitle variants
+    {
+      variant: 'subtitle',
+      size: 'xxs',
+      class: 'text-xs font-semibold',
+    },
     {
       variant: 'subtitle',
       size: 'xs',
@@ -111,6 +120,7 @@ const textVariants = cva('', {
     },
 
     // Body variants
+    { variant: 'body', size: 'xxs', class: 'text-[9px]' },
     { variant: 'body', size: 'xs', class: 'text-xs' },
     { variant: 'body', size: 'sm', class: 'text-sm' },
     { variant: 'body', size: 'md', class: 'text-base' },
@@ -118,6 +128,7 @@ const textVariants = cva('', {
     { variant: 'body', size: 'xl', class: 'text-xl' },
 
     // Small variants
+    { variant: 'small', size: 'xxs', class: 'text-[8px]' },
     { variant: 'small', size: 'xs', class: 'text-[10px]' },
     { variant: 'small', size: 'sm', class: 'text-xs' },
     { variant: 'small', size: 'md', class: 'text-sm' },
@@ -125,6 +136,7 @@ const textVariants = cva('', {
     { variant: 'small', size: 'xl', class: 'text-lg' },
 
     // Tiny variants
+    { variant: 'tiny', size: 'xxs', class: 'text-[6px]' },
     { variant: 'tiny', size: 'xs', class: 'text-[8px]' },
     { variant: 'tiny', size: 'sm', class: 'text-[10px]' },
     { variant: 'tiny', size: 'md', class: 'text-xs' },
@@ -140,6 +152,7 @@ const textVariants = cva('', {
 const iconVariants = cva('', {
   variants: {
     iconSize: {
+      xxs: ['text-[9px]', 'w-3'],
       xs: ['text-xs', 'w-3'],
       sm: ['text-sm', 'w-7'],
       md: ['text-xl', 'w-7'],
@@ -239,7 +252,6 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                       '--sidebar-width-mobile': `${config.mobileSidebarWidth}%`,
                       '--sidebar-width-tablet': `${config.tabletSidebarWidth}%`,
                       '--sidebar-width-desktop': `${config.sidebarWidth!}%`,
-                      width: `${config.mobileSidebarWidth}%`,
                       background: sidebarColor,
                     } as React.CSSProperties)
                   : {
@@ -452,18 +464,18 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
 
             <div
               className={cn(
-                'main-content w-full',
+                'main-content',
                 config.responsiveSidebar &&
-                  'w-[var(--main-width-mobile)] sm:w-[var(--main-width-tablet)] lg:w-[75%]',
+                  'w-[var(--main-width-mobile)] sm:w-[var(--main-width-tablet)] lg:w-[var(--main-width-desktop)]',
               )}
               style={
                 config.responsiveSidebar
                   ? ({
                       '--main-width-mobile': `${100 - config.mobileSidebarWidth!}%`,
                       '--main-width-tablet': `${100 - config.tabletSidebarWidth!}%`,
-                      width: `${100 - config.mobileSidebarWidth!}%`,
+                      '--main-width-desktop': `${100 - config.sidebarWidth!}%`,
                     } as React.CSSProperties)
-                  : { width: '75%' }
+                  : { width: `${100 - config.sidebarWidth!}%` }
               }
             >
               {/* DETAIL */}

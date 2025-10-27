@@ -669,38 +669,41 @@ const CurrVitaeGenerator: React.FC = () => {
           {currentStep === 6 && (
             <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 w-full p-3 sm:p-4 lg:p-6">
               <div className="w-full lg:w-2/5 xl:w-3/6 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-3 sm:p-4 lg:p-6 overflow-auto">
-                <div className="sticky top-0 bg-white pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-gray-200">
+                <div className="sticky lg:-top-6 -top-4 p-2 bg-white pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-gray-200 z-[4]">
                   <h3 className="text-base sm:text-lg font-semibold">
                     Live Preview
                   </h3>
                 </div>
-                <div
-                  className="sm:scale-100 lg:scale-90 origin-top md:-mt-16 -mt-20 cursor-pointer"
-                  onClick={() => setPreview(true)}
-                >
-                  <Sample3
-                    ref={previewRef}
-                    data={finalCV || biodataCurr}
-                    scale="sm"
-                    size="xs"
-                    textSize="xs"
-                    iconSize="xs"
-                    variantText="tiny"
-                    config={{
-                      sidebarWidth: 10,
-                      mobileSidebarWidth: 35,
-                      tabletSidebarWidth: 30,
-                      responsiveImage: true,
-                      mobileImageSize: 120,
-                      tabletImageSize: 150,
-                      desktopImageSize: 200,
-                      responsiveSidebar: true,
-                    }}
-                    printable="noPrint"
-                    {...colorProps}
-                    className="bg-transparent shadow-none p-0"
-                    childrenClassName="max-h-none"
-                  />
+                <div className="relative min-h-[400px]">
+                  {/* Contains the scaled preview */}
+                  <div
+                    className="absolute top-0 left-0 sm:scale-75 lg:scale-90 origin-top-left cursor-pointer"
+                    onClick={() => setPreview(true)}
+                  >
+                    <Sample3
+                      ref={previewRef}
+                      data={finalCV || biodataCurr}
+                      scale="sm"
+                      size="xs"
+                      textSize="xs"
+                      iconSize="xs"
+                      variantText="tiny"
+                      config={{
+                        sidebarWidth: 28,
+                        mobileSidebarWidth: 28,
+                        tabletSidebarWidth: 30,
+                        responsiveImage: true,
+                        mobileImageSize: 120,
+                        tabletImageSize: 150,
+                        desktopImageSize: 200,
+                        responsiveSidebar: true,
+                      }}
+                      printable="noPrint"
+                      className="bg-transparent shadow-none p-0"
+                      childrenClassName="max-h-none"
+                      {...colorProps}
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col gap-3 sm:gap-4 lg:w-1/3 xl:w-2/5 py-4 sm:py-6 lg:py-10">

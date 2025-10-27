@@ -282,14 +282,12 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
                   origin-top
                   transition-transform
                   duration-300
-                  scale-[0.35]
-                  xs:scale-[0.45]
+                  scale-40
                   sm:scale-[0.55]
                   md:scale-[0.7]
                   lg:scale-[0.85]
-                  xl:scale-95
-                  2xl:scale-100
-                  min-w-[210mm]
+                  xl:scale-[0.95]
+                  2xl:scale-[1]
                 "
                 >
                   <Sample3
@@ -301,15 +299,19 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
                     iconSize="md"
                     variantText="small"
                     config={{
-                      sidebarWidth: 20,
+                      sidebarWidth: 28, 
                       responsiveImage: true,
                       responsiveSidebar: true,
-                      mobileSidebarWidth: 30,
+                      mobileSidebarWidth: 28, 
+                      tabletSidebarWidth: 35,
+                      mobileImageSize: 120,
+                      tabletImageSize: 150,
+                      desktopImageSize: 200,
                     }}
                     printable="print"
-                    {...colorProps}
                     className="bg-white shadow-lg !w-[210mm] !min-h-[297mm] !max-w-none mx-auto rounded-none sm:rounded-lg"
                     childrenClassName="!min-h-[297mm] !h-auto"
+                    {...colorProps}
                   />
                 </div>
               </div>
