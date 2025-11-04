@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { HTMLMotionProps, motion, Variants } from 'framer-motion'
 import { cva, VariantProps } from 'class-variance-authority'
 import { joinClass } from '@/utils/common'
+import { X } from 'lucide-react'
 
 const variants = cva(
   `fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
@@ -70,6 +71,7 @@ export interface ModalProps
   text?: string
   className?: string
   classNameOverlay?: string
+  useCloseButton?: boolean
 }
 
 const Modal = ({
@@ -79,6 +81,7 @@ const Modal = ({
   className,
   classNameOverlay,
   size,
+  useCloseButton = true,
   ...props
 }: ModalProps) => {
   useEffect(() => {
@@ -116,6 +119,29 @@ const Modal = ({
         className={joinClass(variants({ size }), className)}
         {...props}
       >
+        {useCloseButton && (
+          <div className="w-full flex justify-end">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="cursor-pointer"
+            >
+              <svg
+                className="w-5 h-5 sm:w-6 sm:h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
         {children}
       </motion.div>
     </>
