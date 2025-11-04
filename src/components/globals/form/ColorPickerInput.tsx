@@ -82,6 +82,7 @@ const ColorPickerInput = forwardRef<HTMLDivElement, ColorPickerProps>(
           color={color}
           onChange={handleChange}
           onBlur={handleBlur}
+          className="!w-full"
         />
 
         {/* Hidden input for form compatibility */}
