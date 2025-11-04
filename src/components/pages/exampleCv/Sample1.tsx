@@ -14,9 +14,12 @@ import {
   faInstagram,
   faLinkedinIn,
   faTelegram,
+  faWhatsapp,
 } from '@fortawesome/free-brands-svg-icons'
 import '@/assets/styles/exampleCurr/_example1.css'
 import { forwardRef } from 'react'
+import Image from 'next/image'
+import { useCVSettingStore } from '@/utils/store'
 
 // Define variants using CVA
 const cvVariants = cva(
@@ -25,6 +28,7 @@ const cvVariants = cva(
   {
     variants: {
       size: {
+        xxs: 'max-w-xl',
         xs: 'max-w-2xl',
         sm: 'max-w-3xl',
         md: 'max-w-4xl',
@@ -33,8 +37,9 @@ const cvVariants = cva(
         full: 'max-w-full',
       },
       scale: {
+        xxs: 'scale-[0.4]',
         xs: 'scale-[0.6]',
-        sm: 'scale-[0.8]',
+        sm: 'scale-[1.0]',
         md: 'scale-[1.0]',
         lg: 'scale-[1.2]',
         xl: 'scale-[1.4]',
@@ -47,13 +52,10 @@ const cvVariants = cva(
           'items-start',
           'print:bg-white',
           'print:py-0',
+          'print:py-0',
+          'print:px-0',
         ],
-        noPrint: [
-          'min-h-screen',
-          'flex',
-          'justify-center',
-          'items-start',
-        ],
+        noPrint: ['min-h-screen', 'flex', 'justify-center', 'items-start'],
       },
     },
     defaultVariants: {
@@ -73,6 +75,7 @@ const textVariants = cva('', {
       tiny: '',
     },
     size: {
+      xxs: '',
       xs: '',
       sm: '',
       md: '',
@@ -82,6 +85,7 @@ const textVariants = cva('', {
   },
   compoundVariants: [
     // Title variants
+    { variant: 'title', size: 'xxs', class: 'text-lg font-bold' },
     { variant: 'title', size: 'xs', class: 'text-xl font-bold' },
     { variant: 'title', size: 'sm', class: 'text-2xl font-bold' },
     { variant: 'title', size: 'md', class: 'text-3xl font-bold' },
@@ -89,6 +93,11 @@ const textVariants = cva('', {
     { variant: 'title', size: 'xl', class: 'text-5xl font-bold' },
 
     // Subtitle variants
+    {
+      variant: 'subtitle',
+      size: 'xxs',
+      class: 'text-xs font-semibold',
+    },
     {
       variant: 'subtitle',
       size: 'xs',
@@ -116,6 +125,7 @@ const textVariants = cva('', {
     },
 
     // Body variants
+    { variant: 'body', size: 'xxs', class: 'text-[9px]' },
     { variant: 'body', size: 'xs', class: 'text-xs' },
     { variant: 'body', size: 'sm', class: 'text-sm' },
     { variant: 'body', size: 'md', class: 'text-base' },
@@ -123,6 +133,7 @@ const textVariants = cva('', {
     { variant: 'body', size: 'xl', class: 'text-xl' },
 
     // Small variants
+    { variant: 'small', size: 'xxs', class: 'text-[8px]' },
     { variant: 'small', size: 'xs', class: 'text-[10px]' },
     { variant: 'small', size: 'sm', class: 'text-xs' },
     { variant: 'small', size: 'md', class: 'text-sm' },
@@ -130,6 +141,7 @@ const textVariants = cva('', {
     { variant: 'small', size: 'xl', class: 'text-lg' },
 
     // Tiny variants
+    { variant: 'tiny', size: 'xxs', class: 'text-[6px]' },
     { variant: 'tiny', size: 'xs', class: 'text-[8px]' },
     { variant: 'tiny', size: 'sm', class: 'text-[10px]' },
     { variant: 'tiny', size: 'md', class: 'text-xs' },
@@ -139,6 +151,22 @@ const textVariants = cva('', {
   defaultVariants: {
     variant: 'body',
     size: 'md',
+  },
+})
+
+const iconVariants = cva('', {
+  variants: {
+    iconSize: {
+      xxs: ['text-[9px]', 'w-3'],
+      xs: ['text-xs', 'w-3'],
+      sm: ['text-sm', 'w-7'],
+      md: ['text-xl', 'w-7'],
+      lg: ['text-2xl', 'w-8'],
+      xl: ['text-3xl', 'w-10'],
+    },
+  },
+  defaultVariants: {
+    iconSize: 'md',
   },
 })
 
@@ -157,7 +185,7 @@ const CVText = ({
 } & React.HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
-      className={cn(textVariants({ variant, size }), className)}
+      className={cn(textVariants({ variant, size }), 'break-all', className)}
       {...props}
     >
       {children}
@@ -170,6 +198,10 @@ interface Sample extends CVProps {
   scale?: VariantProps<typeof cvVariants>['scale']
   textSize?: VariantProps<typeof textVariants>['size']
   printable?: VariantProps<typeof cvVariants>['printable']
+  iconSize?: VariantProps<typeof iconVariants>['iconSize']
+  variantText?: VariantProps<typeof textVariants>['variant']
+  childrenClassName?: string
+  sidebarTextColor?: string
 }
 
 const Sample1 = forwardRef<HTMLDivElement, Sample>(
@@ -179,15 +211,30 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
       size = 'md',
       scale = 'md',
       textSize = 'md',
-      sidebarWidth = 25,
+      config = {
+        sidebarWidth: 25,
+        responsiveSidebar: false,
+        responsiveImage: false,
+        mobileSidebarWidth: 35,
+        tabletSidebarWidth: 30,
+        mobileImageSize: 120,
+        tabletImageSize: 150,
+        desktopImageSize: 200,
+      },
       printable = 'print',
       className,
+      childrenClassName,
       sidebarColor = '#E3E9EF',
       primaryColor = '#5977AC',
-      skillColor = '',
+      sidebarTextColor = '#463F3F',
+      skillColor = '#99a1af',
+      iconSize = 'md',
+      variantText = 'small',
     },
     ref,
   ) => {
+    const { data: setting } = useCVSettingStore()
+
     return (
       <div ref={ref} className={cn(cvVariants({ printable }))}>
         <div
@@ -204,17 +251,61 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
         >
           {/* BIOGRAPHY SIDEBAR */}
           <div
-            className="sidebar min-h-full lg:block"
-            style={{
-              width: `${sidebarWidth}%`,
-              background: sidebarColor,
-            }}
+            className={cn(
+              'sidebar min-h-full lg:block',
+              config.responsiveSidebar &&
+                'w-[var(--sidebar-width-mobile)] sm:w-[var(--sidebar-width-tablet)] lg:w-[var(--sidebar-width-desktop)]',
+            )}
+            style={
+              config.responsiveSidebar
+                ? ({
+                    '--sidebar-width-mobile': `${config.mobileSidebarWidth}%`,
+                    '--sidebar-width-tablet': `${config.tabletSidebarWidth}%`,
+                    '--sidebar-width-desktop': `${config.sidebarWidth!}%`,
+                    background: sidebarColor,
+                  } as React.CSSProperties)
+                : {
+                    width: `${config.sidebarWidth}%`,
+                    background: sidebarColor,
+                  }
+            }
           >
-            <div className="flex justify-center">
-              <div className="w-full aspect-square p-4 border border-black flex items-center justify-center max-w-[200px] mx-auto lg:max-w-none">
-                <User className="w-3/4 h-3/4" />
-              </div>
+            <div className="flex justify-center aspect-square">
+              {!!setting?.usingPicture && (
+                <Image
+                  src={data?.profilePicture! || '/User.png'}
+                  alt="profilePicture"
+                  width={500}
+                  height={500}
+                  className="w-full h-full aspect-square p-0 flex items-center justify-center mx-auto object-cover"
+                  style={
+                    config.responsiveImage
+                      ? {
+                          maxWidth: `${config.mobileImageSize}px`,
+                        }
+                      : {
+                          maxWidth: '100%',
+                        }
+                  }
+                  key={data?.profilePicture}
+                  unoptimized
+                />
+              )}
             </div>
+            {config.responsiveImage && (
+              <style jsx>{`
+                @media (min-width: 640px) {
+                  img {
+                    max-width: ${config.tabletImageSize}px !important;
+                  }
+                }
+                @media (min-width: 1024px) {
+                  img {
+                    max-width: ${config.desktopImageSize}px !important;
+                  }
+                }
+              `}</style>
+            )}
 
             {/* CONTACT */}
             <div className="flex flex-col p-4 gap-y-2">
@@ -226,17 +317,18 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                 CONTACTS
               </CVText>
 
-              {/* Phone */}
+              {/* Phone/WhatsApp */}
               {data?.contacts?.phone && (
                 <div className="flex flex-row gap-2 items-center w-full justify-start">
                   <FontAwesomeIcon
-                    icon={faPhone}
-                    className="text-[17px] text-gray-700 w-6"
+                    icon={faWhatsapp}
+                    className={cn(iconVariants({ iconSize }))}
                   />
                   <CVText
-                    variant="tiny"
+                    variant={variantText}
                     size={textSize}
                     className="font-semibold text-gray-500"
+                    style={{ color: sidebarTextColor }}
                   >
                     {data.contacts.phone}
                   </CVText>
@@ -248,39 +340,31 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                 <div className="flex flex-row gap-2 items-center w-full justify-start">
                   <FontAwesomeIcon
                     icon={faEnvelope}
-                    className="text-[17px] text-gray-700 w-6"
+                    className={cn(iconVariants({ iconSize }))}
                   />
                   <CVText
-                    variant="tiny"
+                    variant={variantText}
                     size={textSize}
                     className="font-semibold text-gray-500"
+                    style={{ color: sidebarTextColor }}
                   >
                     {data.contacts.email}
                   </CVText>
                 </div>
               )}
 
-              {/* Address/Location - if you add this to your contacts interface */}
-              {/* {data?.contacts?.address && (
-              <div className="flex flex-row gap-2 items-center w-full justify-start">
-                <FontAwesomeIcon icon={faMapPin} className="text-[17px] text-gray-700 w-6" />
-                <span className="font-semibold text-[12px] text-gray-500 line-clamp-1">
-                  {data.contacts.address}
-                </span>
-              </div>
-            )} */}
-
               {/* LinkedIn */}
               {data?.contacts?.linkedin && (
                 <div className="flex flex-row gap-2 items-center w-full justify-start">
                   <FontAwesomeIcon
                     icon={faLinkedinIn}
-                    className="text-[17px] text-gray-700 w-6"
+                    className={cn(iconVariants({ iconSize }))}
                   />
                   <CVText
-                    variant="tiny"
+                    variant={variantText}
                     size={textSize}
                     className="font-semibold text-gray-500"
+                    style={{ color: sidebarTextColor }}
                   >
                     {data.contacts.linkedin}
                   </CVText>
@@ -292,12 +376,13 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                 <div className="flex flex-row gap-2 items-center w-full justify-start">
                   <FontAwesomeIcon
                     icon={faTelegram}
-                    className="text-[17px] text-gray-700 w-6"
+                    className={cn(iconVariants({ iconSize }))}
                   />
                   <CVText
-                    variant="tiny"
+                    variant={variantText}
                     size={textSize}
                     className="font-semibold text-gray-500"
+                    style={{ color: sidebarTextColor }}
                   >
                     {data.contacts.telegram}
                   </CVText>
@@ -309,14 +394,15 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                 <div className="flex flex-row gap-2 items-center w-full justify-start">
                   <FontAwesomeIcon
                     icon={faInstagram}
-                    className="text-[17px] text-gray-700 w-6"
+                    className={cn(iconVariants({ iconSize }))}
                   />
                   <CVText
-                    variant="tiny"
+                    variant={variantText}
                     size={textSize}
                     className="font-semibold text-gray-500"
+                    style={{ color: sidebarTextColor }}
                   >
-                    {data.contacts.email}
+                    {data.contacts.instagram}
                   </CVText>
                 </div>
               )}
@@ -326,14 +412,16 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                 <div className="flex flex-row gap-2 items-center w-full justify-start">
                   <FontAwesomeIcon
                     icon={faLink}
-                    className="text-[17px] text-gray-700 w-6"
+                    className={cn(iconVariants({ iconSize }))}
                   />
                   <CVText
-                    variant="tiny"
+                    variant={variantText}
                     size={textSize}
                     className="font-semibold text-gray-500"
+                    style={{ color: sidebarTextColor }}
                   >
-                    {data.contacts.email}
+                    {data.contacts.otherwise.name}:{' '}
+                    {data.contacts.otherwise.username}
                   </CVText>
                 </div>
               )}
@@ -388,7 +476,7 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                               className={`h-4 rounded-sm`}
                               style={{
                                 background: `${
-                                  item.isHasLevel &&
+                                  Boolean(item?.isHasLevel) &&
                                   index < item.level
                                     ? skillColor
                                     : '#99a1af'
@@ -407,8 +495,20 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
 
           {/* MAIN CONTENT */}
           <div
-            className="main-content bg-white px-6 py-6 lg:px-8 lg:py-8"
-            style={{ width: `${100 - sidebarWidth}%` }}
+            className={cn(
+              'main-content bg-white px-6 py-6 lg:px-8 lg:py-8',
+              config.responsiveSidebar &&
+                'w-[var(--main-width-mobile)] sm:w-[var(--main-width-tablet)] lg:w-[var(--main-width-desktop)]',
+            )}
+            style={
+              config.responsiveSidebar
+                ? ({
+                    '--main-width-mobile': `${100 - config.mobileSidebarWidth!}%`,
+                    '--main-width-tablet': `${100 - config.tabletSidebarWidth!}%`,
+                    '--main-width-desktop': `${100 - config.sidebarWidth!}%`,
+                  } as React.CSSProperties)
+                : { width: `${100 - config?.sidebarWidth!}%` }
+            }
           >
             <div className="flex flex-col gap-1 mb-6">
               <CVText
@@ -492,8 +592,6 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
   },
 )
 
+Sample1.displayName = 'Sample1'
+
 export default Sample1
-// Usage examples:
-// <Sample data={cvData} size="lg" scale="md" textSize="sm" />
-// <Sample data={cvData} size="xl" scale="lg" textSize="lg" />
-// <Sample data={cvData} size="sm" scale="xs" textSize="xs" />
