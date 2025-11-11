@@ -5,6 +5,7 @@
 @import './partials/_inputs.css';
 @import './partials/_datepicker.css';
 @import './partials/_fileinput.css';
+@import './partials/_fonts.css';
 
 @custom-variant dark (&:is(.dark *));
 

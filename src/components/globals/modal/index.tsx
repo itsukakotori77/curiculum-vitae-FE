@@ -15,7 +15,8 @@ const variants = cva(
         sm: ['w-[100%] max-w-sm'],
         md: ['w-[100%] max-w-lg'],
         lg: ['w-[100%] max-w-4xl'],
-        xl: ['w-[100%] max-w-7xl'],
+        xl: ['w-[100%] max-w-6xl'],
+        xxl: ['w-[100%] max-w-8xl'],
       },
     },
     defaultVariants: {

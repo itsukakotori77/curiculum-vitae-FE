@@ -71,6 +71,7 @@ export interface ICurrVitae {
     name: string
     company?: string
     certificateDate?: Date | string
+    descCert?: string
   }>
   skills: Array<SkillsType>
 

@@ -17,6 +17,11 @@ import { rgbaToHex } from '@/utils/common'
 import { toast } from 'react-toastify'
 import { useCVSettingStore } from '@/utils/store'
 import { useRouter, usePathname } from 'next/navigation'
+import { SlidersHorizontal, X } from 'lucide-react'
+import BottomSheet from '@/components/globals/bottomSheet'
+import { useWindowSize } from '@/utils/hooks'
+import Button from '@/components/CultUI/Button'
+import { ListFilter } from 'lucide-react'
 
 export default function CuriculumVitae() {
   const filterRef = useRef<HTMLAttributeReferrerPolicy>(null)
@@ -33,8 +38,10 @@ export default function CuriculumVitae() {
   })
 
   const [modal, setModal] = useState<boolean>(false)
+  const [filterOpen, setFilterOpen] = useState<boolean>(false)
   const [currStep, setCurrStep] = useState<number>(1)
   const [usePhoto, setPhoto] = useState<boolean>(false)
+  const [filterMobile, setFilterMobile] = useState<boolean>(false)
   const { mutate: postSetting, isPending } = usePostSetting()
 
   const componentConfig = [
@@ -106,7 +113,6 @@ export default function CuriculumVitae() {
   ]
 
   const handleSubmit = (data: IColorCurr) => {
-    console.log('usephoto', usePhoto)
     const param = {
       primary_color: rgbaToHex(data.primaryColor),
       sidebar_color: rgbaToHex(data.sidebarColor),
@@ -136,17 +142,57 @@ export default function CuriculumVitae() {
   return (
     <>
       <Loading isLoading={isPending} />
-      <section className="w-full h-full px-7 mt-20 relative">
-        <div className="flex w-full h-auto gap-24">
-          <div className="flex w-[20%] items-start justify-center">
+      <section className="w-full h-full px-4 sm:px-6 md:px-7 mt-8 sm:mt-12 md:mt-16 lg:mt-20 relative">
+        {/* Mobile Filter Toggle Button */}
+        <button
+          onClick={() => setFilterMobile(true)}
+          className="lg:hidden fixed bottom-6 right-6 z-50 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800 transition-colors"
+          aria-label="Toggle filters"
+        >
+          <ListFilter className="w-4 h-4" />
+        </button>
+
+        <div className="flex flex-col lg:flex-row w-full h-auto gap-4 md:gap-8 lg:gap-24">
+          {/* Desktop Filter - Sidebar */}
+          <div className="hidden lg:flex w-full lg:w-[20%] items-start justify-center">
             <div className="w-full sticky top-0">
               <Filter ref={filterRef} filter={state} setFilter={setState} />
             </div>
           </div>
 
-          <div className="w-[80%]">
-            {/* CV Components Grid */}
-            <div className="overflow-y-auto grid grid-cols-4 gap-6 pr-2 pb-4 py-2 px-4">
+          {/* Mobile/Tablet Filter - Overlay */}
+          {filterOpen && (
+            <div className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50">
+              <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-xl overflow-y-auto">
+                <div className="sticky top-0 bg-white p-4 border-b flex justify-between items-center">
+                  <h2 className="text-lg font-semibold">Filters</h2>
+                  <button
+                    onClick={() => setFilterOpen(false)}
+                    className="p-2 hover:bg-gray-100 rounded-lg"
+                    aria-label="Close filters"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="p-4">
+                  <Filter ref={filterRef} filter={state} setFilter={setState} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* {window.height < 760 && (
+          )} */}
+          <BottomSheet
+            isOpen={filterMobile}
+            onClose={() => setFilterMobile(false)}
+          >
+            <Filter ref={filterRef} filter={state} setFilter={setState} />
+          </BottomSheet>
+
+          {/* CV Components Grid */}
+          <div className="w-full lg:w-[80%]">
+            <div className="overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 pr-0 sm:pr-2 pb-4 py-2 px-0 sm:px-2 md:px-4">
               {componentConfig?.map((item: any, key: number) => (
                 <motion.div
                   key={key}
@@ -182,12 +228,12 @@ export default function CuriculumVitae() {
         <Modal
           isOpen={modal}
           handleClose={() => setModal(false)}
-          size="lg"
+          size={currStep == 1 ? 'lg' : 'xl'}
           className="!max-h-screen overflow-auto"
         >
-          <div className="flex flex-col gap-5 items-center justify-center py-5 px-3">
+          <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 items-center justify-center py-3 sm:py-4 md:py-5 px-2 sm:px-3">
             <StepperStrips
-              className="z-[99]"
+              className="z-[99] w-full"
               size={2}
               current={currStep}
               direction="horizontal"

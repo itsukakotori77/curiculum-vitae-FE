@@ -11,7 +11,7 @@ import PreviewGenerator, { PreviewGeneratorHandle } from './PerviewGenerator'
 import Sample3 from '../../exampleCv/Sample3'
 import Button from '@/components/CultUI/Button'
 import ProgressBar from '@/components/globals/progressBar'
-import { Pencil, Trash, CirclePlus } from 'lucide-react'
+import { Pencil, Trash, CirclePlus, FileText, Image, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import moment from 'moment'
@@ -38,6 +38,9 @@ import {
   IGeneratorStep4,
   IGeneratorStep5,
 } from '@/interface/curiculumVitae'
+import Sample2 from '../../exampleCv/Sample2'
+import Sample1 from '../../exampleCv/Sample1'
+import Sample4 from '../../exampleCv/Sample4'
 
 // Types
 interface ItemCardProps {
@@ -667,76 +670,83 @@ const CurrVitaeGenerator: React.FC = () => {
           )}
 
           {currentStep === 6 && (
-            <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 w-full p-3 sm:p-4 lg:p-6">
-              <div className="w-full lg:w-2/5 xl:w-3/6 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-3 sm:p-4 lg:p-6 overflow-auto">
-                <div className="sticky lg:-top-6 -top-4 p-2 bg-white pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-gray-200 z-[4]">
-                  <h3 className="text-base sm:text-lg font-semibold">
-                    Live Preview
-                  </h3>
-                </div>
-                <div className="relative min-h-[400px]">
-                  {/* Contains the scaled preview */}
-                  <div
-                    className="absolute top-0 left-0 sm:scale-75 lg:scale-90 origin-top-left cursor-pointer"
-                    onClick={() => setPreview(true)}
-                  >
-                    <Sample3
-                      ref={previewRef}
-                      data={finalCV || biodataCurr}
-                      scale="sm"
-                      size="xs"
-                      textSize="xs"
-                      iconSize="xs"
-                      variantText="tiny"
-                      config={{
-                        sidebarWidth: 28,
-                        mobileSidebarWidth: 28,
-                        tabletSidebarWidth: 30,
-                        responsiveImage: true,
-                        mobileImageSize: 120,
-                        tabletImageSize: 150,
-                        desktopImageSize: 200,
-                        responsiveSidebar: true,
-                      }}
-                      printable="noPrint"
-                      className="bg-transparent shadow-none p-0"
-                      childrenClassName="max-h-none"
-                      {...colorProps}
-                    />
+            <div className="flex flex-col w-full min-h-screen">
+              {/* Sticky Navbar with Buttons */}
+              <div className="sticky top-0 bg-[#EDEDED] border-b border-gray-300 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 z-10 border-none">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-black">
+                    Curriculum Vitae Generator
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full sm:w-auto">
+                    <Button
+                      intent="info"
+                      isLoading={isGenerating}
+                      onClick={downloadPng}
+                      className="lg:w-18 w-full"
+                    >
+                      <span className="font-bold text-xs sm:text-sm">
+                        <Image className="w-6 h-6" />
+                      </span>
+                    </Button>
+                    <Button
+                      intent="info"
+                      isLoading={isGenerating}
+                      onClick={downloadPdf}
+                      className="lg:w-18 w-full"
+                    >
+                      <span className="font-bold text-xs sm:text-sm">
+                        <FileText className="w-6 h-6" />
+                      </span>
+                    </Button>
+                    <Button
+                      intent="info"
+                      isLoading={isPending}
+                      onClick={handleSaveCurr}
+                      className="lg:w-18 w-full"
+                    >
+                      <span className="font-bold text-xs sm:text-sm">
+                        <Save className="w-6 h-6" />
+                      </span>
+                    </Button>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-3 sm:gap-4 lg:w-1/3 xl:w-2/5 py-4 sm:py-6 lg:py-10">
-                <Button
-                  intent="secondary"
-                  isLoading={isGenerating}
-                  onClick={downloadPng}
-                  className="w-full"
-                >
-                  <span className="font-bold text-sm sm:text-base">
-                    Generate PNG
-                  </span>
-                </Button>
-                <Button
-                  intent="secondary"
-                  isLoading={isGenerating}
-                  onClick={downloadPdf}
-                  className="w-full"
-                >
-                  <span className="font-bold text-sm sm:text-base">
-                    Generate PDF
-                  </span>
-                </Button>
-                <Button
-                  intent="secondary"
-                  isLoading={isPending}
-                  onClick={handleSaveCurr}
-                  className="w-full"
-                >
-                  <span className="font-bold text-sm sm:text-base">
-                    Save Data
-                  </span>
-                </Button>
+
+              {/* Main Content - Scrollable and Centered Preview */}
+              <div className="flex flex-col items-center w-full p-2 sm:p-3 lg:p-6 flex-1 overflow-y-auto">
+                <div className="w-full max-w-full sm:max-w-2xl lg:max-w-4xl rounded-lg p-2 sm:p-4 lg:p-6">
+                  <div className="flex justify-center items-start overflow-x-auto">
+                    {/* Centered scaled preview */}
+                    <div
+                      className="scale-[1.0] sm:scale-75 lg:scale-90 lg:aspect-[4/5] origin-top cursor-pointer min-w-fit border-2 border-black p-4 rounded-md shadow-[3px_3px_0px_rgba(0,0,0,1)]"
+                      onClick={() => setPreview(true)}
+                    >
+                      <Sample3
+                        ref={previewRef}
+                        data={finalCV || biodataCurr}
+                        scale="sm"
+                        size="xs"
+                        textSize="xs"
+                        iconSize="xs"
+                        variantText="tiny"
+                        config={{
+                          sidebarWidth: 28,
+                          mobileSidebarWidth: 28,
+                          tabletSidebarWidth: 30,
+                          responsiveImage: true,
+                          mobileImageSize: 120,
+                          tabletImageSize: 150,
+                          desktopImageSize: 200,
+                          responsiveSidebar: true,
+                        }}
+                        printable="noPrint"
+                        className="bg-transparent shadow-none p-0"
+                        childrenClassName="max-h-none"
+                        {...colorProps}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -748,7 +758,7 @@ const CurrVitaeGenerator: React.FC = () => {
                 <h3 className="text-lg font-semibold">Live Preview</h3>
               </div>
               <div
-                className="scale-75 lg:scale-90 origin-top -mt-20 cursor-pointer"
+                className="scale-75 lg:scale-90 origin-top cursor-pointer"
                 onClick={() => setPreview(true)}
               >
                 <Sample3
@@ -763,9 +773,9 @@ const CurrVitaeGenerator: React.FC = () => {
                     sidebarWidth: 28,
                   }}
                   printable="noPrint"
-                  {...colorProps}
                   className="bg-transparent shadow-none p-0"
                   childrenClassName="max-h-none"
+                  {...colorProps}
                 />
               </div>
             </div>

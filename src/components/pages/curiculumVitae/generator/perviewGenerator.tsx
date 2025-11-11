@@ -8,12 +8,15 @@ import React, {
 import Modal from '@/components/globals/modal'
 import { ICurrVitae } from '@/interface/curiculumVitae'
 import Sample3 from '../../exampleCv/Sample3'
+import Sample2 from '../../exampleCv/Sample2'
 import { toPng } from 'html-to-image'
 import { useCVSettingStore } from '@/utils/store'
 import { convertColor } from '@/utils/common'
 import jsPDF from 'jspdf'
 import { Download, FileText, Image as ImageIcon, Loader2 } from 'lucide-react'
 import Button from '@/components/CultUI/Button'
+import Sample1 from '../../exampleCv/Sample1'
+import Sample4 from '../../exampleCv/Sample4'
 
 interface IProps {
   data?: ICurrVitae | any
@@ -162,6 +165,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
       <Modal
         isOpen={isShowing}
         handleClose={onClose}
+        useCloseButton={false}
         className="max-h-screen overflow-hidden h-screen flex flex-col p-0 m-0 sm:m-4 md:m-6 lg:m-8 rounded-none sm:rounded-lg"
       >
         {/* Header with Download Actions - Fixed at top */}
@@ -282,7 +286,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
                   origin-top
                   transition-transform
                   duration-300
-                  scale-40
+                  scale-50
                   sm:scale-[0.55]
                   md:scale-[0.7]
                   lg:scale-[0.85]
@@ -304,7 +308,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
                       responsiveSidebar: true,
                       mobileSidebarWidth: 28, 
                       tabletSidebarWidth: 35,
-                      mobileImageSize: 120,
+                      mobileImageSize: 300,
                       tabletImageSize: 150,
                       desktopImageSize: 200,
                     }}
@@ -334,3 +338,4 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
 PreviewGenerator.displayName = 'PreviewGenerator'
 
 export default PreviewGenerator
+  
