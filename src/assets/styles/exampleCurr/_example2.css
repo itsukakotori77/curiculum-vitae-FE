@@ -18,14 +18,6 @@
     page-break-inside: avoid;
   }
 
-  /* .sidebar {
-    width: 25% !important;
-  }
-
-  .main-content {
-    width: 75% !important;
-  } */
-
   .print-break {
     page-break-before: always;
   }
@@ -39,19 +31,11 @@
   .cv-container {
     flex-direction: column !important;
   }
-
-  .sidebar {
-    width: 100% !important;
-  }
-
-  .main-content {
-    width: 100% !important;
-  }
 }
 
 .sample2-container {
   font-family: 'Times New Roman', Times, serif;
-  padding: 20px;
-  max-width: 600px;
+  /* padding: 20px;
+  max-width: 600px; */
   margin: 0 auto;
 }

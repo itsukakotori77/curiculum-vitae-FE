@@ -5,8 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faEnvelope,
   faLink,
-  faMapPin,
-  faPhone,
 } from '@fortawesome/free-solid-svg-icons'
 import { cn } from '@/utils/common'
 import moment from 'moment'
@@ -20,11 +18,13 @@ import '@/assets/styles/exampleCurr/_example1.css'
 import { forwardRef } from 'react'
 import Image from 'next/image'
 import { useCVSettingStore } from '@/utils/store'
+import '@/assets/styles/exampleCurr/_example1.css'
+
 
 // Define variants using CVA
 const cvVariants = cva(
   // Base classes
-  'flex w-full bg-white shadow-lg min-h-fit print:shadow-none',
+  'flex w-full bg-white shadow-lg sample1-container min-h-fit print:shadow-none',
   {
     variants: {
       size: {
@@ -170,26 +170,25 @@ const iconVariants = cva('', {
   },
 })
 
-// Helper component for consistent text styling
 const CVText = ({
   variant = 'body',
   size = 'md',
   className,
   children,
+  as = 'span',
   ...props
 }: {
   variant?: VariantProps<typeof textVariants>['variant']
   size?: VariantProps<typeof textVariants>['size']
   className?: string
   children: React.ReactNode
-} & React.HTMLAttributes<HTMLSpanElement>) => {
+  as?: 'span' | 'p' | 'div'
+} & React.HTMLAttributes<HTMLElement>) => {
+  const Component = as
   return (
-    <span
-      className={cn(textVariants({ variant, size }), 'break-all', className)}
-      {...props}
-    >
+    <Component className={cn(textVariants({ variant, size }), className)} {...props}>
       {children}
-    </span>
+    </Component>
   )
 }
 

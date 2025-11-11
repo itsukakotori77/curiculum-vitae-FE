@@ -9,16 +9,14 @@ import {
 } from '@fortawesome/free-brands-svg-icons'
 import { faEnvelope, faLink } from '@fortawesome/free-solid-svg-icons'
 import '@/assets/styles/exampleCurr/_example3.css'
-import { CVProps, ICurrVitae } from '@/interface/curiculumVitae'
+import { CVProps } from '@/interface/curiculumVitae'
 import moment from 'moment'
 import { cva, VariantProps } from 'class-variance-authority'
 import { cn } from '@/utils/common'
 import Image from 'next/image'
 import { useCVSettingStore } from '@/utils/store'
 
-// Define variants using CVA
 const cvVariants = cva(
-  // Base classes
   'p-5 flex w-full bg-white shadow-lg sample3-container print:shadow-none',
   {
     variants: {
@@ -180,20 +178,20 @@ const CVText = ({
   size = 'md',
   className,
   children,
+  as = 'span',
   ...props
 }: {
   variant?: VariantProps<typeof textVariants>['variant']
   size?: VariantProps<typeof textVariants>['size']
   className?: string
   children: React.ReactNode
-} & React.HtmlHTMLAttributes<HTMLSpanElement>) => {
+  as?: 'span' | 'p' | 'div'
+} & React.HTMLAttributes<HTMLElement>) => {
+  const Component = as
   return (
-    <span
-      className={cn(textVariants({ variant, size }), 'break-all', className)}
-      {...props}
-    >
+    <Component className={cn(textVariants({ variant, size }), className)} {...props}>
       {children}
-    </span>
+    </Component>
   )
 }
 

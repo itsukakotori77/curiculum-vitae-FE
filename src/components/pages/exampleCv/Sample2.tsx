@@ -6,9 +6,7 @@ import { cva, VariantProps } from 'class-variance-authority'
 import { cn } from '@/utils/common'
 import { useCVSettingStore } from '@/utils/store'
 
-// Define variants using CVA
 const cvVariants = cva(
-  // Base classes
   'flex flex-col gap-3 w-full bg-white shadow-lg sample2-container print:shadow-none',
   {
     variants: {
@@ -192,20 +190,20 @@ const CVText = ({
   size = 'md',
   className,
   children,
+  as = 'span',
   ...props
 }: {
   variant?: VariantProps<typeof textVariants>['variant']
   size?: VariantProps<typeof textVariants>['size']
   className?: string
   children: React.ReactNode
-} & React.HtmlHTMLAttributes<HTMLSpanElement>) => {
+  as?: 'span' | 'p' | 'div'
+} & React.HTMLAttributes<HTMLElement>) => {
+  const Component = as
   return (
-    <span
-      className={cn(textVariants({ variant, size }), 'break-all', className)}
-      {...props}
-    >
+    <Component className={cn(textVariants({ variant, size }), className)} {...props}>
       {children}
-    </span>
+    </Component>
   )
 }
 
