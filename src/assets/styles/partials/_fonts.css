@@ -1,0 +1,33 @@
+@font-face {
+  font-family: 'Playfair';
+  src: url('/fonts/playfair/Playfair-Regular.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gram';
+  src: url('/fonts/Gram.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-timesnewroman {
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.font-playfair {
+  font-family: 'Playfair', sans-serif;
+}
+
+.font-gram {
+  font-family: 'Gram', sans-serif
+}
+
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
+}
+
+.font-segoeui {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
