@@ -469,7 +469,7 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
                             !item?.isHasLevel && (
                               <div
                                 key={key}
-                                className="px-3 py-1.5 rounded-full"
+                                className="px-2 py-0.5 rounded-sm"
                                 style={{ backgroundColor: skillColor }}
                               >
                                 <CVText
