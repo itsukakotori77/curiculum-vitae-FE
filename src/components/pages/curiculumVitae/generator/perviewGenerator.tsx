@@ -335,7 +335,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
   },
 )
 
-PreviewGenerator.displayName = 'PreviewGenerator'
+PreviewGenerator.displayName = 'PreviewGenerator' 
 
 export default PreviewGenerator
   
