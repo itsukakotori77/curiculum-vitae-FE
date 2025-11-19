@@ -200,6 +200,7 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
                   cropAspectRatio: 1,
                   acceptedFileTypes: ['image/*'],
                   maxFiles: 1,
+                  uploadFolder: 'cv_image',
                   files: profileImageFiles,
                   labelIdle:
                     '<span class="text-xs sm:text-sm">Drop your profile image here or <span class="font-bold">Browse</span></span>',
