@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import { HTMLMotionProps, motion, Variants } from 'framer-motion'
 import { cva, VariantProps } from 'class-variance-authority'
 import { joinClass } from '@/utils/common'
-import { X } from 'lucide-react'
 
 const variants = cva(
   `fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
@@ -73,6 +72,7 @@ export interface ModalProps
   className?: string
   classNameOverlay?: string
   useCloseButton?: boolean
+  data?: any
 }
 
 const Modal = ({
@@ -83,6 +83,7 @@ const Modal = ({
   classNameOverlay,
   size,
   useCloseButton = true,
+  data,
   ...props
 }: ModalProps) => {
   useEffect(() => {
