@@ -1,13 +1,13 @@
 @font-face {
-  font-family: 'Playfair';
-  src: url('/fonts/playfair/Playfair-Regular.ttf');
+  font-family: 'Playfair', sans-serif;
+  src: url('/fonts/playfair/Playfair-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Gram';
-  src: url('/fonts/Gram.otf') format('truetype');
+  font-family: 'Gram Local';
+  src: url('/fonts/gram/Gramregular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -21,7 +21,7 @@
 }
 
 .font-gram {
-  font-family: 'Gram', sans-serif
+  font-family: 'Gram', 'Gram Fallback', Arial, sans-serif;
 }
 
 .font-roboto {
@@ -29,5 +29,5 @@
 }
 
 .font-segoeui {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

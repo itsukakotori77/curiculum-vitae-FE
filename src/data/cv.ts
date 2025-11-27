@@ -18,7 +18,7 @@ export const biodataCurr: ICurrVitae = {
   experience: [
     {
       jobTitle: 'IT Software Support',
-      company: 'Bencoolen Coffee',
+      company: 'PT XYZ',
       role: 'Staff IT',
       isCurrent: false,
       startDate: moment('2020-09-01').format('YYYY-MM-DD'),
@@ -32,7 +32,7 @@ export const biodataCurr: ICurrVitae = {
     },
     {
       jobTitle: 'Freelance Fullstack Development',
-      company: 'Dinalogika Consulting',
+      company: 'XYZ Consulting',
       role: 'Staff IT',
       isCurrent: false,
       startDate: moment('2020-10-15').format('YYYY-MM-DD'),
@@ -46,7 +46,7 @@ export const biodataCurr: ICurrVitae = {
     },
     {
       jobTitle: 'Fullstack Development',
-      company: 'PT Dinalogika Consulting',
+      company: 'PT Mencari cinta sejati',
       role: 'Staff IT',
       isCurrent: false,
       startDate: moment('2021-02-15').format('YYYY-MM-DD'),
@@ -57,21 +57,21 @@ export const biodataCurr: ICurrVitae = {
               exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           `,
     },
-    // {
-    //   jobTitle: 'Frontend Development',
-    //   company: 'PT Bank Rakyat Indonesia',
-    //   role: 'Staff IT',
-    //   isCurrent: true,
-    //   startDate: moment('2022-06-15').format('YYYY-MM-DD'),
-    //   descJob: `
-    //         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-    //         incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-    //         exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-    //         irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-    //         pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-    //         deserunt mollit anim id est laborum.
-    //      `,
-    // },
+    {
+      jobTitle: 'Frontend Development',
+      company: 'PT Bank XYZ',
+      role: 'Staff IT',
+      isCurrent: true,
+      startDate: moment('2022-06-15').format('YYYY-MM-DD'),
+      descJob: `
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+            irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+            deserunt mollit anim id est laborum.
+         `,
+    },
   ],
   education: [
     {

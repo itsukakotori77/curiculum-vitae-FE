@@ -1,6 +1,13 @@
 'use client'
 
-import { DependencyList, useEffect, useState } from 'react'
+import {
+  DependencyList,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import {
   useCVMainStore,
@@ -10,6 +17,12 @@ import {
   useCVStep4Store,
   useCVStep5Store,
 } from './store'
+import {
+  useQuery,
+  UseQueryOptions,
+  UseQueryResult,
+  keepPreviousData,
+} from '@tanstack/react-query'
 
 export const useCVData = () => {
   const step1Data = useCVStep1Store((state) => state.data)
@@ -72,4 +85,63 @@ export const useDebounceEffect = (
       clearTimeout(t)
     }
   }, deps)
+}
+
+export const useFetchQuery = <Params extends Record<string, any>, Response>(
+  name: string,
+  fetch: (params: Params) => Promise<Response>,
+  params: Params,
+  options?: Omit<
+    UseQueryOptions<Response, unknown, Response, any[]>,
+    'queryKey' | 'queryFn' | 'placeholderData'
+  > & { keepPreviousData?: boolean },
+  callback?: (value?: UseQueryResult<Response, any>) => void,
+): [
+  UseQueryResult<Response, unknown>,
+  Params,
+  Dispatch<SetStateAction<Params>>,
+] => {
+  const [state, setState] = useState<Params>(params)
+  const { keepPreviousData: keepPrevious = true, ...queryOptions } =
+    options || {}
+
+  useEffect(() => {
+    setState(params)
+  }, [JSON.stringify(params)])
+
+  const cleanState = useMemo(() => {
+    return Object.entries(state).reduce((acc: any, [key, value]) => {
+      if (
+        value !== null &&
+        value !== undefined &&
+        value !== '' &&
+        !(Array.isArray(value) && value.length === 0)
+      ) {
+        acc[key] = value
+      }
+      return acc
+    }, {} as Params)
+  }, [state])
+
+  const queryKey = useMemo(() => {
+    const values = Object.values(cleanState).filter(
+      (value) => value !== undefined && value !== null,
+    )
+    return [name, ...values]
+  }, [name, JSON.stringify(cleanState)])
+
+  const result = useQuery({
+    queryKey,
+    queryFn: () => fetch(cleanState),
+    placeholderData: keepPrevious ? keepPreviousData : undefined,
+    ...queryOptions,
+  }) as any
+
+  useEffect(() => {
+    if (callback) {
+      callback(result)
+    }
+  }, [callback, result])
+
+  return [result.data || result, state, setState]
 }

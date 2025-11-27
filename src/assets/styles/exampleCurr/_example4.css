@@ -1,10 +1,9 @@
 @font-face {
-  font-family: "Gram";
-  src: url("/fonts/gram/Gram.otf") format("truetype");
+  font-family: 'Gram';
+  src: url('/fonts/gram/Gram.otf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
-
 
 @media print {
   @page {
@@ -41,11 +40,13 @@
 }
 
 .sample4-container {
-  font-family: 'Gram', sans-serif;
+  font-family:
+    'Gram Local',
+    -apple-system,
+    sans-serif;
   margin: 0 auto;
 }
 
 .font-palatino {
   font-family: 'Times New Roman', 'Book Antiqua', Palatino, serif;
 }
-

@@ -7,16 +7,21 @@ import React, {
 } from 'react'
 import Modal from '@/components/globals/modal'
 import { ICurrVitae } from '@/interface/curiculumVitae'
-import Sample3 from '../../exampleCv/Sample3'
-import Sample2 from '../../exampleCv/Sample2'
+
 import { toPng } from 'html-to-image'
 import { useCVSettingStore } from '@/utils/store'
 import { convertColor } from '@/utils/common'
 import jsPDF from 'jspdf'
-import { Download, FileText, Image as ImageIcon, Loader2 } from 'lucide-react'
+import { FileText, Image as ImageIcon, Loader2 } from 'lucide-react'
 import Button from '@/components/CultUI/Button'
 import Sample1 from '../../exampleCv/Sample1'
+import Sample2 from '../../exampleCv/Sample2'
+import Sample3 from '../../exampleCv/Sample3'
 import Sample4 from '../../exampleCv/Sample4'
+import Sample5 from '../../exampleCv/Sample5'
+import Sample6 from '../../exampleCv/Sample6'
+import Sample7 from '../../exampleCv/Sample7'
+import { biodataCurr } from '@/data/cv'
 
 interface IProps {
   data?: ICurrVitae | any
@@ -32,7 +37,7 @@ export interface PreviewGeneratorHandle {
 
 const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
   ({ data, isShowing, onClose }, ref) => {
-    const sample3Ref = useRef<HTMLDivElement>(null)
+    const sampleRef = useRef<HTMLDivElement>(null)
     const { data: dataSetting } = useCVSettingStore()
     const [isDownloading, setIsDownloading] = useState<boolean>(false)
     const [downloadType, setDownloadType] = useState<'png' | 'pdf' | null>(null)
@@ -54,22 +59,165 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
       return `${firstName}_${lastName}_CV.${extension}`
     }
 
-    // Common image generation options
-    const getImageOptions = () => ({
-      cacheBust: true,
-      includeQueryParams: true,
-      quality: 0.95,
-      pixelRatio: 2,
-      backgroundColor: '#ffffff',
-      filter: () => true,
-      style: {
-        transform: 'scale(1)',
-        transformOrigin: 'top left',
-      },
-    })
+    // Helper to convert font URL to base64
+    const fetchFontAsBase64 = async (url: string): Promise<string | null> => {
+      try {
+        const response = await fetch(url)
+        if (!response.ok) return null
+
+        const blob = await response.blob()
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.onerror = reject
+          reader.readAsDataURL(blob)
+        })
+      } catch (err) {
+        console.warn(`Failed to fetch font: ${url}`, err)
+        return null
+      }
+    }
+
+    // Helper function to extract and embed fonts as base64
+    const getCustomFontCSS = async () => {
+      const origin = window.location.origin
+      let fontCSS = ''
+
+      const stylesheets = Array.from(document.styleSheets)
+
+      for (const stylesheet of stylesheets) {
+        try {
+          const rules = Array.from(stylesheet.cssRules || [])
+
+          for (const rule of rules) {
+            if (rule instanceof CSSFontFaceRule) {
+              const src = rule.style.getPropertyValue('src')
+
+              if (src && src.includes('url(')) {
+                // Extract URL from src
+                const urlMatch = src.match(/url\(['"]?([^'")\s]+)['"]?\)/)
+                if (!urlMatch) continue
+
+                let fontUrl = urlMatch[1]
+                if (fontUrl.startsWith('data:')) {
+                  fontCSS += `
+                    @font-face {
+                      font-family: ${rule.style.getPropertyValue('font-family')};
+                      src: ${src};
+                      font-weight: ${rule.style.getPropertyValue('font-weight') || 'normal'};
+                      font-style: ${rule.style.getPropertyValue('font-style') || 'normal'};
+                    }
+                  `
+                  continue
+                }
+
+                if (fontUrl.includes('/../')) {
+                  fontUrl = fontUrl.replace(/\/\.\.\//g, '/')
+                }
+
+                // Make URL absolute if relative
+                if (!fontUrl.startsWith('http')) {
+                  fontUrl = `${origin}${fontUrl.startsWith('/') ? fontUrl : '/' + fontUrl}`
+                }
+
+                // Fetch and convert to base64
+                const base64Font = await fetchFontAsBase64(fontUrl)
+
+                if (base64Font) {
+                  // Extract format from src or guess from extension
+                  let format = 'woff2'
+                  const formatMatch = src.match(
+                    /format\(['"]?([^'")\s]+)['"]?\)/,
+                  )
+                  if (formatMatch) {
+                    format = formatMatch[1]
+                  } else if (fontUrl.endsWith('.ttf')) {
+                    format = 'truetype'
+                  } else if (fontUrl.endsWith('.otf')) {
+                    format = 'opentype'
+                  } else if (fontUrl.endsWith('.woff')) {
+                    format = 'woff'
+                  }
+
+                  fontCSS += `
+                    @font-face {
+                      font-family: ${rule.style.getPropertyValue('font-family')};
+                      src: url("${base64Font}") format("${format}");
+                      font-weight: ${rule.style.getPropertyValue('font-weight') || 'normal'};
+                      font-style: ${rule.style.getPropertyValue('font-style') || 'normal'};
+                    }
+                  `
+                }
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('Could not access stylesheet:', err)
+        }
+      }
+
+      return fontCSS
+    }
+
+    const getImageOptions = async (type: string = 'png') => {
+      let fontEmbedCSS = ''
+
+      if (sampleRef.current) {
+        try {
+          await document.fonts.ready
+          fontEmbedCSS = await getCustomFontCSS()
+        } catch (err) {
+          console.warn('Failed to embed fonts:', err)
+        }
+      }
+
+      switch (type) {
+        case 'png':
+          return {
+            cacheBust: true,
+            includeQueryParams: true,
+            quality: 0.95,
+            pixelRatio: 2,
+            backgroundColor: '#ffffff',
+            filter: () => true,
+            style: {
+              transform: 'scale(1)',
+              transformOrigin: 'top left',
+            },
+            fontEmbedCSS,
+          }
+          break
+
+        case 'pdf':
+          const a4Width = 210
+          const a4Height = 297
+
+          const a4WidthPx = 794 
+          const a4HeightPx = 1123 
+
+          return {
+            cacheBust: true,
+            includeQueryParams: true,
+            quality: 1.0,
+            pixelRatio: 3, 
+            backgroundColor: '#ffffff',
+            filter: () => true,
+            width: a4WidthPx,
+            height: a4HeightPx,
+            style: {
+              transform: 'scale(1)',
+              transformOrigin: 'top left',
+              width: `${a4WidthPx}px`,
+              height: `${a4HeightPx}px`,
+            },
+            fontEmbedCSS,
+          }
+          break
+      }
+    }
 
     const downloadPng = async () => {
-      if (!sample3Ref.current) {
+      if (!sampleRef.current) {
         throw new Error('CV reference not found')
       }
 
@@ -77,7 +225,11 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
         setIsDownloading(true)
         setDownloadType('png')
 
-        const dataUrl = await toPng(sample3Ref.current, getImageOptions())
+        await document.fonts.ready
+        await new Promise((resolve) => setTimeout(resolve, 100))
+
+        const options = await getImageOptions('png')
+        const dataUrl = await toPng(sampleRef.current, options)
 
         const link = document.createElement('a')
         link.download = generateFilename('png')
@@ -95,7 +247,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
     }
 
     const downloadPdf = async () => {
-      if (!sample3Ref.current) {
+      if (!sampleRef.current) {
         throw new Error('CV reference not found')
       }
 
@@ -104,26 +256,10 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
         setDownloadType('pdf')
 
         // Get the exact dimensions we want for A4
-        const a4WidthPx = 794 // A4 width at 96 DPI
-        const a4HeightPx = 1123 // A4 height at 96 DPI
 
         // Generate image from HTML with exact A4 dimensions
-        const dataUrl = await toPng(sample3Ref.current, {
-          cacheBust: true,
-          includeQueryParams: true,
-          quality: 1.0,
-          pixelRatio: 3, // Higher quality for PDF
-          backgroundColor: '#ffffff',
-          filter: () => true,
-          width: a4WidthPx,
-          height: a4HeightPx,
-          style: {
-            transform: 'scale(1)',
-            transformOrigin: 'top left',
-            width: `${a4WidthPx}px`,
-            height: `${a4HeightPx}px`,
-          },
-        })
+        const options = await getImageOptions('pdf')
+        const dataUrl = await toPng(sampleRef.current, options)
 
         // A4 dimensions in mm
         const a4Width = 210
@@ -156,7 +292,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
       () => ({
         downloadPng,
         downloadPdf,
-        getElement: () => sample3Ref.current,
+        getElement: () => sampleRef.current,
       }),
       [data, colorProps],
     )
@@ -294,19 +430,19 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
                   2xl:scale-[1]
                 "
                 >
-                  <Sample3
-                    ref={sample3Ref}
-                    data={data!}
+                  <Sample7
+                    ref={sampleRef}
+                    data={biodataCurr!}
                     scale="md"
                     size="full"
                     textSize="md"
                     iconSize="md"
                     variantText="small"
                     config={{
-                      sidebarWidth: 28, 
+                      sidebarWidth: 28,
                       responsiveImage: true,
                       responsiveSidebar: true,
-                      mobileSidebarWidth: 28, 
+                      mobileSidebarWidth: 28,
                       tabletSidebarWidth: 35,
                       mobileImageSize: 300,
                       tabletImageSize: 150,
@@ -315,7 +451,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
                     printable="print"
                     className="bg-white shadow-lg !w-[210mm] !min-h-[297mm] !max-w-none mx-auto rounded-none sm:rounded-lg"
                     childrenClassName="!min-h-[297mm] !h-auto"
-                    {...colorProps}
+                    // {...colorProps}
                   />
                 </div>
               </div>
@@ -335,7 +471,6 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
   },
 )
 
-PreviewGenerator.displayName = 'PreviewGenerator' 
+PreviewGenerator.displayName = 'PreviewGenerator'
 
 export default PreviewGenerator
-  

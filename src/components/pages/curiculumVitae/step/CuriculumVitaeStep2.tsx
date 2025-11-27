@@ -46,7 +46,7 @@ export default function CuriculumVitaeStep2({
     <div className="flex flex-col gap-4">
       <div className="lg:flex gap-10 justify-between w-full h-auto">
         <div className="lg:w-[75%] sm:w-full aspect-[4/5] lg:flex justify-center items-center h-auto border-2 border-black rounded-md p-5 shadow-[3px_3px_0px_rgba(0,0,0,1)]">
-          <Sample6
+          <Sample5
             ref={ref}
             data={biodataCurr}
             scale="md"

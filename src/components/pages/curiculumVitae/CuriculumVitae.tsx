@@ -1,6 +1,11 @@
 'use client'
 
-import React, { HTMLAttributeReferrerPolicy, useRef, useState } from 'react'
+import React, {
+  HTMLAttributeReferrerPolicy,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import Card from '@/components/CultUI/Card'
 import Filter from './Filter'
 import Image from 'next/image'
@@ -10,18 +15,20 @@ import StepperStrips from '@/components/globals/stepper/StepperStrips'
 import CuriculumVItaeStep1 from './step/CuriculumVitaeStep1'
 import CuriculumVitaeStep2 from './step/CuriculumVitaeStep2'
 import { useModalConfirm } from '@/libs/modalConfirm'
-import Loading from '@/components/globals/UI/Loading'
 import { usePostSetting } from '@/services/setting/mutation'
 import { IColorCurr } from '@/interface/curiculumVitae'
 import { rgbaToHex } from '@/utils/common'
 import { toast } from 'react-toastify'
 import { useCVSettingStore } from '@/utils/store'
 import { useRouter, usePathname } from 'next/navigation'
-import { SlidersHorizontal, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import BottomSheet from '@/components/globals/bottomSheet'
-import { useWindowSize } from '@/utils/hooks'
+import { useWindowSize, useFetchQuery } from '@/utils/hooks'
 import Button from '@/components/CultUI/Button'
 import { ListFilter } from 'lucide-react'
+import { apiGetListTemplate } from '@/services/template/api'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 export default function CuriculumVitae() {
   const filterRef = useRef<HTMLAttributeReferrerPolicy>(null)
@@ -29,13 +36,13 @@ export default function CuriculumVitae() {
   const { data: dataSetting, updateData } = useCVSettingStore()
   const router = useRouter()
   const pathname = usePathname()
-  const [state, setState] = useState<{
-    head?: string
-    style?: string[]
-  }>({
-    head: '',
-    style: [],
-  })
+
+  const defaultParam = {
+    page: 1,
+    limit: 10,
+    sortBy: 'created_at',
+    sortSystem: 'desc',
+  }
 
   const [modal, setModal] = useState<boolean>(false)
   const [filterOpen, setFilterOpen] = useState<boolean>(false)
@@ -44,73 +51,18 @@ export default function CuriculumVitae() {
   const [filterMobile, setFilterMobile] = useState<boolean>(false)
   const { mutate: postSetting, isPending } = usePostSetting()
 
-  const componentConfig = [
-    {
-      key: 'sample1',
-      title: 'Sample 1',
-      value: 'sample1',
-    },
-    {
-      key: 'sample2',
-      title: 'Sample 2',
-      value: 'sample2',
-    },
-    {
-      key: 'sample3',
-      title: 'Sample 3',
-      value: 'sample3',
-    },
-    {
-      key: 'sample2',
-      title: 'Sample 2',
-      value: 'sample2',
-    },
-    {
-      key: 'sample3',
-      title: 'Sample 3',
-      value: 'sample3',
-    },
-    {
-      key: 'sample2',
-      title: 'Sample 2',
-      value: 'sample2',
-    },
-    {
-      key: 'sample3',
-      title: 'Sample 3',
-      value: 'sample3',
-    },
-    {
-      key: 'sample3',
-      title: 'Sample 3',
-      value: 'sample3',
-    },
-    {
-      key: 'sample2',
-      title: 'Sample 2',
-      value: 'sample2',
-    },
-    {
-      key: 'sample3',
-      title: 'Sample 3',
-      value: 'sample3',
-    },
-    {
-      key: 'sample3',
-      title: 'Sample 3',
-      value: 'sample3',
-    },
-    {
-      key: 'sample2',
-      title: 'Sample 2',
-      value: 'sample2',
-    },
-    {
-      key: 'sample3',
-      title: 'Sample 3',
-      value: 'sample3',
-    },
-  ]
+  const [
+    { data, isFetching, refetch, isSuccess, isError, error },
+    state,
+    setState,
+  ] = useFetchQuery('LIST CV', apiGetListTemplate, defaultParam, {
+    keepPreviousData: false,
+    retry: 1,
+    retryDelay: 1000,
+    enabled: true,
+  })
+
+  const templates = data?.data || data || []
 
   const handleSubmit = (data: IColorCurr) => {
     const param = {
@@ -139,9 +91,33 @@ export default function CuriculumVitae() {
     })
   }
 
+  const SkeletonCard = () => (
+    <Card className="w-full rounded-md h-full" childrenClass="p-0.5 rounded-sm">
+      <Skeleton className="w-full" height={300} borderRadius={4} />
+    </Card>
+  )
+
+  // // Debug: Log the data structure
+  // useEffect(() => {
+  //   if (data) {
+  //     console.log('=== DATA DEBUG ===')
+  //     console.log('Full data:', data)
+  //     console.log('Is data an array?', Array.isArray(data))
+  //     console.log(
+  //       'Data keys:',
+  //       data && typeof data === 'object' ? Object.keys(data) : 'N/A',
+  //     )
+  //     console.log('Templates:', templates)
+  //     console.log('Templates length:', templates.length)
+  //   }
+
+  //   if (isError) {
+  //     console.error('Query error:', error)
+  //   }
+  // }, [data, isError, error, templates])
+
   return (
     <>
-      <Loading isLoading={isPending} />
       <section className="w-full h-full px-4 sm:px-6 md:px-7 mt-8 sm:mt-12 md:mt-16 lg:mt-20 relative">
         {/* Mobile Filter Toggle Button */}
         <button
@@ -153,14 +129,14 @@ export default function CuriculumVitae() {
         </button>
 
         <div className="flex flex-col lg:flex-row w-full h-auto gap-4 md:gap-8 lg:gap-24">
-          {/* Desktop Filter - Sidebar */}
+          {/* Desktop Filter */}
           <div className="hidden lg:flex w-full lg:w-[20%] items-start justify-center">
             <div className="w-full sticky top-0">
               <Filter ref={filterRef} filter={state} setFilter={setState} />
             </div>
           </div>
 
-          {/* Mobile/Tablet Filter - Overlay */}
+          {/* Mobile Filter Overlay */}
           {filterOpen && (
             <div className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50">
               <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-xl overflow-y-auto">
@@ -181,8 +157,6 @@ export default function CuriculumVitae() {
             </div>
           )}
 
-          {/* {window.height < 760 && (
-          )} */}
           <BottomSheet
             isOpen={filterMobile}
             onClose={() => setFilterMobile(false)}
@@ -190,38 +164,71 @@ export default function CuriculumVitae() {
             <Filter ref={filterRef} filter={state} setFilter={setState} />
           </BottomSheet>
 
-          {/* CV Components Grid */}
+          {/* CV Templates Grid */}
           <div className="w-full lg:w-[80%]">
-            <div className="overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 pr-0 sm:pr-2 pb-4 py-2 px-0 sm:px-2 md:px-4">
-              {componentConfig?.map((item: any, key: number) => (
-                <motion.div
-                  key={key}
-                  className="hover:cursor-pointer"
-                  whileHover={{
-                    scale: 1.04,
-                    transition: {
-                      type: 'spring',
-                      stiffness: 400,
-                      damping: 10,
-                    },
-                  }}
-                  onClick={() => setModal(true)}
+            {/* Show error message if query failed */}
+            {isError && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600">
+                  Failed to load templates. Please try again.
+                </p>
+                <button
+                  onClick={() => refetch()}
+                  className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                 >
-                  <Card
-                    className="w-full rounded-md h-full hover:bg-black hover:opacity-[100%]"
-                    childrenClass="p-0.5 rounded-sm"
-                  >
-                    <Image
-                      className="w-full h-full object-cover"
-                      src={`/cvExample/${item.value}.png`}
-                      width={800}
-                      height={800}
-                      alt={item.value}
-                    />
-                  </Card>
-                </motion.div>
-              ))}
+                  Retry
+                </button>
+              </div>
+            )}
+
+            <div className="overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 pr-0 sm:pr-2 pb-4 py-2 px-0 sm:px-2 md:px-4">
+              {isFetching
+                ? Array.from({ length: defaultParam.limit }).map((_, index) => (
+                    <div key={`skeleton-${index}`}>
+                      <SkeletonCard />
+                    </div>
+                  ))
+                : Array.isArray(templates) &&
+                  templates.map((item: any, key: number) => (
+                    <motion.div
+                      key={item.id || key}
+                      className="hover:cursor-pointer"
+                      whileHover={{
+                        scale: 1.04,
+                        transition: {
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 10,
+                        },
+                      }}
+                      onClick={() => setModal(true)}
+                    >
+                      <Card
+                        className="w-full rounded-md h-full hover:bg-black hover:opacity-[100%] border"
+                        childrenClass="p-0 rounded-sm aspect-[1/1.414]"
+                      >
+                        {/* A4 aspect ratio container using Tailwind */}
+                        <div className="relative w-full aspect-[1/1.414]">
+                          <Image
+                            className="w-full h-full object-cover object-top"
+                            src={`${item.template_photo}`}
+                            fill
+                            alt={item.value || 'Template'}
+                          />
+                        </div>
+                      </Card>
+                    </motion.div>
+                  ))}
             </div>
+
+            {/* No data message */}
+            {!isFetching &&
+              !isError &&
+              (!templates || templates.length === 0) && (
+                <div className="flex items-center justify-center py-12">
+                  <p className="text-gray-500 text-lg">No templates found</p>
+                </div>
+              )}
           </div>
         </div>
 

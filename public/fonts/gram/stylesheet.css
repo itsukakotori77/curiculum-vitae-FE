@@ -1,0 +1,96 @@
+@font-face {
+    font-family: 'Gram';
+    src: url('Gramthin.eot');
+    src: local('Gram Thin'), local('Gram.thin'),
+        url('Gramthin.eot?#iefix') format('embedded-opentype'),
+        url('Gramthin.woff2') format('woff2'),
+        url('Gramthin.woff') format('woff'),
+        url('Gramthin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gram';
+    src: url('Gramlight.eot');
+    src: local('Gram Light'), local('Gram.light'),
+        url('Gramlight.eot?#iefix') format('embedded-opentype'),
+        url('Gramlight.woff2') format('woff2'),
+        url('Gramlight.woff') format('woff'),
+        url('Gramlight.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gram Bold Oblique';
+    src: url('Gramboldoblique.eot');
+    src: local('Gram Bold Oblique'), local('Gram.boldoblique'),
+        url('Gramboldoblique.eot?#iefix') format('embedded-opentype'),
+        url('Gramboldoblique.woff2') format('woff2'),
+        url('Gramboldoblique.woff') format('woff'),
+        url('Gramboldoblique.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gram';
+    src: url('Gramregular.eot');
+    src: local('Gram'), local('Gram.regular'),
+        url('Gramregular.eot?#iefix') format('embedded-opentype'),
+        url('Gramregular.woff2') format('woff2'),
+        url('Gramregular.woff') format('woff'),
+        url('Gramregular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gram Light Oblique';
+    src: url('Gramlightoblique.eot');
+    src: local('Gram Light Oblique'), local('Gram.lightoblique'),
+        url('Gramlightoblique.eot?#iefix') format('embedded-opentype'),
+        url('Gramlightoblique.woff2') format('woff2'),
+        url('Gramlightoblique.woff') format('woff'),
+        url('Gramlightoblique.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gram Oblique';
+    src: url('Gramoblique.eot');
+    src: local('Gram Oblique'), local('Gram.oblique'),
+        url('Gramoblique.eot?#iefix') format('embedded-opentype'),
+        url('Gramoblique.woff2') format('woff2'),
+        url('Gramoblique.woff') format('woff'),
+        url('Gramoblique.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gram';
+    src: url('Grambold.eot');
+    src: local('Gram Bold'), local('Gram.bold'),
+        url('Grambold.eot?#iefix') format('embedded-opentype'),
+        url('Grambold.woff2') format('woff2'),
+        url('Grambold.woff') format('woff'),
+        url('Grambold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Gram Thin Oblique';
+    src: url('Gramthinoblique.eot');
+    src: local('Gram Thin Oblique'), local('Gram.thinoblique'),
+        url('Gramthinoblique.eot?#iefix') format('embedded-opentype'),
+        url('Gramthinoblique.woff2') format('woff2'),
+        url('Gramthinoblique.woff') format('woff'),
+        url('Gramthinoblique.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+}
+

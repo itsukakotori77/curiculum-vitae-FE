@@ -10,9 +10,12 @@ export async function GET(request: Request) {
   const params = Object.fromEntries(url.searchParams)
   const id = url.searchParams.get('id')
 
+  console.log('Received params:', params) // ← Add logging
+  console.log('URL searchParams:', url.searchParams.toString())
+  
   try {
     if (id) {
-      const res = await fetch(`/curiculum-template/getOne/${id}`)
+      const res = await fetch.get(`/curiculum-template/getOne/${id}`)
       return NextResponse.json(res?.data, {
         status: res?.data?.status,
       })
@@ -46,4 +49,3 @@ export async function POST(request: Request) {
     })
   }
 }
-
