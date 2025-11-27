@@ -528,7 +528,6 @@ const CurrVitaeGenerator: React.FC = () => {
 
   const commonProps = useMemo(
     () => ({
-      previewRef,
       data: finalCV || biodataCurr,
       scale: 'md' as const,
       textSize: 'xs' as const,
@@ -548,7 +547,7 @@ const CurrVitaeGenerator: React.FC = () => {
       className: 'bg-transparent shadow-none p-0 w-fit',
       ...colorProps,
     }),
-    [previewRef, finalCV],
+    [finalCV],
   )
 
   useEffect(() => {
@@ -779,7 +778,7 @@ const CurrVitaeGenerator: React.FC = () => {
                         }
                       >
                         {SampleComponent && (
-                          <SampleComponent {...commonProps} />
+                          <SampleComponent ref={previewRef} {...commonProps} />
                         )}
                       </Suspense>
                     </div>

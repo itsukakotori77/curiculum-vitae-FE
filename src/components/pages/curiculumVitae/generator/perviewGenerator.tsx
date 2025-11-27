@@ -296,7 +296,6 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
 
     const commonProps = useMemo(
       () => ({
-        sampleRef,
         data: data || biodataCurr,
         scale: 'md' as const,
         textSize: 'xs' as const,
@@ -318,7 +317,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
         childrenClassName: '!min-h-[297mm] !h-auto',
         ...colorProps,
       }),
-      [sampleRef, data],
+      [data],
     )
 
     useImperativeHandle(
@@ -478,7 +477,9 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
                       </div>
                     }
                   >
-                    {SampleComponent && <SampleComponent {...commonProps} />}
+                    {SampleComponent && (
+                      <SampleComponent ref={sampleRef} {...commonProps} />
+                    )}
                   </Suspense>
                 </div>
               </div>

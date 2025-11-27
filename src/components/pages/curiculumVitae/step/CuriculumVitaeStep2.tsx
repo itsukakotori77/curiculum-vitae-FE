@@ -1,6 +1,13 @@
 'use client'
 
-import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import React, {
+  lazy,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import ColorPickerForm from '@/components/globals/form/ColorPickerForm'
 import { useForm } from 'react-hook-form'
 import Button from '@/components/CultUI/Button'
@@ -55,40 +62,42 @@ export default function CuriculumVitaeStep2({
   // Memoize color conversions to avoid recalculating on every render
   const primaryColor = useMemo(
     () => convertColor(watch('primaryColor')) || '#E3E9EF',
-    [watch('primaryColor')]
+    [watch('primaryColor')],
   )
-  
+
   const sidebarColor = useMemo(
     () => convertColor(watch('sidebarColor')) || '#5977AC',
-    [watch('sidebarColor')]
+    [watch('sidebarColor')],
   )
-  
+
   const skillColor = useMemo(
     () => convertColor(watch('skillColor')!) || '#262424',
-    [watch('skillColor')]
+    [watch('skillColor')],
   )
 
   // Memoize the entire props object to prevent unnecessary re-renders
-  const commonProps = useMemo(() => ({
-    ref,
-    data: biodataCurr,
-    scale: "md" as const,
-    textSize: "xs" as const,
-    config: {
-      sidebarWidth: 25,
-      ...(width < 768 ? { scale: 'md' as const } : {}),
-    },
-    printable: "noPrint" as const,
-    primaryColor,
-    sidebarColor,
-    skillColor,
-    iconSize: "xs" as const,
-    variantText: "tiny" as const,
-    className: "bg-transparent shadow-none p-0 w-fit",
-  }), [ref, primaryColor, sidebarColor, skillColor, width])
+  const commonProps = useMemo(
+    () => ({
+      data: biodataCurr,
+      scale: 'md' as const,
+      textSize: 'xs' as const,
+      config: {
+        sidebarWidth: 25,
+        ...(width < 768 ? { scale: 'md' as const } : {}),
+      },
+      printable: 'noPrint' as const,
+      primaryColor,
+      sidebarColor,
+      skillColor,
+      iconSize: 'xs' as const,
+      variantText: 'tiny' as const,
+      className: 'bg-transparent shadow-none p-0 w-fit',
+    }),
+    [primaryColor, sidebarColor, skillColor, width],
+  )
 
   useEffect(() => {
-    if(templateId){
+    if (templateId) {
       const DynamicSample = loadSampleComponent(templateId)
       setSampleComponent(() => DynamicSample)
       setValue('cvTemplate', +templateId)
@@ -99,15 +108,17 @@ export default function CuriculumVitaeStep2({
     <div className="flex flex-col gap-4">
       <div className="lg:flex gap-10 justify-between w-full h-auto">
         <div className="lg:w-[75%] sm:w-full aspect-[4/5] lg:flex justify-center items-center h-auto border-2 border-black rounded-md p-5 shadow-[3px_3px_0px_rgba(0,0,0,1)]">
-          <Suspense fallback={
-            <div className="flex items-center justify-center min-w-full h-full">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-            </div>
-          }>
-            {SampleComponent && <SampleComponent {...commonProps} />}
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center min-w-full h-full">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+              </div>
+            }
+          >
+            {SampleComponent && <SampleComponent ref={ref} {...commonProps} />}
           </Suspense>
         </div>
-        
+
         <form
           id="color-form"
           onSubmit={handleSubmit(onSubmit)}
