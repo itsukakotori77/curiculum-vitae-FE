@@ -7,7 +7,7 @@ import { cn } from '@/utils/common'
 import { useCVSettingStore } from '@/utils/store'
 
 const cvVariants = cva(
-  'flex flex-col gap-3 w-full bg-white shadow-lg sample2-container print:shadow-none',
+  'p-5 flex flex-col gap-3 w-full bg-white shadow-lg min-h-fit sample2-container print:shadow-none',
   {
     variants: {
       size: {
@@ -201,7 +201,10 @@ const CVText = ({
 } & React.HTMLAttributes<HTMLElement>) => {
   const Component = as
   return (
-    <Component className={cn(textVariants({ variant, size }), className)} {...props}>
+    <Component
+      className={cn(textVariants({ variant, size }), className)}
+      {...props}
+    >
       {children}
     </Component>
   )
@@ -253,7 +256,7 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
       <div
         ref={ref}
         className={cn(
-          cvVariants({ size, scale }),
+          cvVariants({ size, scale, printable }),
           'origin-top',
           className,
           childrenClassName,
@@ -344,7 +347,84 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
         <div className="flex flex-col w-full gap-3">
           <SectionHeader textSize={textSize}>EDUCATION</SectionHeader>
           <ul className="list-none">
-            {data?.education?.map((item: any, key: number) => (
+            {data?.education?.toReversed()?.map((item: any, key: number) => (
+              <li key={key} className="grid gap-2 mb-3">
+                <div className="flex items-end justify-between">
+                  <CVText variant="small" size={textSize} className="font-bold">
+                    {`${item?.major || ''}, ${item?.university?.split('|')[1] || item?.university || ''}`}
+                  </CVText>
+                  <div className="flex-1 border-b border-dotted border-black mx-1 mb-[4.5px]"></div>
+                  {item?.graduatedStatus ? (
+                    <CVText
+                      variant="small"
+                      size={textSize}
+                      className="font-medium"
+                    >
+                      {`Graduated, ${moment(item?.graduated).format('MMMM, Do YYYY')}`}
+                    </CVText>
+                  ) : (
+                    <CVText
+                      variant="small"
+                      size={textSize}
+                      className="font-normal text-gray-500"
+                    >
+                      Not Graduated Yet
+                    </CVText>
+                  )}
+                </div>
+                <CVText
+                  variant="tiny"
+                  size={textSize}
+                  className="font-light text-justify"
+                >
+                  {item?.majorDesc || ''}
+                </CVText>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* CERTIFICATIONS */}
+        <div className="flex flex-col w-full gap-3">
+          <SectionHeader textSize={textSize}>CERTIFICATIONS</SectionHeader>
+          <ul className="list-none">
+            {data?.certification
+              ?.toReversed()
+              ?.map((item: any, key: number) => (
+                <li key={key} className="grid gap-2 mb-3">
+                  <div className="flex items-end justify-between">
+                    <CVText
+                      variant="small"
+                      size={textSize}
+                      className="font-bold"
+                    >
+                      {item?.name}
+                    </CVText>
+                    <div className="flex-1 border-b border-dotted border-black mx-1 mb-[4.5px]"></div>
+                    <CVText
+                      variant="small"
+                      size={textSize}
+                      className="font-medium"
+                    >
+                      {`${item?.company}, ${moment(item?.certificateDate).format('MMMM, Do YYYY')}`}
+                    </CVText>
+                  </div>
+                  <CVText
+                    variant="tiny"
+                    size={textSize}
+                    className="font-light text-justify"
+                  >
+                    {item?.descCert || ''}
+                  </CVText>
+                </li>
+              ))}
+          </ul>
+        </div>
+        {/* EDUCATION */}
+        <div className="flex flex-col w-full gap-3">
+          <SectionHeader textSize={textSize}>EDUCATION</SectionHeader>
+          <ul className="list-none">
+            {data?.education?.toReversed()?.map((item: any, key: number) => (
               <li key={key} className="grid gap-2 mb-3">
                 <div className="flex items-end justify-between">
                   <CVText variant="small" size={textSize} className="font-bold">

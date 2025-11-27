@@ -15,7 +15,7 @@ import { faEnvelope, faLink } from '@fortawesome/free-solid-svg-icons'
 import '@/assets/styles/exampleCurr/_example6.css'
 
 const cvVariants = cva(
-  'p-5 w-full bg-white sample6-container shadow-lg print:shadow-none',
+  'w-full bg-white sample6-container shadow-lg print:shadow-none',
   {
     variants: {
       size: {
@@ -234,7 +234,7 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
               marginBottom: scale === 'xs' || scale === 'sm' ? '10vh' : '0',
             }}
           >
-            <div className="flex flex-col min-w-full gap-1 px-6">
+            <div className="flex flex-col min-w-full gap-1 p-7">
               <CVText
                 variant="title"
                 size="lg"
@@ -256,7 +256,7 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
 
               {/* CONTACTS */}
               <div
-                className="flex gap-2 justify-evenly -mx-11 px-2 py-2 mb-4"
+                className="flex gap-2 justify-evenly -mx-7 px-2 py-2 mb-4"
                 style={{ background: primaryColor }}
               >
                 {/* Phone/WhatsApp */}
@@ -380,39 +380,41 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
                     WORK EXPERIENCE
                   </CVText>
 
-                  {data?.experience?.map((item: any, key: number) => (
-                    <div className="flex flex-col gap-1.5" key={key}>
-                      <CVText
-                        variant="small"
-                        size={textSize}
-                        className="font-bold"
-                      >
-                        {item?.jobTitle}
-                      </CVText>
-                      <CVText
-                        variant="small"
-                        size={textSize}
-                        className="font-medium"
-                      >
-                        {item?.company}
-                      </CVText>
-                      <CVText
-                        variant="tiny"
-                        size={textSize}
-                        className="font-light italic"
-                        as="p"
-                      >
-                        {`${moment(item?.startDate).format('DD/MM/YYYY')} - ${moment(item?.endDate).format('DD/MM/YYYY')}`}
-                      </CVText>
-                      <CVText
-                        variant="tiny"
-                        size={textSize}
-                        className=" text-justify font-medium mb-2"
-                      >
-                        {item?.descJob}
-                      </CVText>
-                    </div>
-                  ))}
+                  {data?.experience
+                    ?.toReversed()
+                    ?.map((item: any, key: number) => (
+                      <div className="flex flex-col gap-1.5" key={key}>
+                        <CVText
+                          variant="small"
+                          size={textSize}
+                          className="font-bold"
+                        >
+                          {item?.jobTitle}
+                        </CVText>
+                        <CVText
+                          variant="small"
+                          size={textSize}
+                          className="font-medium"
+                        >
+                          {item?.company}
+                        </CVText>
+                        <CVText
+                          variant="tiny"
+                          size={textSize}
+                          className="font-light italic"
+                          as="p"
+                        >
+                          {`${moment(item?.startDate).format('DD/MM/YYYY')} - ${moment(item?.endDate).format('DD/MM/YYYY')}`}
+                        </CVText>
+                        <CVText
+                          variant="tiny"
+                          size={textSize}
+                          className=" text-justify font-medium mb-2"
+                        >
+                          {item?.descJob}
+                        </CVText>
+                      </div>
+                    ))}
                 </div>
 
                 {/* SKIILS */}
@@ -496,43 +498,45 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
                     >
                       EDUCATION
                     </CVText>
-                    {data?.education?.map((item: any, key: number) => (
-                      <div className="flex flex-col gap-1 my-1" key={key}>
-                        <CVText
-                          variant="small"
-                          size={textSize}
-                          className="font-semibold"
-                        >
-                          {`${item?.degree} in ${item?.major}`}
-                        </CVText>
-                        <CVText
-                          variant="tiny"
-                          size={textSize}
-                          className="font-medium"
-                        >
-                          {item?.university}
-                        </CVText>
-                        {item?.graduatedStatus ? (
-                          <>
-                            <CVText
-                              variant="tiny"
-                              size={textSize}
-                              className="flex items-center font-medium"
-                            >
-                              {`${moment(item?.graduated).format('YYYY')}`}
-                            </CVText>
-                          </>
-                        ) : (
+                    {data?.education
+                      ?.toReversed()
+                      ?.map((item: any, key: number) => (
+                        <div className="flex flex-col gap-1 my-1" key={key}>
                           <CVText
                             variant="small"
                             size={textSize}
-                            className="font-normal"
+                            className="font-semibold"
                           >
-                            Not Graduated Yet
+                            {`${item?.degree} in ${item?.major}`}
                           </CVText>
-                        )}
-                      </div>
-                    ))}
+                          <CVText
+                            variant="tiny"
+                            size={textSize}
+                            className="font-medium"
+                          >
+                            {item?.university}
+                          </CVText>
+                          {item?.graduatedStatus ? (
+                            <>
+                              <CVText
+                                variant="tiny"
+                                size={textSize}
+                                className="flex items-center font-medium"
+                              >
+                                {`${moment(item?.graduated).format('YYYY')}`}
+                              </CVText>
+                            </>
+                          ) : (
+                            <CVText
+                              variant="small"
+                              size={textSize}
+                              className="font-normal"
+                            >
+                              Not Graduated Yet
+                            </CVText>
+                          )}
+                        </div>
+                      ))}
                   </div>
 
                   {/* CERTIFICATE */}

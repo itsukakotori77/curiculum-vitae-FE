@@ -1,11 +1,8 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import { CVProps } from '@/interface/curiculumVitae'
-import { BookCheck, ChevronRight, User } from 'lucide-react'
+import { BookCheck, ChevronRight, ShieldCheck, User, UserRound } from 'lucide-react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faEnvelope,
-  faLink,
-} from '@fortawesome/free-solid-svg-icons'
+import { faEnvelope, faLink } from '@fortawesome/free-solid-svg-icons'
 import { cn } from '@/utils/common'
 import moment from 'moment'
 import {
@@ -19,7 +16,6 @@ import { forwardRef } from 'react'
 import Image from 'next/image'
 import { useCVSettingStore } from '@/utils/store'
 import '@/assets/styles/exampleCurr/_example1.css'
-
 
 // Define variants using CVA
 const cvVariants = cva(
@@ -186,7 +182,10 @@ const CVText = ({
 } & React.HTMLAttributes<HTMLElement>) => {
   const Component = as
   return (
-    <Component className={cn(textVariants({ variant, size }), className)} {...props}>
+    <Component
+      className={cn(textVariants({ variant, size }), className)}
+      {...props}
+    >
       {children}
     </Component>
   )
@@ -226,7 +225,7 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
       sidebarColor = '#E3E9EF',
       primaryColor = '#5977AC',
       sidebarTextColor = '#463F3F',
-      skillColor = '#99a1af',
+      skillColor = '#74B2FA',
       iconSize = 'md',
       variantText = 'small',
     },
@@ -237,15 +236,10 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
     return (
       <div ref={ref} className={cn(cvVariants({ printable }))}>
         <div
-          className={cn(
-            cvVariants({ size, scale }),
-            'origin-top',
-            className,
-          )}
+          className={cn(cvVariants({ size, scale }), 'origin-top', className)}
           style={{
             transformOrigin: 'top center',
-            marginBottom:
-              scale === 'xs' || scale === 'sm' ? '10vh' : '0',
+            marginBottom: scale === 'xs' || scale === 'sm' ? '10vh' : '0',
           }}
         >
           {/* BIOGRAPHY SIDEBAR */}
@@ -269,8 +263,8 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                   }
             }
           >
-            <div className="flex justify-center aspect-square">
-              {!!setting?.usingPicture && (
+            {!!setting?.usingPicture && (
+              <div className="flex justify-center aspect-square">
                 <Image
                   src={data?.profilePicture! || '/User.png'}
                   alt="profilePicture"
@@ -289,8 +283,8 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                   key={data?.profilePicture}
                   unoptimized
                 />
-              )}
-            </div>
+              </div>
+            )}
             {config.responsiveImage && (
               <style jsx>{`
                 @media (min-width: 640px) {
@@ -439,7 +433,7 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
               <CVText
                 variant="tiny"
                 size={textSize}
-                className="font-light leading-relaxed mt-2 break-all"
+                className="font-light leading-relaxed mt-2 break-all text-justify"
               >
                 {data?.profile}
               </CVText>
@@ -467,23 +461,19 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                         {item?.name}
                       </CVText>
                       <div className="grid grid-cols-5 gap-0.5">
-                        {Array.from(
-                          { length: item?.level },
-                          (_, index) => (
-                            <div
-                              key={index}
-                              className={`h-4 rounded-sm`}
-                              style={{
-                                background: `${
-                                  Boolean(item?.isHasLevel) &&
-                                  index < item.level
-                                    ? skillColor
-                                    : '#99a1af'
-                                }`,
-                              }}
-                            />
-                          ),
-                        )}
+                        {Array.from({ length: item?.level }, (_, index) => (
+                          <div
+                            key={index}
+                            className={`h-4 rounded-sm`}
+                            style={{
+                              background: `${
+                                Boolean(item?.isHasLevel) && index < item.level
+                                  ? skillColor
+                                  : '#99a1af'
+                              }`,
+                            }}
+                          />
+                        ))}
                       </div>
                     </div>
                   </li>
@@ -517,22 +507,18 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
               >
                 {`${data?.firstName} ${data?.lastName}`}
               </CVText>
-              <CVText
-                variant="subtitle"
-                size={textSize}
-                className="text-black"
-              >
+              <CVText variant="subtitle" size={textSize} className="text-black">
                 {data?.role.toUpperCase()}
               </CVText>
             </div>
 
             {/* TIMELINE */}
-            <div className="flex my-4 mx-2">
+            <div className="flex my-4 mx-2 w-full">
               <ol className="relative border-s border-gray-200">
                 {/* EXPERIENCE */}
                 <li className="mb-8 ms-6">
                   <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white">
-                    <BookCheck className="text-blue-800 w-4 h-4" />
+                    <UserRound className="text-blue-800 w-4 h-4" />
                   </span>
                   <CVText
                     variant="subtitle"
@@ -542,7 +528,7 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                     Experience
                   </CVText>
 
-                  <ul className="space-y-4 list-disc pl-4">
+                  <ul className="space-y-4 list-disc pl-4 w-full">
                     {data?.experience
                       ?.toReversed()
                       ?.map((item: any, key: number) => (
@@ -550,7 +536,7 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                           <CVText
                             variant="small"
                             size={textSize}
-                            className="block mb-2 font-bold leading-none text-gray-600"
+                            className="block mb-2 font-bold leading-none text-gray-600 w-full"
                           >
                             {`${item?.jobTitle} - ${item?.company}`}
                           </CVText>
@@ -559,20 +545,16 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                             size={textSize}
                             className="flex items-center mb-2 font-medium leading-none text-gray-500"
                           >
-                            {moment(item?.startDate).format(
-                              'MMMM, Do YYYY',
-                            )}
+                            {moment(item?.startDate).format('MMMM, Do YYYY')}
                             <ChevronRight className="w-4 h-4 mx-1" />
                             {item?.isCurrent
                               ? 'Current'
-                              : moment(item?.endDate).format(
-                                  'MMMM, Do YYYY',
-                                )}
+                              : moment(item?.endDate).format('MMMM, Do YYYY')}
                           </CVText>
                           <CVText
                             variant="small"
                             size={textSize}
-                            className="mb-2 font-normal text-gray-500 leading-relaxed"
+                            className="mb-2 font-normal text-gray-500 leading-relaxed !text-justify"
                           >
                             {item?.descJob}
                           </CVText>
@@ -581,7 +563,86 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                   </ul>
                 </li>
 
-                {/* Education and Certifications sections follow similar pattern... */}
+                {/* EDUCATIONS */}
+                <li className="mb-8 ms-6">
+                  <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white">
+                    <BookCheck className="text-blue-800 w-4 h-4" />
+                  </span>
+                  <CVText
+                    variant="subtitle"
+                    size={textSize}
+                    className="flex items-center mb-3 text-gray-900"
+                  >
+                    Education
+                  </CVText>
+
+                  <ul className="space-y-4 list-disc pl-4 w-full">
+                    {data?.education
+                      ?.toReversed()
+                      ?.map((item: any, key: number) => (
+                        <li key={key}>
+                          <CVText
+                            variant="small"
+                            size={textSize}
+                            className="block mb-2 font-bold leading-none text-gray-600 w-full"
+                          >
+                            {`${item?.degree} in ${item?.major}`}
+                          </CVText>
+                          <CVText
+                            variant="small"
+                            size={textSize}
+                            className="flex items-center mb-2 font-medium leading-none text-gray-500"
+                          >
+                            {moment(item?.graduated).format('MMMM, Do YYYY')}
+                          </CVText>
+                          <CVText
+                            variant="small"
+                            size={textSize}
+                            className="mb-2 font-normal text-gray-500 leading-relaxed !text-justify"
+                          >
+                            {`${item?.gpa} - ${item?.gpaStatus}`}
+                          </CVText>
+                        </li>
+                      ))}
+                  </ul>
+                </li>
+                
+                {/* CERTIFICATIONS */}
+                <li className="mb-8 ms-6">
+                  <span className="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white">
+                    <ShieldCheck className="text-blue-800 w-4 h-4" />
+                  </span>
+                  <CVText
+                    variant="subtitle"
+                    size={textSize}
+                    className="flex items-center mb-3 text-gray-900"
+                  >
+                    Education
+                  </CVText>
+
+                  <ul className="space-y-4 list-disc pl-4 w-full">
+                    {data?.certification
+                      ?.toReversed()
+                      ?.map((item: any, key: number) => (
+                        <li key={key}>
+                          <CVText
+                            variant="small"
+                            size={textSize}
+                            className="block mb-2 font-bold leading-none text-gray-600 w-full"
+                          >
+                            {`${item?.name} - ${item?.company}`}
+                          </CVText>
+                          <CVText
+                            variant="small"
+                            size={textSize}
+                            className="mb-2 font-normal text-gray-500 leading-relaxed !text-justify"
+                          >
+                            {item?.descCert}
+                          </CVText>
+                        </li>
+                      ))}
+                  </ul>
+                </li>
               </ol>
             </div>
           </div>

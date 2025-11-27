@@ -17,7 +17,7 @@ import Image from 'next/image'
 import { useCVSettingStore } from '@/utils/store'
 
 const cvVariants = cva(
-  'p-5 flex w-full bg-white shadow-lg sample3-container print:shadow-none',
+  'flex w-full bg-white shadow-lg sample3-container print:shadow-none',
   {
     variants: {
       size: {
@@ -500,7 +500,7 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
               </div>
 
               {/* TIMELINE */}
-              <div className="flex w-full flex-col items-start my-2 py-2 pl-4">
+              <div className="flex w-full flex-col items-start my-2 py-2 pl-4 pr-4">
                 {/* PROFILE */}
                 <div className="group flex gap-x-5 w-full">
                   <div className="relative">

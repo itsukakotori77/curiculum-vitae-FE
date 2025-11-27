@@ -16,7 +16,7 @@ import { faEnvelope, faLink } from '@fortawesome/free-solid-svg-icons'
 import { useCVSettingStore } from '@/utils/store'
 
 const cvVariants = cva(
-  'p-5 w-full bg-white shadow-lg sample4-container print:shadow-none',
+  'w-full bg-white sample4-container shadow-lg print:shadow-none',
   {
     variants: {
       size: {
@@ -238,7 +238,7 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
               marginBottom: scale === 'xs' || scale === 'sm' ? '10vh' : '0',
             }}
           >
-            <div className="flex flex-col min-w-full">
+            <div className="flex flex-col min-w-full p-5">
               {/* SEGMENT 1 */}
               <div className="flex w-full gap-4">
                 <div className="w-[70%] flex flex-col gap-2">
@@ -260,21 +260,27 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                         size="lg"
                         className="font-palatino"
                       >
-                        {data?.firstName}
+                        {`${!!setting?.usingPicture ? data?.firstName : `${data?.firstName} ${data?.lastName}`}`}
                       </CVText>
                     </div>
                   </div>
-                  <div className="flex w-full justify-end items-end flex-col gap-2">
-                    <CVText variant="title" size="lg" className="font-palatino">
-                      {data?.lastName}
-                    </CVText>
-                  </div>
+                  {!!setting?.usingPicture && (
+                    <div className="flex w-full justify-end items-end flex-col gap-2">
+                      <CVText
+                        variant="title"
+                        size="lg"
+                        className="font-palatino"
+                      >
+                        {data?.lastName}
+                      </CVText>
+                    </div>
+                  )}
                 </div>
                 <div className="w-[30%]">
-                  <div className="flex justify-center items-center mx-2 z-999">
-                    {!!setting?.usingPicture && (
+                  {!!setting?.usingPicture && (
+                    <div className="flex justify-center items-center mx-2 z-999">
                       <Image
-                        src={'/User-ex.png'}
+                        src={'/User.png'}
                         width={500}
                         height={500}
                         alt="profilePicture"
@@ -282,21 +288,25 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                           config.responsiveImage
                             ? {
                                 maxWidth: `${config.mobileImageSize}px`,
+                                borderColor: primaryColor,
                               }
                             : {
                                 maxWidth: '200px',
+                                borderColor: primaryColor,
                               }
                         }
                         key={data?.profilePicture}
-                        className="object-cover md:w-30 md:h-40 lg:w-40 lg:h-50 z-2 rounded-sm aspect-[4/5]"
+                        className="object-cover md:w-30 md:h-40 lg:w-40 lg:h-50 z-2 rounded-sm aspect-[4/5] border"
                       />
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* SEGMENT 2 - Fixed without absolute positioning */}
-              <div className="min-w-full -mt-16 relative z-1">
+              <div
+                className={`min-w-full ${!!setting?.usingPicture ? '-mt-16' : 'mt-2'} relative z-1`}
+              >
                 <div
                   className="p-3 border rounded-lg bg-white w-full"
                   style={{
@@ -508,50 +518,52 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                     >
                       EDUCATION
                     </CVText>
-                    {data?.education?.map((item: any, key: number) => (
-                      <div className="flex flex-col gap-1 my-1" key={key}>
-                        <CVText
-                          variant="small"
-                          size={textSize}
-                          className="font-semibold"
-                        >
-                          {`${item?.degree} in ${item?.major}`}
-                        </CVText>
-                        <CVText
-                          variant="tiny"
-                          size={textSize}
-                          className="font-medium"
-                        >
-                          {item?.university}
-                        </CVText>
-                        {item?.graduatedStatus ? (
-                          <>
-                            <CVText
-                              variant="tiny"
-                              size={textSize}
-                              className="flex items-center font-medium"
-                            >
-                              {`${moment(item?.graduated).format('YYYY')}`}
-                            </CVText>
-                            <CVText
-                              variant="tiny"
-                              size={textSize}
-                              className="font-normal"
-                            >
-                              {`${item?.gpa} - ${item?.gpaStatus}`}
-                            </CVText>
-                          </>
-                        ) : (
+                    {data?.education
+                      ?.toReversed()
+                      ?.map((item: any, key: number) => (
+                        <div className="flex flex-col gap-1 my-1" key={key}>
                           <CVText
                             variant="small"
                             size={textSize}
-                            className="font-normal"
+                            className="font-semibold"
                           >
-                            Not Graduated Yet
+                            {`${item?.degree} in ${item?.major}`}
                           </CVText>
-                        )}
-                      </div>
-                    ))}
+                          <CVText
+                            variant="tiny"
+                            size={textSize}
+                            className="font-medium"
+                          >
+                            {item?.university}
+                          </CVText>
+                          {item?.graduatedStatus ? (
+                            <>
+                              <CVText
+                                variant="tiny"
+                                size={textSize}
+                                className="flex items-center font-medium"
+                              >
+                                {`${moment(item?.graduated).format('YYYY')}`}
+                              </CVText>
+                              <CVText
+                                variant="tiny"
+                                size={textSize}
+                                className="font-normal"
+                              >
+                                {`${item?.gpa} - ${item?.gpaStatus}`}
+                              </CVText>
+                            </>
+                          ) : (
+                            <CVText
+                              variant="small"
+                              size={textSize}
+                              className="font-normal"
+                            >
+                              Not Graduated Yet
+                            </CVText>
+                          )}
+                        </div>
+                      ))}
                   </div>
 
                   {/* Skills */}
@@ -620,8 +632,8 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                   </div>
                 </div>
 
-                {/* EXPERIENCES */}
                 <div className="w-[70%]">
+                  {/* EXPERIENCES */}
                   <div className="p-2">
                     <CVText
                       variant="subtitle"
@@ -631,35 +643,80 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                       EXPERIENCES
                     </CVText>
                     <div className="p-0 my-4 flex flex-col gap-3">
-                      {data?.experience?.map((item: any, key: number) => (
-                        <div className="flex flex-col gap-2" key={key}>
-                          <div className="flex justify-between">
+                      {data?.experience
+                        ?.toReversed()
+                        ?.map((item: any, key: number) => (
+                          <div className="flex flex-col gap-2" key={key}>
+                            <div className="flex justify-between">
+                              <CVText
+                                variant="small"
+                                size={textSize}
+                                className="font-bold"
+                              >
+                                {item?.jobTitle}
+                              </CVText>
+                              <CVText
+                                variant="small"
+                                size={textSize}
+                                className="font-normal"
+                              >
+                                {`${item?.company} | ${moment(item?.startDate).format('YYYY')} - ${moment(item?.endDate).format('YYYY')}`}
+                              </CVText>
+                            </div>
                             <CVText
-                              variant="small"
+                              variant="tiny"
                               size={textSize}
-                              className="font-bold"
+                              className=" text-justify font-medium"
                             >
-                              {item?.jobTitle}
-                            </CVText>
-                            <CVText
-                              variant="small"
-                              size={textSize}
-                              className="font-normal"
-                            >
-                              {`${item?.company} | ${moment(item?.startDate).format('YYYY')} - ${moment(item?.endDate).format('YYYY')}`}
+                              {item?.descJob}
                             </CVText>
                           </div>
-                          <CVText
-                            variant="tiny"
-                            size={textSize}
-                            className=" text-justify font-medium"
-                          >
-                            {item?.descJob}
-                          </CVText>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   </div>
+
+                  {/* CERTIFICATIONS */}
+                  <div className="p-2">
+                    <CVText
+                      variant="subtitle"
+                      size={textSize}
+                      className="font-extrabold"
+                    >
+                      CERTIFICATIONS
+                    </CVText>
+                    <div className="p-0 my-4 flex flex-col gap-3">
+                      {data?.certification
+                        ?.toReversed()
+                        ?.map((item: any, key: number) => (
+                          <div className="flex flex-col gap-2" key={key}>
+                            <div className="flex justify-between">
+                              <CVText
+                                variant="small"
+                                size={textSize}
+                                className="font-bold"
+                              >
+                                {item?.name}
+                              </CVText>
+                              <CVText
+                                variant="small"
+                                size={textSize}
+                                className="font-normal"
+                              >
+                                {`${item?.company} | ${moment(item?.certificateDate).format('YYYY')}`}
+                              </CVText>
+                            </div>
+                            <CVText
+                              variant="tiny"
+                              size={textSize}
+                              className=" text-justify font-medium"
+                            >
+                              {item?.descCert}
+                            </CVText>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>

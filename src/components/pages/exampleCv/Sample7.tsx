@@ -14,9 +14,10 @@ import {
 import { faEnvelope, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import '@/assets/styles/exampleCurr/_example7.css'
+import { useCVSettingStore } from '@/utils/store'
 
 const cvVariants = cva(
-  'p-5 w-full bg-white sample7-container shadow-lg print:shadow-none',
+  'w-full bg-white sample7-container shadow-lg print:shadow-none',
   {
     variants: {
       size: {
@@ -225,6 +226,8 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
     },
     ref,
   ) => {
+    const { data: setting } = useCVSettingStore()
+
     return (
       <>
         <div ref={ref} className={cn(cvVariants({ size, scale }), className)}>
@@ -235,26 +238,30 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
               marginBottom: scale === 'xs' || scale === 'sm' ? '10vh' : '0',
             }}
           >
-            <div className="flex min-w-full gap-2 px-6 -mt-6 -mx-4">
+            <div
+              className={`flex min-w-full gap-2 px-10 pb-8 -mx-4 ${!!setting?.usingPicture && '-mt-6'}`}
+            >
               <div className="w-[40%]">
-                <div className="flex justify-center items-center flex-col">
-                  <div
-                    className="h-80 w-48 rounded-br-3xl rounded-bl-3xl"
-                    style={{ background: primaryColor }}
-                  ></div>
-                  <div
-                    className="rounded-full border-6 -mt-40"
-                    style={{ borderColor: sidebarColor }}
-                  >
-                    <Image
-                      src="/User-ex.png"
-                      alt="user"
-                      width={600}
-                      height={600}
-                      className="w-50 h-50 object-cover rounded-full"
-                    />
+                {!!setting?.usingPicture && (
+                  <div className="flex justify-center items-center flex-col">
+                    <div
+                      className="h-80 w-48 rounded-br-3xl rounded-bl-3xl"
+                      style={{ background: primaryColor }}
+                    ></div>
+                    <div
+                      className="rounded-full border-6 -mt-40"
+                      style={{ borderColor: sidebarColor }}
+                    >
+                      <Image
+                        src="/User.png"
+                        alt="user"
+                        width={600}
+                        height={600}
+                        className="w-50 h-50 object-cover rounded-full"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="flex flex-col gap-2 w-full px-6 mt-2">
                   {/* SKIILS */}
@@ -297,7 +304,10 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                                           {index == item?.level && (
                                             <div
                                               className="absolute w-2.5 h-2.5 rounded-full border-2 -top-1 -left-2.5"
-                                              style={{ background: skillColor, borderColor: sidebarColor }}
+                                              style={{
+                                                background: skillColor,
+                                                borderColor: sidebarColor,
+                                              }}
                                             ></div>
                                           )}
                                         </>
@@ -374,7 +384,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                         <CVText
                           variant="tiny"
                           size={textSize}
-                          className="font-light tracking-wide"
+                          className="font-light tracking-wide text-[10px]"
                           style={{ color: sidebarTextColor }}
                         >
                           {data.contacts.phone}
@@ -392,7 +402,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                         <CVText
                           variant="tiny"
                           size={textSize}
-                          className="font-light tracking-wide"
+                          className="font-light tracking-wide text-[10px]"
                           style={{ color: sidebarTextColor }}
                         >
                           {data.contacts.telegram}
@@ -410,7 +420,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                         <CVText
                           variant="tiny"
                           size={textSize}
-                          className="font-light tracking-wide"
+                          className="font-light tracking-wide text-[10px]"
                           style={{ color: sidebarTextColor }}
                         >
                           {data.contacts.email}
@@ -428,7 +438,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                         <CVText
                           variant="tiny"
                           size={textSize}
-                          className="font-light tracking-wide"
+                          className="font-light tracking-wide text-[10px]"
                           style={{ color: sidebarTextColor }}
                         >
                           {data.contacts.linkedin}
@@ -446,7 +456,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                         <CVText
                           variant="tiny"
                           size={textSize}
-                          className="font-light tracking-wide"
+                          className="font-light tracking-wide text-[10px]"
                           style={{ color: sidebarTextColor }}
                         >
                           {data.contacts.instagram}
@@ -481,53 +491,55 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                     EXPERIENCES
                   </CVText>
                   <div className="p-0 my-4 flex flex-col gap-3">
-                    {data?.experience?.map((item: any, key: number) => (
-                      <div className="flex flex-col gap-2" key={key}>
-                        <div className="flex gap-4 items-start">
-                          <CVText
-                            variant="small"
-                            size={textSize}
-                            className="font-bold flex-shrink-0"
-                            style={{ color: sidebarColor }}
-                          >
-                            {`${moment(item?.startDate).format('YYYY')} - ${
-                              moment(item?.endDate).isAfter(moment()) ||
-                              moment(item?.endDate).isSame(moment(), 'day')
-                                ? 'Present'
-                                : moment(item?.endDate).format('YYYY')
-                            }`}
-                          </CVText>
-                          <FontAwesomeIcon
-                            icon={faArrowRight}
-                            className="flex-shrink-0 "
-                          />
-                          <div className="flex flex-col gap-1">
+                    {data?.experience
+                      ?.toReversed()
+                      ?.map((item: any, key: number) => (
+                        <div className="flex flex-col gap-2" key={key}>
+                          <div className="flex gap-4 items-start">
                             <CVText
                               variant="small"
                               size={textSize}
-                              className="font-bold"
+                              className="font-bold flex-shrink-0"
                               style={{ color: sidebarColor }}
                             >
-                              {item?.jobTitle}
+                              {`${moment(item?.startDate).format('YYYY')} - ${
+                                moment(item?.endDate).isAfter(moment()) ||
+                                moment(item?.endDate).isSame(moment(), 'day')
+                                  ? 'Present'
+                                  : moment(item?.endDate).format('YYYY')
+                              }`}
                             </CVText>
-                            <CVText
-                              variant="tiny"
-                              size={textSize}
-                              className="font-semibold"
-                            >
-                              {item?.company}
-                            </CVText>
-                            <CVText
-                              variant="tiny"
-                              size={textSize}
-                              className="text-justify font-medium"
-                            >
-                              {item?.descJob}
-                            </CVText>
+                            <FontAwesomeIcon
+                              icon={faArrowRight}
+                              className="flex-shrink-0 "
+                            />
+                            <div className="flex flex-col gap-1">
+                              <CVText
+                                variant="small"
+                                size={textSize}
+                                className="font-bold"
+                                style={{ color: sidebarColor }}
+                              >
+                                {item?.jobTitle}
+                              </CVText>
+                              <CVText
+                                variant="tiny"
+                                size={textSize}
+                                className="font-semibold"
+                              >
+                                {item?.company}
+                              </CVText>
+                              <CVText
+                                variant="tiny"
+                                size={textSize}
+                                className="text-justify font-medium"
+                              >
+                                {item?.descJob}
+                              </CVText>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                   <hr className="bg-black h-[1px]  w-full" />
                 </div>
@@ -542,48 +554,50 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                     EDUCATIONS
                   </CVText>
                   <div className="p-0 my-4 flex flex-col gap-3">
-                    {data?.education?.map((item: any, key: number) => (
-                      <div className="flex flex-col gap-2" key={key}>
-                        <div className="flex gap-4 items-start">
-                          <CVText
-                            variant="small"
-                            size={textSize}
-                            className="font-bold flex-shrink-0"
-                            style={{ color: sidebarColor }}
-                          >
-                            {`${moment(item?.graduated).format('YYYY')} ${!!item?.graduatedStatus ? `(Graduated - ${item?.gpa})` : ''}`}
-                          </CVText>
-                          <FontAwesomeIcon
-                            icon={faArrowRight}
-                            className="flex-shrink-0 "
-                          />
-                          <div className="flex flex-col gap-1">
+                    {data?.education
+                      ?.toReversed()
+                      ?.map((item: any, key: number) => (
+                        <div className="flex flex-col gap-2" key={key}>
+                          <div className="flex gap-4 items-start">
                             <CVText
                               variant="small"
                               size={textSize}
-                              className="font-bold"
+                              className="font-bold flex-shrink-0"
                               style={{ color: sidebarColor }}
                             >
-                              {item?.major}
+                              {`${moment(item?.graduated).format('YYYY')} ${!!item?.graduatedStatus ? `(Graduated - ${item?.gpa})` : ''}`}
                             </CVText>
-                            <CVText
-                              variant="tiny"
-                              size={textSize}
-                              className="font-semibold"
-                            >
-                              {item?.university}
-                            </CVText>
-                            <CVText
-                              variant="tiny"
-                              size={textSize}
-                              className="text-justify font-medium"
-                            >
-                              {item?.majorDesc}
-                            </CVText>
+                            <FontAwesomeIcon
+                              icon={faArrowRight}
+                              className="flex-shrink-0 "
+                            />
+                            <div className="flex flex-col gap-1">
+                              <CVText
+                                variant="small"
+                                size={textSize}
+                                className="font-bold"
+                                style={{ color: sidebarColor }}
+                              >
+                                {item?.major}
+                              </CVText>
+                              <CVText
+                                variant="tiny"
+                                size={textSize}
+                                className="font-semibold"
+                              >
+                                {item?.university}
+                              </CVText>
+                              <CVText
+                                variant="tiny"
+                                size={textSize}
+                                className="text-justify font-medium"
+                              >
+                                {item?.majorDesc}
+                              </CVText>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                   <hr className="bg-black h-[1px]  w-full" />
                 </div>
