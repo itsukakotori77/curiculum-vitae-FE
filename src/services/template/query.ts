@@ -1,14 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiGetDetailTemplate, apiGetListTemplate } from './api'
 
-export async function useGetDetail(id: number, enabled?: boolean) {
+export function useGetDetailTemplate(id: number, options?: any) {
   return useQuery({
-    queryKey: ['Detail Template'],
+    queryKey: ['Detail Template', id],
     queryFn: async () => {
       const { data } = await apiGetDetailTemplate(+id)
 
       return data
     },
+    ...options,
   })
 }
 

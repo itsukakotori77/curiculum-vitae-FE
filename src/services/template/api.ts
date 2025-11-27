@@ -10,9 +10,11 @@ export async function apiGetListTemplate(params: any) {
 }
 
 export async function apiGetDetailTemplate(id: number | string) {
-  const res = await api.get<any, any>(`/api/v1/template`, { params: { id } })
+  const { data } = await api.get<any, any>(`/api/v1/template`, {
+    params: { id },
+  })
 
-  return res
+  return data
 }
 
 export async function apiPostTemplate(params: any) {
