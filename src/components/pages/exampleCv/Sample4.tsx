@@ -257,7 +257,7 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                     <div className="w-1/2 flex flex-col justify-end items-end">
                       <CVText
                         variant="title"
-                        size="lg"
+                        size="sm"
                         className="font-palatino"
                       >
                         {`${!!setting?.usingPicture ? data?.firstName : `${data?.firstName} ${data?.lastName}`}`}
@@ -268,7 +268,7 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                     <div className="flex w-full justify-end items-end flex-col gap-2">
                       <CVText
                         variant="title"
-                        size="lg"
+                        size="sm"
                         className="font-palatino"
                       >
                         {data?.lastName}
@@ -280,7 +280,7 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                   {!!setting?.usingPicture && (
                     <div className="flex justify-center items-center mx-2 z-999">
                       <Image
-                        src={'/User.png'}
+                        src={data?.profilePicture || '/User.png'}
                         width={500}
                         height={500}
                         alt="profilePicture"
@@ -716,7 +716,6 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                         ))}
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>

@@ -238,9 +238,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
               marginBottom: scale === 'xs' || scale === 'sm' ? '10vh' : '0',
             }}
           >
-            <div
-              className={`flex min-w-full gap-2 px-10 pb-8 -mx-4 ${!!setting?.usingPicture && '-mt-6'}`}
-            >
+            <div className={`flex min-w-full gap-2 px-10 pb-8 -mx-4`}>
               <div className="w-[40%]">
                 {!!setting?.usingPicture && (
                   <div className="flex justify-center items-center flex-col">
@@ -253,11 +251,20 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                       style={{ borderColor: sidebarColor }}
                     >
                       <Image
-                        src="/User.png"
+                        src={data?.profilePicture || '/User.png'}
                         alt="user"
                         width={600}
                         height={600}
                         className="w-50 h-50 object-cover rounded-full"
+                        style={
+                          config.responsiveImage
+                            ? {
+                                maxWidth: `${config.mobileImageSize}px`,
+                              }
+                            : {
+                                maxWidth: '200px',
+                              }
+                        }
                       />
                     </div>
                   </div>
@@ -464,7 +471,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                       </div>
                     )}
                   </div>
-                  <hr className="bg-black h-[1px]  w-full" />
+                  <hr className="bg-black h-[1px] w-full" />
 
                   {/* PROFILE */}
                   <div className="py-2">
@@ -478,7 +485,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                     </CVText>
                   </div>
 
-                  <hr className="bg-black h-[1px]  w-full" />
+                  <hr className="bg-black h-[1px] w-full" />
                 </div>
 
                 {/* EXPERIENCE */}
@@ -499,7 +506,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                             <CVText
                               variant="small"
                               size={textSize}
-                              className="font-bold flex-shrink-0"
+                              className="font-bold flex-shrink-0 w-24"
                               style={{ color: sidebarColor }}
                             >
                               {`${moment(item?.startDate).format('YYYY')} - ${
@@ -511,7 +518,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                             </CVText>
                             <FontAwesomeIcon
                               icon={faArrowRight}
-                              className="flex-shrink-0 "
+                              className="flex-shrink-0 w-3"
                             />
                             <div className="flex flex-col gap-1">
                               <CVText
@@ -559,17 +566,27 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                       ?.map((item: any, key: number) => (
                         <div className="flex flex-col gap-2" key={key}>
                           <div className="flex gap-4 items-start">
-                            <CVText
-                              variant="small"
-                              size={textSize}
-                              className="font-bold flex-shrink-0"
-                              style={{ color: sidebarColor }}
-                            >
-                              {`${moment(item?.graduated).format('YYYY')} ${!!item?.graduatedStatus ? `(Graduated - ${item?.gpa})` : ''}`}
-                            </CVText>
+                            <div className="flex flex-col flex-shrink-0 w-30">
+                              <CVText
+                                variant="small"
+                                size={textSize}
+                                className="font-bold"
+                                style={{ color: sidebarColor }}
+                              >
+                                {`${moment(item?.graduated).format('YYYY')}`}
+                              </CVText>
+                              <CVText
+                                variant="tiny"
+                                size={textSize}
+                                className="font-medium"
+                                style={{ color: sidebarColor }}
+                              >
+                                {`${!!item?.graduatedStatus ? `(Graduated - ${item?.gpa})` : ''}`}
+                              </CVText>
+                            </div>
                             <FontAwesomeIcon
                               icon={faArrowRight}
-                              className="flex-shrink-0 "
+                              className="flex-shrink-0 w-3"
                             />
                             <div className="flex flex-col gap-1">
                               <CVText
