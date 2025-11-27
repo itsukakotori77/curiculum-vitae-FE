@@ -95,6 +95,7 @@ export interface IColorCurr {
   primaryColor: RgbaColor
   skillColor?: RgbaColor
   isUsingPhoto?: boolean | number
+  cvTemplate?: number | string
 }
 
 export interface CVProps {
@@ -174,6 +175,7 @@ export interface ISettingCurr {
   primaryColor?: RgbaColor
   skillColor?: RgbaColor
   usingPicture?: boolean | number
+  cvTemplate?: number | string
 }
 
 export interface CVStep1Store {

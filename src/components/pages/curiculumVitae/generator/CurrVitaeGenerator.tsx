@@ -1,6 +1,14 @@
 'use client'
 
-import React, { useRef, useCallback, useMemo, useState } from 'react'
+import React, {
+  useRef,
+  useCallback,
+  useMemo,
+  useState,
+  lazy,
+  useEffect,
+  Suspense,
+} from 'react'
 import StepperBubble from '@/components/globals/stepper/StepperBubble'
 import GeneratorForm1, { GeneratorForm1Ref } from './GeneratorForm1'
 import GeneratorForm2, { GeneratorForm2Ref } from './GeneratorForm2'
@@ -38,9 +46,6 @@ import {
   IGeneratorStep4,
   IGeneratorStep5,
 } from '@/interface/curiculumVitae'
-import Sample2 from '../../exampleCv/Sample2'
-import Sample1 from '../../exampleCv/Sample1'
-import Sample4 from '../../exampleCv/Sample4'
 
 // Types
 interface ItemCardProps {
@@ -92,6 +97,15 @@ interface ColorProps {
   primaryColor?: string
   sidebarColor?: string
   skillColor?: string
+}
+
+const loadSampleComponent = (id: number) => {
+  return lazy(
+    () =>
+      import(`../../exampleCv/Sample${id}`).catch(
+        () => import('../../exampleCv/Sample5'),
+      ), // Fallback to Sample5 if not found
+  )
 }
 
 // Reusable Item Card Component
@@ -329,6 +343,10 @@ const CurrVitaeGenerator: React.FC = () => {
   const { openModal, closeModal } = useModalConfirm()
   const { mutate: postCurr, isPending } = usePostCurr()
 
+  const templateId = +dataSetting?.cvTemplate! || 5
+  const [SampleComponent, setSampleComponent] =
+    useState<React.ComponentType<any> | null>(null)
+
   const colorProps: ColorProps = useMemo(
     () => ({
       primaryColor: convertColor(dataSetting?.primaryColor!),
@@ -507,6 +525,38 @@ const CurrVitaeGenerator: React.FC = () => {
     }),
     [idxExp, idxEdu, idxSkill, experiences, educations, skills],
   )
+
+  const commonProps = useMemo(
+    () => ({
+      previewRef,
+      data: finalCV || biodataCurr,
+      scale: 'md' as const,
+      textSize: 'xs' as const,
+      config: {
+        sidebarWidth: 28,
+        mobileSidebarWidth: 28,
+        tabletSidebarWidth: 30,
+        responsiveImage: true,
+        mobileImageSize: 120,
+        tabletImageSize: 150,
+        desktopImageSize: 200,
+        responsiveSidebar: true,
+      },
+      printable: 'noPrint' as const,
+      iconSize: 'xs' as const,
+      variantText: 'tiny' as const,
+      className: 'bg-transparent shadow-none p-0 w-fit',
+      ...colorProps,
+    }),
+    [previewRef, finalCV],
+  )
+
+  useEffect(() => {
+    if (templateId) {
+      const DynamicSample = loadSampleComponent(templateId)
+      setSampleComponent(() => DynamicSample)
+    }
+  }, [templateId])
 
   return (
     <div className="min-h-screen lg:h-screen">
@@ -721,29 +771,17 @@ const CurrVitaeGenerator: React.FC = () => {
                       className="scale-[1.0] sm:scale-75 lg:scale-90 lg:aspect-[4/5] origin-top cursor-pointer min-w-fit border-2 border-black p-4 rounded-md shadow-[3px_3px_0px_rgba(0,0,0,1)]"
                       onClick={() => setPreview(true)}
                     >
-                      <Sample3
-                        ref={previewRef}
-                        data={finalCV || biodataCurr}
-                        scale="sm"
-                        size="xs"
-                        textSize="xs"
-                        iconSize="xs"
-                        variantText="tiny"
-                        config={{
-                          sidebarWidth: 28,
-                          mobileSidebarWidth: 28,
-                          tabletSidebarWidth: 30,
-                          responsiveImage: true,
-                          mobileImageSize: 120,
-                          tabletImageSize: 150,
-                          desktopImageSize: 200,
-                          responsiveSidebar: true,
-                        }}
-                        printable="noPrint"
-                        className="bg-transparent shadow-none p-0"
-                        childrenClassName="max-h-none"
-                        {...colorProps}
-                      />
+                      <Suspense
+                        fallback={
+                          <div className="flex items-center justify-center min-w-full h-full">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                          </div>
+                        }
+                      >
+                        {SampleComponent && (
+                          <SampleComponent {...commonProps} />
+                        )}
+                      </Suspense>
                     </div>
                   </div>
                 </div>
@@ -761,22 +799,15 @@ const CurrVitaeGenerator: React.FC = () => {
                 className="scale-75 lg:scale-90 origin-top cursor-pointer"
                 onClick={() => setPreview(true)}
               >
-                <Sample3
-                  ref={previewRef}
-                  data={finalCV || biodataCurr}
-                  scale="sm"
-                  size="xs"
-                  textSize="xs"
-                  iconSize="xs"
-                  variantText="tiny"
-                  config={{
-                    sidebarWidth: 28,
-                  }}
-                  printable="noPrint"
-                  className="bg-transparent shadow-none p-0"
-                  childrenClassName="max-h-none"
-                  {...colorProps}
-                />
+                <Suspense
+                  fallback={
+                    <div className="flex items-center justify-center min-w-full h-full">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                    </div>
+                  }
+                >
+                  {SampleComponent && <SampleComponent {...commonProps} />}
+                </Suspense>
               </div>
             </div>
           )}
@@ -788,6 +819,7 @@ const CurrVitaeGenerator: React.FC = () => {
         data={finalCV || biodataCurr}
         isShowing={preview}
         onClose={() => setPreview(false)}
+        templateId={templateId}
       />
     </div>
   )

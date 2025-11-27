@@ -29,6 +29,15 @@ import { ListFilter } from 'lucide-react'
 import { apiGetListTemplate } from '@/services/template/api'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import { useGetDetailTemplate } from '@/services/template/query'
+import Loading from '@/components/globals/UI/Loading'
+
+const defaultParam = {
+  page: 1,
+  limit: 10,
+  sortBy: 'created_at',
+  sortSystem: 'desc',
+}
 
 export default function CuriculumVitae() {
   const filterRef = useRef<HTMLAttributeReferrerPolicy>(null)
@@ -36,20 +45,20 @@ export default function CuriculumVitae() {
   const { data: dataSetting, updateData } = useCVSettingStore()
   const router = useRouter()
   const pathname = usePathname()
-
-  const defaultParam = {
-    page: 1,
-    limit: 10,
-    sortBy: 'created_at',
-    sortSystem: 'desc',
-  }
-
   const [modal, setModal] = useState<boolean>(false)
   const [filterOpen, setFilterOpen] = useState<boolean>(false)
   const [currStep, setCurrStep] = useState<number>(1)
   const [usePhoto, setPhoto] = useState<boolean>(false)
   const [filterMobile, setFilterMobile] = useState<boolean>(false)
   const { mutate: postSetting, isPending } = usePostSetting()
+  const [detail, setDetail] = useState<number | null>(null)
+  const {
+    data: dataDetail,
+    refetch: refetchDetail,
+    isPending: isLoadingDetail,
+  } = useGetDetailTemplate(detail!, {
+    enabled: false,
+  })
 
   const [
     { data, isFetching, refetch, isSuccess, isError, error },
@@ -97,27 +106,15 @@ export default function CuriculumVitae() {
     </Card>
   )
 
-  // // Debug: Log the data structure
-  // useEffect(() => {
-  //   if (data) {
-  //     console.log('=== DATA DEBUG ===')
-  //     console.log('Full data:', data)
-  //     console.log('Is data an array?', Array.isArray(data))
-  //     console.log(
-  //       'Data keys:',
-  //       data && typeof data === 'object' ? Object.keys(data) : 'N/A',
-  //     )
-  //     console.log('Templates:', templates)
-  //     console.log('Templates length:', templates.length)
-  //   }
-
-  //   if (isError) {
-  //     console.error('Query error:', error)
-  //   }
-  // }, [data, isError, error, templates])
+  useEffect(() => {
+    if (detail) {
+      refetchDetail()
+    }
+  }, [detail])
 
   return (
     <>
+      <Loading isLoading={isPending} />
       <section className="w-full h-full px-4 sm:px-6 md:px-7 mt-8 sm:mt-12 md:mt-16 lg:mt-20 relative">
         {/* Mobile Filter Toggle Button */}
         <button
@@ -201,7 +198,10 @@ export default function CuriculumVitae() {
                           damping: 10,
                         },
                       }}
-                      onClick={() => setModal(true)}
+                      onClick={(vl) => {
+                        setDetail(item.id)
+                        setModal(true)
+                      }}
                     >
                       <Card
                         className="w-full rounded-md h-full hover:bg-black hover:opacity-[100%] border"
@@ -251,6 +251,7 @@ export default function CuriculumVitae() {
 
             {currStep === 1 && (
               <CuriculumVItaeStep1
+                dataDetail={dataDetail}
                 onStepChange={(val, photo) => {
                   setCurrStep(val)
                   setPhoto(photo)
@@ -260,6 +261,7 @@ export default function CuriculumVitae() {
 
             {currStep === 2 && (
               <CuriculumVitaeStep2
+                dataDetail={dataDetail}
                 onSubmit={handleSubmit}
                 isLoading={isPending}
                 onStepChange={(val) => setCurrStep(val)}

@@ -4,29 +4,34 @@ import React, {
   useRef,
   useMemo,
   useState,
+  lazy,
+  useEffect,
+  Suspense,
 } from 'react'
 import Modal from '@/components/globals/modal'
 import { ICurrVitae } from '@/interface/curiculumVitae'
-
 import { toPng } from 'html-to-image'
 import { useCVSettingStore } from '@/utils/store'
 import { convertColor } from '@/utils/common'
 import jsPDF from 'jspdf'
 import { FileText, Image as ImageIcon, Loader2 } from 'lucide-react'
 import Button from '@/components/CultUI/Button'
-import Sample1 from '../../exampleCv/Sample1'
-import Sample2 from '../../exampleCv/Sample2'
-import Sample3 from '../../exampleCv/Sample3'
-import Sample4 from '../../exampleCv/Sample4'
-import Sample5 from '../../exampleCv/Sample5'
-import Sample6 from '../../exampleCv/Sample6'
-import Sample7 from '../../exampleCv/Sample7'
 import { biodataCurr } from '@/data/cv'
 
 interface IProps {
   data?: ICurrVitae | any
   isShowing: boolean
   onClose: () => void
+  templateId?: number | string
+}
+
+const loadSampleComponent = (id: number) => {
+  return lazy(
+    () =>
+      import(`../../exampleCv/Sample${id}`).catch(
+        () => import('../../exampleCv/Sample5'),
+      ), // Fallback to Sample5 if not found
+  )
 }
 
 export interface PreviewGeneratorHandle {
@@ -36,11 +41,13 @@ export interface PreviewGeneratorHandle {
 }
 
 const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
-  ({ data, isShowing, onClose }, ref) => {
+  ({ data, isShowing, onClose, templateId }, ref) => {
     const sampleRef = useRef<HTMLDivElement>(null)
     const { data: dataSetting } = useCVSettingStore()
     const [isDownloading, setIsDownloading] = useState<boolean>(false)
     const [downloadType, setDownloadType] = useState<'png' | 'pdf' | null>(null)
+    const [SampleComponent, setSampleComponent] =
+      useState<React.ComponentType<any> | null>(null)
 
     // Memoize color props to avoid recalculation
     const colorProps = useMemo(
@@ -192,14 +199,14 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
           const a4Width = 210
           const a4Height = 297
 
-          const a4WidthPx = 794 
-          const a4HeightPx = 1123 
+          const a4WidthPx = 794
+          const a4HeightPx = 1123
 
           return {
             cacheBust: true,
             includeQueryParams: true,
             quality: 1.0,
-            pixelRatio: 3, 
+            pixelRatio: 3,
             backgroundColor: '#ffffff',
             filter: () => true,
             width: a4WidthPx,
@@ -287,6 +294,33 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
       }
     }
 
+    const commonProps = useMemo(
+      () => ({
+        sampleRef,
+        data: data || biodataCurr,
+        scale: 'md' as const,
+        textSize: 'xs' as const,
+        config: {
+          sidebarWidth: 28,
+          responsiveImage: true,
+          responsiveSidebar: true,
+          mobileSidebarWidth: 28,
+          tabletSidebarWidth: 35,
+          mobileImageSize: 300,
+          tabletImageSize: 150,
+          desktopImageSize: 200,
+        },
+        printable: 'print' as const,
+        iconSize: 'xs' as const,
+        variantText: 'tiny' as const,
+        className:
+          'bg-white shadow-lg !w-[210mm] !min-h-[297mm] !max-w-none mx-auto rounded-none sm:rounded-lg',
+        childrenClassName: '!min-h-[297mm] !h-auto',
+        ...colorProps,
+      }),
+      [sampleRef, data],
+    )
+
     useImperativeHandle(
       ref,
       () => ({
@@ -296,6 +330,13 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
       }),
       [data, colorProps],
     )
+
+    useEffect(() => {
+      if (templateId) {
+        const DynamicSample = loadSampleComponent(+templateId!)
+        setSampleComponent(() => DynamicSample)
+      }
+    }, [templateId])
 
     return (
       <Modal
@@ -430,29 +471,15 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
                   2xl:scale-[1]
                 "
                 >
-                  <Sample7
-                    ref={sampleRef}
-                    data={biodataCurr!}
-                    scale="md"
-                    size="full"
-                    textSize="md"
-                    iconSize="md"
-                    variantText="small"
-                    config={{
-                      sidebarWidth: 28,
-                      responsiveImage: true,
-                      responsiveSidebar: true,
-                      mobileSidebarWidth: 28,
-                      tabletSidebarWidth: 35,
-                      mobileImageSize: 300,
-                      tabletImageSize: 150,
-                      desktopImageSize: 200,
-                    }}
-                    printable="print"
-                    className="bg-white shadow-lg !w-[210mm] !min-h-[297mm] !max-w-none mx-auto rounded-none sm:rounded-lg"
-                    childrenClassName="!min-h-[297mm] !h-auto"
-                    // {...colorProps}
-                  />
+                  <Suspense
+                    fallback={
+                      <div className="flex items-center justify-center min-w-full h-full">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                      </div>
+                    }
+                  >
+                    {SampleComponent && <SampleComponent {...commonProps} />}
+                  </Suspense>
                 </div>
               </div>
             </div>
