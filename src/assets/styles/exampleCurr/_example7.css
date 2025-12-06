@@ -33,7 +33,7 @@
 }
 
 .sample7-container {
-  /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+  font-family: var(--font-montserrat);
   margin: 0 auto;
 }
 
