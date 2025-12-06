@@ -10,7 +10,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --font-montserrat: 'Montserrat', sans-serif;
+  --font-montserrat: var(--font-montserrat);
   --radius: 0.625rem;
   --background: #f5f4f0;
   --foreground: hsl(0, 0%, 14.5%);
