@@ -222,6 +222,12 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
         mobileImageSize: 120,
         tabletImageSize: 150,
         desktopImageSize: 200,
+        mobileBackgroundHeight: 240,
+        tabletBackgroundHeight: 280,
+        desktopBackgroundHeight: 320,
+        mobileBackgroundWidth: 144,
+        tabletBackgroundWidth: 168,
+        desktopBackgroundWidth: 192,
       },
     },
     ref,
@@ -242,27 +248,49 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
               <div className="w-[40%]">
                 {!!setting?.usingPicture && (
                   <div className="flex justify-center items-center flex-col">
+                    {/* Responsive Background */}
                     <div
-                      className="h-80 w-48 rounded-br-3xl rounded-bl-3xl"
-                      style={{ background: primaryColor }}
+                      className="rounded-br-4xl rounded-bl-3xl"
+                      style={
+                        config.responsiveImage
+                          ? {
+                              background: primaryColor,
+                              height: `${config.mobileBackgroundHeight || 240}px`,
+                              width: `${config.mobileBackgroundWidth || 144}px`,
+                            }
+                          : {
+                              background: primaryColor,
+                              height: '320px',
+                              width: '192px',
+                            }
+                      }
                     ></div>
+
+                    {/* Image Container */}
                     <div
-                      className="rounded-full border-6 -mt-40"
-                      style={{ borderColor: sidebarColor }}
+                      className="rounded-full border-6"
+                      style={{
+                        borderColor: sidebarColor,
+                        marginTop: config.responsiveImage
+                          ? `-${+config.mobileImageSize! * 0.89}px` // Responsive negative margin
+                          : '-160px', // Default margin
+                      }}
                     >
                       <Image
                         src={data?.profilePicture || '/User.png'}
                         alt="user"
                         width={600}
                         height={600}
-                        className="w-50 h-50 object-cover rounded-full"
+                        className="object-cover rounded-full"
                         style={
                           config.responsiveImage
                             ? {
-                                maxWidth: `${config.mobileImageSize}px`,
+                                width: `${config.mobileImageSize}px`,
+                                height: `${config.mobileImageSize}px`,
                               }
                             : {
-                                maxWidth: '200px',
+                                width: '200px',
+                                height: '200px',
                               }
                         }
                       />
@@ -362,8 +390,8 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                 <div className="flex flex-col gap-1 justify-center w-full mt-12">
                   <CVText
                     variant="title"
-                    size="xl"
-                    className="font-bold"
+                    size="lg"
+                    className="font-bold" 
                     style={{ color: sidebarColor }}
                   >
                     {`${data?.firstName} ${data?.lastName}`}
@@ -380,10 +408,10 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                 <div className="flex flex-col gap-2 mt-20">
                   {/* CONTACTS */}
                   <hr className="bg-black h-[1px] w-full" />
-                  <div className="flex justify-evenly flex-wrap gap-2">
+                  <div className="flex justify-evenly flex-wrap gap-1">
                     {/* Phone/WhatsApp */}
                     {data?.contacts?.phone && (
-                      <div className="flex justify-start items-center">
+                      <div className="flex justify-start items-center gap-0.5">
                         <FontAwesomeIcon
                           icon={faWhatsapp}
                           className={cn(iconVariants({ iconSize }))}
@@ -401,7 +429,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
 
                     {/* Telegram */}
                     {data?.contacts?.telegram && (
-                      <div className="flex justify-start items-center">
+                      <div className="flex justify-start items-center gap-0.5">
                         <FontAwesomeIcon
                           icon={faTelegram}
                           className={cn(iconVariants({ iconSize }))}
@@ -419,7 +447,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
 
                     {/* Email */}
                     {data?.contacts?.email && (
-                      <div className="flex justify-start items-center">
+                      <div className="flex justify-start items-center gap-0.5">
                         <FontAwesomeIcon
                           icon={faEnvelope}
                           className={cn(iconVariants({ iconSize }))}
@@ -437,7 +465,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
 
                     {/* LinkedIn */}
                     {data?.contacts?.linkedin && (
-                      <div className="flex justify-start items-center">
+                      <div className="flex justify-start items-center gap-0.5">
                         <FontAwesomeIcon
                           icon={faLinkedinIn}
                           className={cn(iconVariants({ iconSize }))}
@@ -455,7 +483,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
 
                     {/* Instagram */}
                     {data?.contacts?.instagram && (
-                      <div className="flex justify-start items-center">
+                      <div className="flex justify-start items-center gap-0.5">
                         <FontAwesomeIcon
                           icon={faInstagram}
                           className={cn(iconVariants({ iconSize }))}

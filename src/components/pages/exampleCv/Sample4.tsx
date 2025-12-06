@@ -278,25 +278,23 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                 </div>
                 <div className="w-[30%]">
                   {!!setting?.usingPicture && (
-                    <div className="flex justify-center items-center mx-2 z-999">
+                    <div
+                      className="relative mx-2 z-999"
+                      style={{
+                        width: config.responsiveImage
+                          ? `${config.mobileImageSize}px`
+                          : '180px',
+                        aspectRatio: '4/5',
+                        borderColor: primaryColor,
+                      }}
+                    >
                       <Image
                         src={data?.profilePicture || '/User.png'}
-                        width={500}
-                        height={500}
+                        fill
                         alt="profilePicture"
-                        style={
-                          config.responsiveImage
-                            ? {
-                                maxWidth: `${config.mobileImageSize}px`,
-                                borderColor: primaryColor,
-                              }
-                            : {
-                                maxWidth: '200px',
-                                borderColor: primaryColor,
-                              }
-                        }
                         key={data?.profilePicture}
-                        className="object-cover md:w-30 md:h-40 lg:w-40 lg:h-50 z-2 rounded-sm aspect-[4/5] border"
+                        className="object-cover rounded-sm border p-0"
+                        style={{ borderColor: primaryColor }}
                       />
                     </div>
                   )}
@@ -305,7 +303,7 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
 
               {/* SEGMENT 2 - Fixed without absolute positioning */}
               <div
-                className={`min-w-full ${!!setting?.usingPicture ? '-mt-16' : 'mt-2'} relative z-1`}
+                className={`min-w-full ${!!setting?.usingPicture ? '-mt-14' : 'mt-2'} relative z-1`}
               >
                 <div
                   className="p-3 border rounded-lg bg-white w-full"

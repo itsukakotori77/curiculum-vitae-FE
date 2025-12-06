@@ -342,7 +342,7 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
                       variant="small"
                       size={textSize}
                       className="font-medium tracking-wide "
-                      style={{ color: sidebarTextColor }}
+                      style={{ color: sidebarColor }}
                     >
                       {data.contacts.instagram}
                     </CVText>
