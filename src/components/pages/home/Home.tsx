@@ -26,7 +26,7 @@ export default function Home({ title }: IProps) {
       <div className="flex flex-col lg:flex-row w-full h-full justify-between p-4 sm:p-6 md:p-8 lg:p-10 box-border gap-6 lg:gap-8">
         {/* Left Text Section */}
         <div className="w-full lg:w-[35%] text-center lg:text-left flex flex-col items-center lg:items-start">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-4 sm:mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-4 sm:mb-6">
             {title}
           </h1>
           <div className="grid mt-2 gap-3 sm:gap-4 w-full max-w-md lg:max-w-none">
