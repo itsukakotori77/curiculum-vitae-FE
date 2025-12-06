@@ -145,3 +145,13 @@ export const useFetchQuery = <Params extends Record<string, any>, Response>(
 
   return [result.data || result, state, setState]
 }
+
+export const useHydration = () => {
+  const [hydrated, setHydrated] = useState<boolean>(false)
+
+  useEffect(() => {
+    setHydrated(true)
+  }, [])
+
+  return hydrated
+}
