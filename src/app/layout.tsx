@@ -4,8 +4,10 @@ import '@/assets/styles/globals.css'
 import QueryProvider from '@/components/globals/layouts/Queryprovider'
 
 const montserrat = Montserrat({
-  variable: '--font-montserrat',
   subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-montserrat',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
