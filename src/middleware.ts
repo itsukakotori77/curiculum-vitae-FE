@@ -16,6 +16,7 @@ export const config = {
   matcher: [
     '/dashboard/:path',
     '/curiculumVitae/:path',
+    '/curiculumVitae',
     '/about/:path',
     '/faq/:path',
     '/example/:path*',
