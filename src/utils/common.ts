@@ -6,14 +6,10 @@ import { jwtDecode } from 'jwt-decode'
 
 export const autoUnoClassName = (className?: string) => {
   if (!className) return ''
-  return className.startsWith(':uno:')
-    ? className
-    : `:uno: ${className}`
+  return className.startsWith(':uno:') ? className : `:uno: ${className}`
 }
 
-export function joinClass(
-  ...args: Array<string | boolean | undefined>
-) {
+export function joinClass(...args: Array<string | boolean | undefined>) {
   return twMerge(
     args
       .filter((str) => typeof str === 'string')
@@ -55,10 +51,7 @@ export const convertColor = (color: RgbaColor) => {
     : 'rgba(91, 116, 165, 1)'
 }
 
-export const hexToRgba = (
-  hex: string,
-  alpha: number = 1,
-): RgbaColor => {
+export const hexToRgba = (hex: string, alpha: number = 1): RgbaColor => {
   hex = hex.replace(/^#/, '')
 
   if (hex.length === 3) {
@@ -100,11 +93,7 @@ export const typeTextArea = (type: string): number => {
   }
 }
 
-export const convertTime = (
-  dt2: any,
-  dt1: any,
-  type: string,
-): number => {
+export const convertTime = (dt2: any, dt1: any, type: string): number => {
   let diff = (dt2.getTime() - dt1.getTime()) / 1000
   let val = 0
   switch (type) {
@@ -169,4 +158,165 @@ export const canvasToBlob = (
       quality,
     )
   })
+}
+
+// Helper to convert font URL to base64
+export const fetchFontAsBase64 = async (
+  url: string,
+): Promise<string | null> => {
+  try {
+    const response = await fetch(url)
+    if (!response.ok) return null
+
+    const blob = await response.blob()
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onloadend = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(blob)
+    })
+  } catch (err) {
+    console.warn(`Failed to fetch font: ${url}`, err)
+    return null
+  }
+}
+
+export const getCustomFontCSS = async () => {
+  let fontCSS = ''
+
+  try {
+    // Wait for fonts to load
+    await document.fonts.ready
+
+    // Get all loaded fonts from document
+    const loadedFonts = Array.from(document.fonts.values())
+    
+    console.log('Loaded fonts:', loadedFonts.map(f => ({
+      family: f.family,
+      weight: f.weight,
+      style: f.style,
+      status: f.status
+    })))
+
+    // Scan stylesheets for Next.js font definitions
+    const stylesheets = Array.from(document.styleSheets)
+
+    for (const stylesheet of stylesheets) {
+      try {
+        // Next.js injects fonts into the document
+        const rules = Array.from(stylesheet.cssRules || [])
+
+        for (const rule of rules) {
+          if (rule instanceof CSSFontFaceRule) {
+            const fontFamily = rule.style.getPropertyValue('font-family')
+            const src = rule.style.getPropertyValue('src')
+
+            // Check if this is a font we care about
+            if (!fontFamily || !src) continue
+
+            console.log('Found font-face:', fontFamily, src)
+
+            if (src.includes('url(')) {
+              const urlMatches = Array.from(src.matchAll(/url\(['"]?([^'")\s]+)['"]?\)/g))
+              
+              for (const match of urlMatches) {
+                let fontUrl = match[1]
+
+                // Skip if already base64
+                if (fontUrl.startsWith('data:')) {
+                  fontCSS += `
+                    @font-face {
+                      font-family: ${fontFamily};
+                      src: ${src};
+                      font-weight: ${rule.style.getPropertyValue('font-weight') || 'normal'};
+                      font-style: ${rule.style.getPropertyValue('font-style') || 'normal'};
+                      font-display: ${rule.style.getPropertyValue('font-display') || 'swap'};
+                    }
+                  `
+                  console.log('✓ Font already base64:', fontFamily)
+                  break
+                }
+
+                // Make URL absolute if it's relative (Next.js fonts)
+                if (!fontUrl.startsWith('http')) {
+                  const origin = window.location.origin
+                  fontUrl = fontUrl.startsWith('/') ? `${origin}${fontUrl}` : `${origin}/${fontUrl}`
+                }
+
+                console.log('Fetching font from:', fontUrl)
+
+                try {
+                  const base64Font = await fetchFontAsBase64(fontUrl)
+                  
+                  if (base64Font) {
+                    // Get format
+                    let format = 'woff2'
+                    const formatMatch = src.match(/format\(['"]?([^'")\s]+)['"]?\)/)
+                    if (formatMatch) {
+                      format = formatMatch[1]
+                    } else if (fontUrl.includes('.woff2')) {
+                      format = 'woff2'
+                    } else if (fontUrl.includes('.woff')) {
+                      format = 'woff'
+                    }
+
+                    fontCSS += `
+                      @font-face {
+                        font-family: ${fontFamily};
+                        src: url("${base64Font}") format("${format}");
+                        font-weight: ${rule.style.getPropertyValue('font-weight') || 'normal'};
+                        font-style: ${rule.style.getPropertyValue('font-style') || 'normal'};
+                        font-display: ${rule.style.getPropertyValue('font-display') || 'swap'};
+                        unicode-range: ${rule.style.getPropertyValue('unicode-range') || ''};
+                      }
+                    `
+                    console.log(`✓ Font embedded: ${fontFamily}`)
+                    break
+                  }
+                } catch (err) {
+                  console.warn('Failed to fetch font:', fontUrl, err)
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Could not access stylesheet:', err)
+      }
+    }
+
+    // Also handle your local fonts
+    const origin = window.location.origin
+    const localFonts = [
+      { family: 'Playfair', url: '/fonts/playfair/Playfair-Regular.ttf', format: 'truetype', weight: '400', style: 'normal' },
+      { family: 'Gram', url: '/fonts/gram/Gramregular.ttf', format: 'truetype', weight: '400', style: 'normal' },
+    ]
+
+    for (const font of localFonts) {
+      try {
+        const fontUrl = `${origin}${font.url}`
+        const base64Font = await fetchFontAsBase64(fontUrl)
+        
+        if (base64Font) {
+          fontCSS += `
+            @font-face {
+              font-family: '${font.family}';
+              src: url("${base64Font}") format("${font.format}");
+              font-weight: ${font.weight};
+              font-style: ${font.style};
+            }
+          `
+          console.log(`✓ Local font embedded: ${font.family}`)
+        }
+      } catch (err) {
+        console.error(`Failed to embed ${font.family}:`, err)
+      }
+    }
+
+  } catch (err) {
+    console.error('Error in getCustomFontCSS:', err)
+  }
+
+  console.log('Total font CSS length:', fontCSS.length)
+  return fontCSS
 }

@@ -114,6 +114,12 @@ export interface CVProps {
     mobileImageSize?: number
     tabletImageSize?: number
     desktopImageSize?: number
+    mobileBackgroundHeight?: number
+    tabletBackgroundHeight?: number
+    desktopBackgroundHeight?: number
+    mobileBackgroundWidth?: number
+    tabletBackgroundWidth?: number
+    desktopBackgroundWidth?: number
   }
 }
 

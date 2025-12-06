@@ -8,6 +8,7 @@ import React, {
   lazy,
   useEffect,
   Suspense,
+  ComponentType,
 } from 'react'
 import StepperBubble from '@/components/globals/stepper/StepperBubble'
 import GeneratorForm1, { GeneratorForm1Ref } from './GeneratorForm1'
@@ -16,7 +17,6 @@ import GeneratorForm3, { GeneratorForm3Ref } from './GeneratorForm3'
 import GeneratorForm4, { GeneratorForm4Ref } from './GeneratorForm4'
 import GeneratorForm5, { GeneratorForm5Ref } from './GeneratorForm5'
 import PreviewGenerator, { PreviewGeneratorHandle } from './PerviewGenerator'
-import Sample3 from '../../exampleCv/Sample3'
 import Button from '@/components/CultUI/Button'
 import ProgressBar from '@/components/globals/progressBar'
 import { Pencil, Trash, CirclePlus, FileText, Image, Save } from 'lucide-react'
@@ -25,7 +25,7 @@ import { toast } from 'react-toastify'
 import moment from 'moment'
 import { biodataCurr } from '@/data/cv'
 import { labels } from '@/data/menu'
-import { useCVData, useWindowSize } from '@/utils/hooks'
+import { useCVData, useHydration, useWindowSize } from '@/utils/hooks'
 import { useModalConfirm } from '@/libs/modalConfirm'
 import { convertColor } from '@/utils/common'
 import { usePostCurr } from '@/services/curivulumVitae/mutation'
@@ -286,7 +286,7 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
 // List Container
 const ListContainer: React.FC<ListContainerProps> = ({ title, children }) => (
   <div className="flex flex-col w-full max-w-5xl mx-auto gap-3 sm:gap-4 overflow-y-auto h-[calc(100vh-10rem)] sm:h-[calc(100vh-8rem)] px-3 sm:px-4 lg:px-6 py-2">
-    <span className="font-semibold text-base sm:text-lg sticky top-0 bg-white py-2 z-10">
+    <span className="font-semibold text-base sm:text-lg sticky top-0 bg-white rounded-md border border-gray-200 py-2 px-4 z-10">
       {title}
     </span>
     {children}
@@ -301,6 +301,7 @@ const CurrVitaeGenerator: React.FC = () => {
   const windowSize = useWindowSize()
   const [preview, setPreview] = useState<boolean>(false)
   const [isGenerating, setIsGenerating] = useState<boolean>(false)
+  const hydrated = useHydration()
 
   // Stores
   const {
@@ -312,6 +313,7 @@ const CurrVitaeGenerator: React.FC = () => {
     maxStep,
   } = useCVNavigationStore()
   const { data: profile, updateData: updateStep1Data } = useCVStep1Store()
+  const { contacts, update: updateContacts } = useCVStep5Store()
   const {
     experiences,
     currentEditIndex: idxExp,
@@ -336,7 +338,6 @@ const CurrVitaeGenerator: React.FC = () => {
     remove: removeSkill,
     setEditIndex: setIdxSkill,
   } = useCVStep4Store()
-  const { contacts, update: updateContacts } = useCVStep5Store()
   const { data: dataSetting } = useCVSettingStore()
   const { updatePayloadCV } = useCVMainStore()
   const { finalCV } = useCVData()
@@ -345,7 +346,7 @@ const CurrVitaeGenerator: React.FC = () => {
 
   const templateId = +dataSetting?.cvTemplate! || 5
   const [SampleComponent, setSampleComponent] =
-    useState<React.ComponentType<any> | null>(null)
+    useState<ComponentType<any> | null>(null)
 
   const colorProps: ColorProps = useMemo(
     () => ({
@@ -540,11 +541,18 @@ const CurrVitaeGenerator: React.FC = () => {
         tabletImageSize: 150,
         desktopImageSize: 200,
         responsiveSidebar: true,
+        mobileBackgroundHeight: 200,
+        tabletBackgroundHeight: 280,
+        desktopBackgroundHeight: 320,
+        mobileBackgroundWidth: 100,
+        tabletBackgroundWidth: 168,
+        desktopBackgroundWidth: 192,
       },
       printable: 'noPrint' as const,
       iconSize: 'xs' as const,
       variantText: 'tiny' as const,
-      className: 'bg-transparent shadow-none p-0 w-fit',
+      className:
+        'bg-transparent shadow-none pr-4 overflow-auto lg:h-[calc(100vh-10vh)]',
       ...colorProps,
     }),
     [finalCV],
@@ -556,6 +564,18 @@ const CurrVitaeGenerator: React.FC = () => {
       setSampleComponent(() => DynamicSample)
     }
   }, [templateId])
+
+  useEffect(() => {
+    console.log(profile)
+  }, [profile])
+
+  if (!hydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen lg:h-screen">
@@ -726,63 +746,77 @@ const CurrVitaeGenerator: React.FC = () => {
                   <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-black">
                     Curriculum Vitae Generator
                   </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full sm:w-auto">
-                    <Button
-                      intent="info"
-                      isLoading={isGenerating}
-                      onClick={downloadPng}
-                      className="lg:w-18 w-full"
-                    >
-                      <span className="font-bold text-xs sm:text-sm">
-                        <Image className="w-6 h-6" />
-                      </span>
-                    </Button>
-                    <Button
-                      intent="info"
-                      isLoading={isGenerating}
-                      onClick={downloadPdf}
-                      className="lg:w-18 w-full"
-                    >
-                      <span className="font-bold text-xs sm:text-sm">
-                        <FileText className="w-6 h-6" />
-                      </span>
-                    </Button>
-                    <Button
-                      intent="info"
-                      isLoading={isPending}
-                      onClick={handleSaveCurr}
-                      className="lg:w-18 w-full"
-                    >
-                      <span className="font-bold text-xs sm:text-sm">
-                        <Save className="w-6 h-6" />
-                      </span>
-                    </Button>
-                  </div>
+                  {windowSize.width > 1024 && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full sm:w-auto">
+                      <Button
+                        intent="info"
+                        isLoading={isGenerating}
+                        onClick={downloadPng}
+                        className="lg:w-18 w-full"
+                      >
+                        <span className="font-bold text-xs sm:text-sm">
+                          <Image className="w-6 h-6" />
+                        </span>
+                      </Button>
+                      <Button
+                        intent="info"
+                        isLoading={isGenerating}
+                        onClick={downloadPdf}
+                        className="lg:w-18 w-full"
+                      >
+                        <span className="font-bold text-xs sm:text-sm">
+                          <FileText className="w-6 h-6" />
+                        </span>
+                      </Button>
+                      <Button
+                        intent="info"
+                        isLoading={isPending}
+                        onClick={handleSaveCurr}
+                        className="lg:w-18 w-full"
+                      >
+                        <span className="font-bold text-xs sm:text-sm">
+                          <Save className="w-6 h-6" />
+                        </span>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Main Content - Scrollable and Centered Preview */}
-              <div className="flex flex-col items-center w-full p-2 sm:p-3 lg:p-6 flex-1 overflow-y-auto">
-                <div className="w-full max-w-full sm:max-w-2xl lg:max-w-4xl rounded-lg p-2 sm:p-4 lg:p-6">
-                  <div className="flex justify-center items-start overflow-x-auto">
-                    {/* Centered scaled preview */}
-                    <div
-                      className="scale-[1.0] sm:scale-75 lg:scale-90 lg:aspect-[4/5] origin-top cursor-pointer min-w-fit border-2 border-black p-4 rounded-md shadow-[3px_3px_0px_rgba(0,0,0,1)]"
-                      onClick={() => setPreview(true)}
-                    >
-                      <Suspense
-                        fallback={
-                          <div className="flex items-center justify-center min-w-full h-full">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-                          </div>
-                        }
-                      >
-                        {SampleComponent && (
-                          <SampleComponent ref={previewRef} {...commonProps} />
-                        )}
-                      </Suspense>
-                    </div>
-                  </div>
+              <div className="flex flex-col items-center w-full p-2 sm:p-3 lg:p-6 flex-1 overflow-hidden">
+                <div
+                  className="transform-gpu
+                        transition-transform
+                        duration-300
+                        scale-70
+                        sm:scale-[0.50]
+                        md:scale-[0.7]
+                        lg:scale-[0.90]
+                        xl:scale-[0.95]
+                        2xl:scale-[1] 
+                        lg:aspect-[4/5] 
+                        origin-top 
+                        cursor-pointer 
+                        min-w-fit 
+                        border-2 
+                        border-black 
+                        p-2
+                        rounded-md 
+                        shadow-[3px_3px_0px_rgba(0,0,0,1)]"
+                  onClick={() => setPreview(true)}
+                >
+                  <Suspense
+                    fallback={
+                      <div className="flex items-center justify-center min-w-full h-full">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                      </div>
+                    }
+                  >
+                    {SampleComponent && (
+                      <SampleComponent ref={previewRef} {...commonProps} />
+                    )}
+                  </Suspense>
                 </div>
               </div>
             </div>
@@ -790,9 +824,10 @@ const CurrVitaeGenerator: React.FC = () => {
 
           {/* Preview Sidebar (Step 1 only) */}
           {currentStep === 1 && (
-            <div className="hidden lg:block w-1/3 xl:w-2/5 bg-white border-l border-gray-200 p-4 lg:p-6 overflow-hidden">
-              <div className="sticky top-0 bg-white pb-4 mb-4 border-b border-gray-200">
+            <div className="hidden lg:block w-1/3 xl:w-2/5 bg-white border-l border-gray-200 p-4 lg:p-6 overflow-hidden max-w-full">
+              <div className="sticky top-0 bg-white pb-4 mb-4 border-b border-gray-200 flex flex-col gap-1">
                 <h3 className="text-lg font-semibold">Live Preview</h3>
+                <span className="font-light text-xs">Click to show detail</span>
               </div>
               <div
                 className="scale-75 lg:scale-90 origin-top cursor-pointer"

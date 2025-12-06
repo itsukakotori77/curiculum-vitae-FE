@@ -45,18 +45,30 @@ const Schema = Yup.object().shape({
     .matches(/^[\w\\.-]+@[\w\\.-]+\.\w+$/, 'Email is not valid')
     .required('Email is required'),
   telegram: Yup.string()
-    .matches(/^@[a-zA-Z0-9_]+$/, 'Telegram is not valid')
-    .optional(),
+    .nullable()
+    .notRequired()
+    .test('telegram-format', 'Telegram is not valid', function (value) {
+      if (!value) return true // Allow empty
+      return /^@[a-zA-Z0-9_]+$/.test(value)
+    }),
   instagram: Yup.string()
-    .matches(/^[a-zA-Z0-9_]+$/, 'Instagram is not valid')
-    .optional(),
+    .nullable()
+    .notRequired()
+    .test('instagram-format', 'Instagram is not valid', function (value) {
+      if (!value) return true // Allow empty
+      return /^[a-zA-Z0-9_]+$/.test(value)
+    }),
   linkedin: Yup.string()
-    .matches(/^[a-zA-Z0-9_]+$/, 'Linkedin is not valid')
-    .optional(),
+    .nullable()
+    .notRequired()
+    .test('linkedin-format', 'Linkedin is not valid', function (value) {
+      if (!value) return true // Allow empty
+      return /^[a-zA-Z0-9_]+$/.test(value)
+    }),
 })
 
 const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
-  ({ data, loading, onSubmit, onCancel, setState, className }, ref) => {
+  ({ data, loading, onSubmit, onCancel, className }, ref) => {
     const {
       handleSubmit,
       control,

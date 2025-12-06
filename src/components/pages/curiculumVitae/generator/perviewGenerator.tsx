@@ -12,7 +12,7 @@ import Modal from '@/components/globals/modal'
 import { ICurrVitae } from '@/interface/curiculumVitae'
 import { toPng } from 'html-to-image'
 import { useCVSettingStore } from '@/utils/store'
-import { convertColor } from '@/utils/common'
+import { convertColor, getCustomFontCSS } from '@/utils/common'
 import jsPDF from 'jspdf'
 import { FileText, Image as ImageIcon, Loader2 } from 'lucide-react'
 import Button from '@/components/CultUI/Button'
@@ -26,11 +26,10 @@ interface IProps {
 }
 
 const loadSampleComponent = (id: number) => {
-  return lazy(
-    () =>
-      import(`../../exampleCv/Sample${id}`).catch(
-        () => import('../../exampleCv/Sample5'),
-      ), // Fallback to Sample5 if not found
+  return lazy(() =>
+    import(`../../exampleCv/Sample${id}`).catch(
+      () => import('../../exampleCv/Sample5'),
+    ),
   )
 }
 
@@ -59,111 +58,10 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
       [dataSetting],
     )
 
-    // Generate filename based on CV data
     const generateFilename = (extension: 'png' | 'pdf'): string => {
       const firstName = data?.firstName || 'CV'
       const lastName = data?.lastName || 'Resume'
       return `${firstName}_${lastName}_CV.${extension}`
-    }
-
-    // Helper to convert font URL to base64
-    const fetchFontAsBase64 = async (url: string): Promise<string | null> => {
-      try {
-        const response = await fetch(url)
-        if (!response.ok) return null
-
-        const blob = await response.blob()
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader()
-          reader.onloadend = () => resolve(reader.result as string)
-          reader.onerror = reject
-          reader.readAsDataURL(blob)
-        })
-      } catch (err) {
-        console.warn(`Failed to fetch font: ${url}`, err)
-        return null
-      }
-    }
-
-    // Helper function to extract and embed fonts as base64
-    const getCustomFontCSS = async () => {
-      const origin = window.location.origin
-      let fontCSS = ''
-
-      const stylesheets = Array.from(document.styleSheets)
-
-      for (const stylesheet of stylesheets) {
-        try {
-          const rules = Array.from(stylesheet.cssRules || [])
-
-          for (const rule of rules) {
-            if (rule instanceof CSSFontFaceRule) {
-              const src = rule.style.getPropertyValue('src')
-
-              if (src && src.includes('url(')) {
-                // Extract URL from src
-                const urlMatch = src.match(/url\(['"]?([^'")\s]+)['"]?\)/)
-                if (!urlMatch) continue
-
-                let fontUrl = urlMatch[1]
-                if (fontUrl.startsWith('data:')) {
-                  fontCSS += `
-                    @font-face {
-                      font-family: ${rule.style.getPropertyValue('font-family')};
-                      src: ${src};
-                      font-weight: ${rule.style.getPropertyValue('font-weight') || 'normal'};
-                      font-style: ${rule.style.getPropertyValue('font-style') || 'normal'};
-                    }
-                  `
-                  continue
-                }
-
-                if (fontUrl.includes('/../')) {
-                  fontUrl = fontUrl.replace(/\/\.\.\//g, '/')
-                }
-
-                // Make URL absolute if relative
-                if (!fontUrl.startsWith('http')) {
-                  fontUrl = `${origin}${fontUrl.startsWith('/') ? fontUrl : '/' + fontUrl}`
-                }
-
-                // Fetch and convert to base64
-                const base64Font = await fetchFontAsBase64(fontUrl)
-
-                if (base64Font) {
-                  // Extract format from src or guess from extension
-                  let format = 'woff2'
-                  const formatMatch = src.match(
-                    /format\(['"]?([^'")\s]+)['"]?\)/,
-                  )
-                  if (formatMatch) {
-                    format = formatMatch[1]
-                  } else if (fontUrl.endsWith('.ttf')) {
-                    format = 'truetype'
-                  } else if (fontUrl.endsWith('.otf')) {
-                    format = 'opentype'
-                  } else if (fontUrl.endsWith('.woff')) {
-                    format = 'woff'
-                  }
-
-                  fontCSS += `
-                    @font-face {
-                      font-family: ${rule.style.getPropertyValue('font-family')};
-                      src: url("${base64Font}") format("${format}");
-                      font-weight: ${rule.style.getPropertyValue('font-weight') || 'normal'};
-                      font-style: ${rule.style.getPropertyValue('font-style') || 'normal'};
-                    }
-                  `
-                }
-              }
-            }
-          }
-        } catch (err) {
-          console.warn('Could not access stylesheet:', err)
-        }
-      }
-
-      return fontCSS
     }
 
     const getImageOptions = async (type: string = 'png') => {
@@ -173,6 +71,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
         try {
           await document.fonts.ready
           fontEmbedCSS = await getCustomFontCSS()
+          console.log('fonts', fontEmbedCSS)
         } catch (err) {
           console.warn('Failed to embed fonts:', err)
         }
@@ -192,6 +91,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
               transformOrigin: 'top left',
             },
             fontEmbedCSS,
+            skipFonts: false,
           }
           break
 
@@ -233,6 +133,15 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
         setDownloadType('png')
 
         await document.fonts.ready
+
+        // Store original transform and remove it
+        const wrapper = sampleRef.current.parentElement
+        const originalTransform = wrapper?.style.transform || ''
+
+        if (wrapper) {
+          wrapper.style.transform = originalTransform
+        }
+
         await new Promise((resolve) => setTimeout(resolve, 100))
 
         const options = await getImageOptions('png')
@@ -263,6 +172,12 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
         setDownloadType('pdf')
 
         // Get the exact dimensions we want for A4
+        const wrapper = sampleRef.current.parentElement
+        const originalTransform = wrapper?.style.transform || ''
+
+        if (wrapper) {
+          wrapper.style.transform = originalTransform
+        }
 
         // Generate image from HTML with exact A4 dimensions
         const options = await getImageOptions('pdf')
@@ -305,9 +220,15 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
           responsiveSidebar: true,
           mobileSidebarWidth: 28,
           tabletSidebarWidth: 35,
-          mobileImageSize: 300,
+          mobileImageSize: 150,
           tabletImageSize: 150,
           desktopImageSize: 200,
+          mobileBackgroundHeight: 220,
+          tabletBackgroundHeight: 280,
+          desktopBackgroundHeight: 320,
+          mobileBackgroundWidth: 144,
+          tabletBackgroundWidth: 168,
+          desktopBackgroundWidth: 192,
         },
         printable: 'print' as const,
         iconSize: 'xs' as const,
