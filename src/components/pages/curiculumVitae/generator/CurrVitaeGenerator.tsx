@@ -565,10 +565,6 @@ const CurrVitaeGenerator: React.FC = () => {
     }
   }, [templateId])
 
-  useEffect(() => {
-    console.log(profile)
-  }, [profile])
-
   if (!hydrated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -741,7 +737,7 @@ const CurrVitaeGenerator: React.FC = () => {
           {currentStep === 6 && (
             <div className="flex flex-col w-full min-h-screen">
               {/* Sticky Navbar with Buttons */}
-              <div className="sticky top-0 bg-[#EDEDED] border-b border-gray-300 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 z-10 border-none">
+              <div className="sticky top-0 bg-[#EDEDED] border-b border-gray-300 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 z-10 border-none auto">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-black">
                     Curriculum Vitae Generator
@@ -784,7 +780,7 @@ const CurrVitaeGenerator: React.FC = () => {
               </div>
 
               {/* Main Content - Scrollable and Centered Preview */}
-              <div className="flex flex-col items-center w-full p-2 sm:p-3 lg:p-6 flex-1 overflow-hidden">
+              <div className="flex flex-col items-center w-full p-2 sm:p-3 lg:p-6 flex-1 overflow-auto">
                 <div
                   className="transform-gpu
                         transition-transform
