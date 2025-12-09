@@ -82,7 +82,7 @@ export const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
     return (
       <Card
         title="Skills & Certificates"
-        className={joinClass('w-full max-w-full overflow-hidden', className)}
+        className={joinClass('w-full max-w-full overflow-hidden p-[3px]', className)}
       >
         <form
           noValidate

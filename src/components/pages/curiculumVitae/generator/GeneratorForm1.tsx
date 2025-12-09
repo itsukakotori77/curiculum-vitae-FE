@@ -116,7 +116,7 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
     return (
       <Card
         title="Profile"
-        className={joinClass('w-full max-w-full overflow-hidden', className)}
+        className={joinClass('w-full max-w-full overflow-hidden p-[3px]', className)}
       >
         <form
           onSubmit={handleSubmit(onSubmit)}

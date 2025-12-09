@@ -105,7 +105,7 @@ export const GeneratorForm3 = forwardRef<GeneratorForm3Ref, FormGenerator3>(
     return (
       <Card
         title="Education"
-        className={joinClass('w-full max-w-full overflow-hidden', className)}
+        className={joinClass('w-full max-w-full overflow-hidden p-[3px]', className)}
       >
         <form
           noValidate

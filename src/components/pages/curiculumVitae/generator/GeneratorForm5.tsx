@@ -131,7 +131,7 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
     return (
       <Card
         title="Contacts"
-        className={joinClass('w-full max-w-full overflow-hidden', className)}
+        className={joinClass('w-full max-w-full overflow-hidden p-[3px]', className)}
       >
         <form
           noValidate
