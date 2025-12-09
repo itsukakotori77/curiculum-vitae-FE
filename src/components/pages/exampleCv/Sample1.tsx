@@ -245,7 +245,7 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
           {/* BIOGRAPHY SIDEBAR */}
           <div
             className={cn(
-              'sidebar min-h-full lg:block',
+              'min-h-full lg:block',
               config.responsiveSidebar &&
                 'w-[var(--sidebar-width-mobile)] sm:w-[var(--sidebar-width-tablet)] lg:w-[var(--sidebar-width-desktop)]',
             )}
@@ -271,15 +271,6 @@ const Sample1 = forwardRef<HTMLDivElement, Sample>(
                   width={500}
                   height={500}
                   className="w-full h-full aspect-square p-0 flex items-center justify-center mx-auto object-cover"
-                  style={
-                    config.responsiveImage
-                      ? {
-                          maxWidth: `${config.mobileImageSize}px`,
-                        }
-                      : {
-                          maxWidth: '100%',
-                        }
-                  }
                   key={data?.profilePicture}
                   unoptimized
                 />
