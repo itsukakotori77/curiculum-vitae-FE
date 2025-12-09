@@ -601,6 +601,8 @@ const CurrVitaeGenerator: React.FC = () => {
         {/* Content Area */}
         <div className="flex-1 flex flex-col lg:flex-row overflow-hidden lg:h-full">
           {/* Forms */}
+
+          {/* +============+ STEP 01 +============+ */}
           {currentStep === 1 && (
             <div className="flex-1 p-3 sm:p-4 lg:p-6 overflow-y-auto flex items-center justify-center">
               <div className="w-full max-w-3xl">
@@ -614,6 +616,7 @@ const CurrVitaeGenerator: React.FC = () => {
             </div>
           )}
 
+          {/* +============+ STEP 02 +============+ */}
           {currentStep === 2 && (
             <div className="flex-1 overflow-y-auto">
               {!showForm ? (
@@ -650,6 +653,7 @@ const CurrVitaeGenerator: React.FC = () => {
             </div>
           )}
 
+          {/* +============+ STEP 03 +============+ */}
           {currentStep === 3 && (
             <div className="flex-1 overflow-y-auto">
               {!showForm ? (
@@ -686,6 +690,7 @@ const CurrVitaeGenerator: React.FC = () => {
             </div>
           )}
 
+          {/* +============+ STEP 04 +============+ */}
           {currentStep === 4 && (
             <div className="flex-1 overflow-y-auto">
               {!showForm ? (
@@ -722,18 +727,21 @@ const CurrVitaeGenerator: React.FC = () => {
             </div>
           )}
 
+          {/* +============+ STEP 05 +============+ */}
           {currentStep === 5 && (
-            <div className="flex-1 p-3 sm:p-4 lg:p-20 overflow-y-auto">
+            <div className="flex-1 p-3 sm:p-4 lg:p-6 overflow-y-auto flex items-center justify-center">
               <div className="w-full max-w-5xl mx-auto">
                 <GeneratorForm5
                   data={contacts}
                   onSubmit={handleStep5Submit}
                   onCancel={() => setCurrentStep(4)}
+                  onChange={updateContacts}
                 />
               </div>
             </div>
           )}
 
+          {/* +============+ STEP 06 +============+ */}
           {currentStep === 6 && (
             <div className="flex flex-col w-full min-h-screen">
               {/* Sticky Navbar with Buttons */}
@@ -816,7 +824,7 @@ const CurrVitaeGenerator: React.FC = () => {
           )}
 
           {/* Preview Sidebar (Step 1 only) */}
-          {currentStep === 1 && (
+          {(currentStep === 1 || currentStep === 5)  && (
             <div className="hidden lg:block w-1/3 xl:w-2/5 bg-white border-l border-gray-200 p-4 lg:p-6 overflow-hidden max-w-full">
               <div className="sticky top-0 bg-white pb-4 mb-4 border-b border-gray-200 flex flex-col gap-1">
                 <h3 className="text-lg font-semibold">Live Preview</h3>
