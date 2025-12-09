@@ -552,7 +552,7 @@ const CurrVitaeGenerator: React.FC = () => {
       iconSize: 'xs' as const,
       variantText: 'tiny' as const,
       className:
-        'bg-transparent shadow-none pr-4 overflow-auto lg:h-[calc(100vh-10vh)]',
+        'bg-transparent shadow-none pr-4 overflow-auto lg:h-[calc(100vh-10vh)] lg:aspect-[4/5]',
       ...colorProps,
     }),
     [finalCV],
@@ -780,7 +780,7 @@ const CurrVitaeGenerator: React.FC = () => {
               </div>
 
               {/* Main Content - Scrollable and Centered Preview */}
-              <div className="flex flex-col items-center w-full p-2 sm:p-3 lg:p-6 flex-1 overflow-auto">
+              <div className="flex flex-col items-center w-full p-2 sm:p-3 lg:p-6 flex-1 overflow-auto min-w-full">
                 <div
                   className="transform-gpu
                         transition-transform
@@ -788,10 +788,7 @@ const CurrVitaeGenerator: React.FC = () => {
                         scale-70
                         sm:scale-[0.50]
                         md:scale-[0.7]
-                        lg:scale-[0.90]
-                        xl:scale-[0.95]
-                        2xl:scale-[1] 
-                        lg:aspect-[4/5] 
+                        lg:scale-[1]
                         origin-top 
                         cursor-pointer 
                         min-w-fit 
