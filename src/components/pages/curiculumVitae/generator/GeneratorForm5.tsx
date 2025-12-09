@@ -7,7 +7,12 @@ import TextForm from '@/components/globals/form/TextForm'
 import { IGeneratorStep5 } from '@/interface/curiculumVitae'
 import { joinClass } from '@/utils/common'
 import { yupResolver } from '@hookform/resolvers/yup'
-import React, { forwardRef, useImperativeHandle } from 'react'
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from 'react'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -68,14 +73,17 @@ const Schema = Yup.object().shape({
 })
 
 const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
-  ({ data, loading, onSubmit, onCancel, className }, ref) => {
+  (
+    { data, loading, onSubmit, onChange, onCancel, className, setState },
+    ref,
+  ) => {
     const {
       handleSubmit,
       control,
       watch,
       reset,
       getValues,
-      formState: { isValid },
+      formState: { isValid, isDirty },
     } = useForm<IGeneratorStep5 | any>({
       resolver: yupResolver(Schema),
       mode: 'onChange',
@@ -90,6 +98,19 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
     })
 
     const watchedValues = watch()
+
+    useEffect(() => {
+      const subscription = watch((value) => {
+        if (onChange) {
+          onChange(value as IGeneratorStep5)
+        }
+        if (setState) {
+          setState(value as IGeneratorStep5)
+        }
+      })
+
+      return () => subscription.unsubscribe()
+    }, [watch, onChange, setState])
 
     useImperativeHandle(
       ref,
@@ -111,11 +132,10 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
       <Card
         title="Contacts"
         className={joinClass('w-full max-w-full overflow-hidden', className)}
-        useShadow={false}
       >
         <form
           noValidate
-          className="grid gap-3 sm:gap-4 py-3 sm:py-4 px-2 sm:px-4 md:px-6"
+          className="grid gap-3 sm:gap-4 py-3 sm:py-4 px-2 sm:px-4 md:px-6 w-full"
           onSubmit={handleSubmit(onSubmit)}
         >
           {/* Primary Contact Fields - Responsive Grid */}
@@ -255,7 +275,7 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
               }}
               fieldInput={{
                 maxLength: 255,
-                rows: 3,
+                rows: 4,
                 placeholder: 'Enter your full address...',
               }}
               name="address"
@@ -278,7 +298,7 @@ const GeneratorForm5 = forwardRef<GeneratorForm5Ref, FormGenerator5>(
               intent="info"
               className="w-full sm:w-32 md:w-40 order-1 sm:order-2"
               isLoading={loading}
-              disabled={!isValid}
+              disabled={!isValid || !isDirty}
             >
               <span className="font-bold text-sm sm:text-base">
                 {loading ? 'Submitting...' : 'Submit'}

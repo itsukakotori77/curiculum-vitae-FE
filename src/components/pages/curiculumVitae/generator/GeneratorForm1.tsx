@@ -17,6 +17,7 @@ import Button from '@/components/CultUI/Button'
 import Card from '@/components/CultUI/Card'
 import FileForm from '@/components/globals/form/FileForm'
 import { useCVSettingStore } from '@/utils/store'
+import { joinClass } from '@/utils/common'
 
 interface FormGeneratorStep1 {
   data?: IGeneratorStep1
@@ -25,6 +26,7 @@ interface FormGeneratorStep1 {
   onCancel: (val: IGeneratorStep1) => void
   onChange?: (val: IGeneratorStep1) => void
   setState?: React.Dispatch<React.SetStateAction<IGeneratorStep1 | undefined>>
+  className?: string
 }
 
 export interface GeneratorForm1Ref {
@@ -43,7 +45,10 @@ const Schema = Yup.object().shape({
 })
 
 const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
-  ({ data, loading, onSubmit, onChange, onCancel, setState }, ref) => {
+  (
+    { data, loading, onSubmit, onChange, onCancel, setState, className },
+    ref,
+  ) => {
     const {
       handleSubmit,
       control,
@@ -51,7 +56,7 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
       reset,
       setValue,
       getValues,
-      formState: { isValid },
+      formState: { isValid, isDirty },
     } = useForm<IGeneratorStep1>({
       resolver: yupResolver(Schema),
       mode: 'all',
@@ -74,26 +79,20 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
     }, [watch('profilePicture')])
 
     const watchedValues = watch()
-    const prevValuesRef = useRef<IGeneratorStep1 | null>(null)
     const usingPicture = useCVSettingStore((state) => state.data?.usingPicture)
 
     useEffect(() => {
-      const hasChanged =
-        !prevValuesRef.current ||
-        JSON.stringify(prevValuesRef.current) !== JSON.stringify(watchedValues)
-
-      if (hasChanged) {
-        prevValuesRef.current = watchedValues
-
+      const subscription = watch((value) => {
         if (onChange) {
-          onChange(watchedValues)
+          onChange(value as IGeneratorStep1)
         }
-
         if (setState) {
-          setState(watchedValues)
+          setState(value as IGeneratorStep1)
         }
-      }
-    }, [watchedValues, onChange, setState])
+      })
+
+      return () => subscription.unsubscribe()
+    }, [watch, onChange, setState])
 
     useImperativeHandle(
       ref,
@@ -115,7 +114,10 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
     )
 
     return (
-      <Card title="Profile" className="w-full max-w-full overflow-hidden">
+      <Card
+        title="Profile"
+        className={joinClass('w-full max-w-full overflow-hidden', className)}
+      >
         <form
           onSubmit={handleSubmit(onSubmit)}
           noValidate
@@ -250,7 +252,7 @@ const GeneratorForm1 = forwardRef<GeneratorForm1Ref, FormGeneratorStep1>(
               intent="info"
               className="w-full sm:w-32 md:w-40 order-1 sm:order-2"
               isLoading={loading}
-              disabled={!isValid}
+              disabled={!isValid || !isDirty}
             >
               <span className="font-bold text-sm sm:text-base">
                 {loading ? 'Submitting...' : 'Submit'}
