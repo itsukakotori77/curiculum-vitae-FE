@@ -228,7 +228,7 @@ const Sample5 = forwardRef<HTMLDivElement, Sample>(
       <>
         <div ref={ref} className={cn(cvVariants({ size, scale }))}>
           <div
-            className={cn(cvVariants({ printable }), childrenClassName)}
+            className={cn(cvVariants({ printable }), className)}
             style={{
               transformOrigin: 'top center',
               marginBottom: scale === 'xs' || scale === 'sm' ? '10vh' : '0',
