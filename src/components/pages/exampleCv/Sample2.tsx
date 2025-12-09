@@ -31,8 +31,6 @@ const cvVariants = cva(
         print: [
           'min-h-screen',
           'flex',
-          'justify-center',
-          'items-start',
           'print:bg-white',
           'print:py-0',
           'print:py-0',
@@ -42,8 +40,6 @@ const cvVariants = cva(
         noPrint: [
           'min-h-screen',
           'flex',
-          'justify-center',
-          'items-start',
           'flex-col',
         ],
       },

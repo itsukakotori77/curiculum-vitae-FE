@@ -240,7 +240,7 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
             {/* BIOGRAPHY */}
             <div
               className={cn(
-                'sidebar min-h-full lg:block',
+                'min-h-full lg:block',
                 config.responsiveSidebar &&
                   'w-[var(--sidebar-width-mobile)] sm:w-[var(--sidebar-width-tablet)] lg:w-[var(--sidebar-width-desktop)]',
               )}
