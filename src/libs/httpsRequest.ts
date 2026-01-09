@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import https from 'https'
+import qs from 'qs'
 
 const httpRequest = (baseURL: string, token?: string) => {
   const accessToken = token ?? ''
@@ -11,6 +12,10 @@ const httpRequest = (baseURL: string, token?: string) => {
     },
     timeout: 60000,
     httpsAgent: new https.Agent({ keepAlive: true }),
+    paramsSerializer: params =>
+      qs.stringify(params, {
+        arrayFormat: 'repeat', 
+      }),
   })
 
   instance.interceptors.request.use(

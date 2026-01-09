@@ -127,9 +127,14 @@ export default function CuriculumVitae() {
 
         <div className="flex flex-col lg:flex-row w-full h-auto gap-4 md:gap-8 lg:gap-24">
           {/* Desktop Filter */}
-          <div className="hidden lg:flex w-full lg:w-[20%] items-start justify-center">
+          <div className="hidden lg:flex w-full lg:w-[15%] items-start justify-center">
             <div className="w-full sticky top-0">
-              <Filter ref={filterRef} filter={state} setFilter={setState} />
+              <Filter
+                ref={filterRef}
+                filter={state}
+                setFilter={setState}
+                defaultValue={defaultParam}
+              />
             </div>
           </div>
 

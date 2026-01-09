@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   const params = Object.fromEntries(url.searchParams)
   const id = url.searchParams.get('id')
 
-  console.log('Received params:', params) // ← Add logging
+  console.log('Received params:', params) 
   console.log('URL searchParams:', url.searchParams.toString())
   
   try {

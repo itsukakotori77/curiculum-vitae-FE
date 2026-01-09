@@ -27,7 +27,7 @@ export default function LoginForm({
   onSubmit,
   isLoading,
 }: IProps) {
-  const { handleSubmit, control, register, reset } = useForm<ILogin>({
+  const { handleSubmit, control, reset } = useForm<ILogin>({
     resolver: yupResolver(schema),
     mode: 'onChange',
   })
@@ -81,7 +81,7 @@ export default function LoginForm({
         <CheckBoxForm
           fieldLabel={{ children: '' }}
           name="remember_me"
-          register={register}
+          control={control}
           titleClassName="text-sm"
           fieldInput={[
             {
