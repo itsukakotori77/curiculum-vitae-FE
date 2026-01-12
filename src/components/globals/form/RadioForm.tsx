@@ -19,6 +19,7 @@ interface RadioProps extends HTMLMotionProps<'div'> {
   labelClassName?: string
   classNameWrapper?: string
   labelTitleClassName?: string
+  classNameInput?: string
 }
 
 const RadioForm: React.FC<RadioProps> = ({
@@ -29,6 +30,7 @@ const RadioForm: React.FC<RadioProps> = ({
   labelClassName,
   classNameWrapper,
   labelTitleClassName,
+  classNameInput,
   ...props
 }) => {
   return (
@@ -69,7 +71,7 @@ const RadioForm: React.FC<RadioProps> = ({
                       }
                       ref={field.ref}
                       label={item.label}
-                      className={joinClass('max-h-[16px] max-w-[16px]')}
+                      className={joinClass('max-h-[16px] max-w-[16px]', classNameInput)}
                       labelClassName={labelClassName}
                       isInvalid={Boolean(errors?.[name]?.message)}
                     />
