@@ -46,7 +46,6 @@ export default function CuriculumVitae() {
   const router = useRouter()
   const pathname = usePathname()
   const [modal, setModal] = useState<boolean>(false)
-  const [filterOpen, setFilterOpen] = useState<boolean>(false)
   const [currStep, setCurrStep] = useState<number>(1)
   const [usePhoto, setPhoto] = useState<boolean>(false)
   const [filterMobile, setFilterMobile] = useState<boolean>(false)
@@ -138,32 +137,16 @@ export default function CuriculumVitae() {
             </div>
           </div>
 
-          {/* Mobile Filter Overlay */}
-          {filterOpen && (
-            <div className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50">
-              <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-xl overflow-y-auto">
-                <div className="sticky top-0 bg-white p-4 border-b flex justify-between items-center">
-                  <h2 className="text-lg font-semibold">Filters</h2>
-                  <button
-                    onClick={() => setFilterOpen(false)}
-                    className="p-2 hover:bg-gray-100 rounded-lg"
-                    aria-label="Close filters"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-                <div className="p-4">
-                  <Filter ref={filterRef} filter={state} setFilter={setState} />
-                </div>
-              </div>
-            </div>
-          )}
-
           <BottomSheet
             isOpen={filterMobile}
             onClose={() => setFilterMobile(false)}
           >
-            <Filter ref={filterRef} filter={state} setFilter={setState} />
+            <Filter
+              ref={filterRef}
+              filter={state}
+              setFilter={setState}
+              defaultValue={defaultParam}
+            />
           </BottomSheet>
 
           {/* CV Templates Grid */}
