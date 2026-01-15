@@ -29,9 +29,7 @@ interface IProps extends VariantProps<typeof variantsBadge> {
 
 const Badge: React.FC<IProps> = ({ children, intent, className }) => {
   return (
-    <div className={cn(variantsBadge({ intent }), className)}>
-      {children}
-    </div>
+    <div className={cn(variantsBadge({ intent }), className)}>{children}</div>
   )
 }
 

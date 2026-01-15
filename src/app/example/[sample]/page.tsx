@@ -10,6 +10,7 @@ import Sample6 from '@/components/pages/exampleCv/Sample6'
 import { biodataCurr } from '@/data/cv'
 import { useParams } from 'next/navigation'
 import Sample7 from '@/components/pages/exampleCv/Sample7'
+import Sample8 from '@/components/pages/exampleCv/Sample8'
 
 export default function Page() {
   const { sample } = useParams()
@@ -23,6 +24,7 @@ export default function Page() {
       {sample === '5' && <Sample5 data={biodataCurr} />}
       {sample === '6' && <Sample6 data={biodataCurr} />}
       {sample === '7' && <Sample7 data={biodataCurr} />}
+      {sample === '8' && <Sample8 data={biodataCurr} />}
     </>
   )
 }
