@@ -10,6 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Mail, LockKeyhole } from 'lucide-react'
 import CheckBoxForm from '@/components/globals/form/CheckBoxForm'
 import Image from 'next/image'
+import { API_URL } from '@/libs/constants'
 
 interface IProps {
   className?: string
@@ -109,6 +110,7 @@ export default function LoginForm({
           intent="default"
           type="button"
           isLoading={isLoading}
+          onClick={() => location.replace(`${API_URL}/auth/google`)}
         >
           <Image
             src={'/icon/icon-google.svg'}
