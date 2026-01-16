@@ -8,3 +8,10 @@ export async function apiPostLogin(params: any) {
 
   return res
 }
+
+export async function apiGetIsLogin(params?: any) {
+  const { data } = await api.get<any, any>(`/api/v1/user/me`, params)
+
+  console.log('response', data)
+  return data
+}

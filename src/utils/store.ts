@@ -1,6 +1,6 @@
 // stores/cvStep1Store.ts
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import {
   CVNavigationStore,
   CVSettingStore,
@@ -19,8 +19,13 @@ import {
 } from '@/interface/curiculumVitae'
 import { transformToICurrVitae } from './parseToForm'
 import { transformToCurrPayload } from './parseToPayload'
-import { decodeToken, getToken } from './common'
+import { cookieAuthStorage, decodeToken, getToken } from './common'
 import { IFileManagerStore, MetadataFile } from '@/interface/fileManager'
+import { IAuth } from '@/interface/login'
+import { jwtDecode } from 'jwt-decode'
+import httpRequest from '@/libs/httpsRequest'
+import { URL } from '@/libs/constants'
+import { apiGetIsLogin } from '@/services/login/api'
 
 interface CVMainStore {
   finalCV: ICurrVitae | null
@@ -397,7 +402,7 @@ export const useFileManagerStore = create<IFileManagerStore>()(
       },
     }),
     {
-      name: 'file-manager-storage', // unique name for localStorage key
+      name: 'file-manager-storage',
       // Optional: customize what gets persisted
       partialize: (state) => ({
         fileEntries: state.fileEntries.map((entry) => ({
@@ -409,6 +414,41 @@ export const useFileManagerStore = create<IFileManagerStore>()(
           error: entry.error,
         })),
       }),
+    },
+  ),
+)
+
+export const useAuthStore = create<IAuth>()(
+  persist(
+    (set) => ({
+      token: null,
+      user: null,
+      isAuthenticated: false,
+
+      setAuth: (token, user) => {
+        set({ isAuthenticated: true, token, user })
+
+        const { exp } = jwtDecode(token)
+        cookieAuthStorage.setItem('accessToken', token, {
+          expires: new Date(exp! * 1000),
+        })
+      },
+      logout: () => {
+        set({ isAuthenticated: false, token: null, user: null })
+        cookieAuthStorage.removeItem('accessToken')
+      },
+      checkAuth: async () => {
+        console.log('asdasd')
+        try {
+          const res = await apiGetIsLogin()
+          set({ isAuthenticated: true, user: res?.user })
+        } catch (error) {
+          set({ isAuthenticated: false, user: null })
+        }
+      },
+    }),
+    {
+      name: 'auth-storage',
     },
   ),
 )

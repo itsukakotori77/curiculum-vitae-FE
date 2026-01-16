@@ -3,6 +3,7 @@ import { RgbaColor } from 'react-colorful'
 import { twMerge } from 'tailwind-merge'
 import { getCookie } from 'cookies-next'
 import { jwtDecode } from 'jwt-decode'
+import Cookies from 'js-cookie'
 
 export const autoUnoClassName = (className?: string) => {
   if (!className) return ''
@@ -117,12 +118,8 @@ export const convertTime = (dt2: any, dt1: any, type: string): number => {
 }
 
 export const getToken = () => {
-  const token = getCookie('accessToken')
-  if (token && typeof token === 'string') {
-    return token
-  }
-
-  return null
+  const token = getCookie('accessToken')!
+  return token as string
 }
 
 export const checkTimeDay = (dt2: any, dt1: any): number => {
@@ -190,13 +187,16 @@ export const getCustomFontCSS = async () => {
 
     // Get all loaded fonts from document
     const loadedFonts = Array.from(document.fonts.values())
-    
-    console.log('Loaded fonts:', loadedFonts.map(f => ({
-      family: f.family,
-      weight: f.weight,
-      style: f.style,
-      status: f.status
-    })))
+
+    console.log(
+      'Loaded fonts:',
+      loadedFonts.map((f) => ({
+        family: f.family,
+        weight: f.weight,
+        style: f.style,
+        status: f.status,
+      })),
+    )
 
     // Scan stylesheets for Next.js font definitions
     const stylesheets = Array.from(document.styleSheets)
@@ -217,8 +217,10 @@ export const getCustomFontCSS = async () => {
             console.log('Found font-face:', fontFamily, src)
 
             if (src.includes('url(')) {
-              const urlMatches = Array.from(src.matchAll(/url\(['"]?([^'")\s]+)['"]?\)/g))
-              
+              const urlMatches = Array.from(
+                src.matchAll(/url\(['"]?([^'")\s]+)['"]?\)/g),
+              )
+
               for (const match of urlMatches) {
                 let fontUrl = match[1]
 
@@ -240,18 +242,22 @@ export const getCustomFontCSS = async () => {
                 // Make URL absolute if it's relative (Next.js fonts)
                 if (!fontUrl.startsWith('http')) {
                   const origin = window.location.origin
-                  fontUrl = fontUrl.startsWith('/') ? `${origin}${fontUrl}` : `${origin}/${fontUrl}`
+                  fontUrl = fontUrl.startsWith('/')
+                    ? `${origin}${fontUrl}`
+                    : `${origin}/${fontUrl}`
                 }
 
                 console.log('Fetching font from:', fontUrl)
 
                 try {
                   const base64Font = await fetchFontAsBase64(fontUrl)
-                  
+
                   if (base64Font) {
                     // Get format
                     let format = 'woff2'
-                    const formatMatch = src.match(/format\(['"]?([^'")\s]+)['"]?\)/)
+                    const formatMatch = src.match(
+                      /format\(['"]?([^'")\s]+)['"]?\)/,
+                    )
                     if (formatMatch) {
                       format = formatMatch[1]
                     } else if (fontUrl.includes('.woff2')) {
@@ -288,15 +294,27 @@ export const getCustomFontCSS = async () => {
     // Also handle your local fonts
     const origin = window.location.origin
     const localFonts = [
-      { family: 'Playfair', url: '/fonts/playfair/Playfair-Regular.ttf', format: 'truetype', weight: '400', style: 'normal' },
-      { family: 'Gram', url: '/fonts/gram/Gramregular.ttf', format: 'truetype', weight: '400', style: 'normal' },
+      {
+        family: 'Playfair',
+        url: '/fonts/playfair/Playfair-Regular.ttf',
+        format: 'truetype',
+        weight: '400',
+        style: 'normal',
+      },
+      {
+        family: 'Gram',
+        url: '/fonts/gram/Gramregular.ttf',
+        format: 'truetype',
+        weight: '400',
+        style: 'normal',
+      },
     ]
 
     for (const font of localFonts) {
       try {
         const fontUrl = `${origin}${font.url}`
         const base64Font = await fetchFontAsBase64(fontUrl)
-        
+
         if (base64Font) {
           fontCSS += `
             @font-face {
@@ -312,11 +330,22 @@ export const getCustomFontCSS = async () => {
         console.error(`Failed to embed ${font.family}:`, err)
       }
     }
-
   } catch (err) {
     console.error('Error in getCustomFontCSS:', err)
   }
 
   console.log('Total font CSS length:', fontCSS.length)
   return fontCSS
+}
+
+export const cookieAuthStorage = {
+  getItem: (name: string) => {
+    return Cookies.get(name) || null
+  },
+  setItem: (name: string, value: string, config: any) => {
+    Cookies.set(name, value, ...config)
+  },
+  removeItem: (name: string) => {
+    Cookies.remove(name)
+  },
 }
