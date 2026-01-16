@@ -16,9 +16,9 @@ export default function Layout({
   return (
     <>
       {/* <Loading isLoading/> */}
-      <div className="w-full h-screen flex flex-col">
+      <div className="w-full h-screen flex flex-col" id="outer-container">
         {useHeader && <Navbar />}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto" id="page-wrap">
           <span className="text-lg">{title}</span>
           {children}
         </main>
