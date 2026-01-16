@@ -9,9 +9,6 @@ export async function GET(request: Request) {
   const url = new URL(request.url)
   const params = Object.fromEntries(url.searchParams)
   const id = url.searchParams.get('id')
-
-  console.log('Received params:', params) 
-  console.log('URL searchParams:', url.searchParams.toString())
   
   try {
     if (id) {
