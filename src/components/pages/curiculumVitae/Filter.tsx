@@ -123,7 +123,7 @@ const Filter = forwardRef(
               name="head"
               fieldInput={headOpt as any}
               classNameWrapper="flex flex-col lg:gap-y-1"
-              classNameInput="radio-neutral"
+              classNameInput="radio-neutral border-2"
               control={control}
             />
           </div>
