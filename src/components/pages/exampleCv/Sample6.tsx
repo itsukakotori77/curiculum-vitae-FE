@@ -238,7 +238,7 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
               <CVText
                 variant="title"
                 size="lg"
-                className="uppercase font-stretch-expanded font-timesnewroman"
+                className="uppercase font-stretch-expanded font-[times-new-roman]"
               >
                 {`${data?.firstName} ${data?.lastName}`}
               </CVText>
@@ -375,7 +375,7 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
                   <CVText
                     variant="body"
                     size="lg"
-                    className="font-extrabold font-timesnewroman"
+                    className="font-extrabold font-[times-new-roman]"
                   >
                     WORK EXPERIENCE
                   </CVText>
@@ -423,7 +423,7 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
                     <CVText
                       variant="body"
                       size="lg"
-                      className="font-extrabold font-timesnewroman"
+                      className="font-extrabold font-[times-new-roman]"
                     >
                       SKILLS
                     </CVText>
@@ -494,7 +494,7 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
                     <CVText
                       variant="body"
                       size="lg"
-                      className="font-extrabold font-timesnewroman"
+                      className="font-extrabold font-[times-new-roman]"
                     >
                       EDUCATION
                     </CVText>
@@ -544,7 +544,7 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
                     <CVText
                       variant="body"
                       size="lg"
-                      className="font-extrabold font-timesnewroman"
+                      className="font-extrabold font-[times-new-roman]"
                     >
                       CERTIFICATES
                     </CVText>

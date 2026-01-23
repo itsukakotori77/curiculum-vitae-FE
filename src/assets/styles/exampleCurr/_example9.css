@@ -17,6 +17,7 @@
     box-shadow: none !important;
     page-break-inside: avoid;
   }
+
   .print-break {
     page-break-before: always;
   }
@@ -32,7 +33,7 @@
   }
 }
 
-.sample5-container {
-  font-family: 'Gram', sans-serif;
+.sample9-container {
+  font-family: var(--font-montserrat);
   margin: 0 auto;
 }

@@ -258,7 +258,7 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                       <CVText
                         variant="title"
                         size="sm"
-                        className="font-palatino"
+                        className="font-[times-new-roman]"
                       >
                         {`${!!setting?.usingPicture ? data?.firstName : `${data?.firstName} ${data?.lastName}`}`}
                       </CVText>
@@ -269,7 +269,7 @@ const Sample4 = forwardRef<HTMLDivElement, Sample>(
                       <CVText
                         variant="title"
                         size="sm"
-                        className="font-palatino"
+                        className="font-[times-new-roman]"
                       >
                         {data?.lastName}
                       </CVText>

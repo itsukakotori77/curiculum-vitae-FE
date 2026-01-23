@@ -23,14 +23,14 @@ export async function GET(request: NextRequest) {
     try {
       const { exp } = jwtDecode(token)
 
-      // Set cookie
-      ;(await cookies()).set('accessToken', token, {
-        expires: new Date(exp! * 1000),
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-      })
+        // Set cookie
+        ; (await cookies()).set('accessToken', token, {
+          expires: new Date(exp! * 1000),
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/',
+        })
 
       return NextResponse.redirect(new URL('/?success=login', request.url))
     } catch (error) {
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     const { exp } = jwtDecode(res?.data?.data?.token)
 
     if (res?.data?.data?.token) {
-      ;(await cookies()).set('accessToken', res?.data?.data?.token, {
+      ; (await cookies()).set('accessToken', res?.data?.data?.token, {
         expires: new Date(exp! * 1000),
       })
     }

@@ -41,12 +41,8 @@
 
 .sample4-container {
   font-family:
-    'Gram Local',
+    'Gram',
     -apple-system,
     sans-serif;
   margin: 0 auto;
-}
-
-.font-palatino {
-  font-family: 'Times New Roman', 'Book Antiqua', Palatino, serif;
 }

@@ -14,8 +14,7 @@ export interface IAuth {
   user: IUser | null 
   isAuthenticated: boolean 
   checkAuth: () => Promise<void>
-
   setAuth: (token: string, user: IUser) => void 
   logout: () => void 
-  // checkAuth: () => void 
+  validateAuth: () => Promise<void>
 }

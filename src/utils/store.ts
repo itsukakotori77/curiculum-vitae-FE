@@ -420,7 +420,7 @@ export const useFileManagerStore = create<IFileManagerStore>()(
 
 export const useAuthStore = create<IAuth>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       token: null,
       user: null,
       isAuthenticated: false,
@@ -446,9 +446,16 @@ export const useAuthStore = create<IAuth>()(
           set({ isAuthenticated: false, user: null })
         }
       },
+      validateAuth: async () => {
+        const state = get()
+        if (state.isAuthenticated) {
+          await get().checkAuth()
+        }
+      },
     }),
     {
       name: 'auth-storage',
+      partialize: (state) => ({ user: state.user }),
     },
   ),
 )

@@ -1,33 +1,74 @@
 @font-face {
-  font-family: 'Playfair', sans-serif;
+  font-family: 'Playfair';
   src: url('/fonts/playfair/Playfair-Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-weight: 400;
 }
 
 @font-face {
-  font-family: 'Gram Local';
+  font-family: 'Playfair';
+  src: url('/fonts/playfair/Playfair-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Gram';
   src: url('/fonts/gram/Gramregular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-weight: 400;
 }
 
-.font-timesnewroman {
-  font-family: 'Times New Roman', Times, serif;
+@font-face {
+  font-family: 'Gram';
+  src: url('/fonts/gram/Grambold.ttf') format('truetype');
+  font-weight: 700;
 }
 
-.font-playfair {
-  font-family: 'Playfair', serif;
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/literata/Literata-Regular.ttf') format('truetype');
+  font-weight: 400;
 }
 
-.font-gram {
-  font-family: 'Gram', 'Gram Fallback', Arial, sans-serif;
+@font-face {
+  font-family: 'Literata';
+  src: url('/fonts/literata/Literata-Bold.ttf') format('truetype');
+  font-weight: 700;
 }
 
-.font-roboto {
-  font-family: 'Roboto', sans-serif;
+@font-face {
+  font-family: 'Libre Caslon Text';
+  src: url('/fonts/libreCaslon/LibreCaslonText-Regular.ttf') format('truetype');
+  font-weight: 400;
 }
 
-.font-segoeui {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+@font-face {
+  font-family: 'Libre Caslon Text';
+  src: url('/fonts/libreCaslon/LibreCaslonText-Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+/* Base rule */
+[class^="font-["],
+[class*=" font-["] {
+  font-family: var(--font-family);
+}
+
+/* Font mappings */
+.font-\[playfair\] {
+  --font-family: 'Playfair', serif;
+}
+
+.font-\[gram\] {
+  --font-family: 'Gram', Arial, sans-serif;
+}
+
+.font-\[literata\] {
+  --font-family: 'Literata', serif;
+}
+
+.font-\[libre-caslon\] {
+  --font-family: 'Libre Caslon Text', serif;
+}
+
+.font-\[times-new-roman\] {
+  --font-family: "Times New Roman", Times, serif;
 }

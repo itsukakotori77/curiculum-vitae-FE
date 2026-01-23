@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ToastContainer } from 'react-toastify'
 import { RecoilRoot } from 'recoil'
 import {
@@ -15,6 +15,7 @@ import 'moment/locale/id'
 import { IdleTimerProvider } from 'react-idle-timer'
 import { useRouter } from 'next/navigation'
 import ModalConfirm from '../modal/ModalConfirm'
+import { useAuthStore } from '@/utils/store'
 
 interface IProps {
   children: React.ReactNode
@@ -36,9 +37,15 @@ export default function QueryProvider({ children }: IProps) {
   const router = useRouter()
   const locale: LocaleKey = 'id'
 
+  const { validateAuth } = useAuthStore()
+
   if (moment.locale() !== locale) {
     moment.locale(locale)
   }
+
+  useEffect(() => {
+    validateAuth()
+  }, [])
 
   return (
     <>

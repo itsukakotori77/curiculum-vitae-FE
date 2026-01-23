@@ -11,6 +11,7 @@ import { biodataCurr } from '@/data/cv'
 import { useParams } from 'next/navigation'
 import Sample7 from '@/components/pages/exampleCv/Sample7'
 import Sample8 from '@/components/pages/exampleCv/Sample8'
+import Sample9 from '@/components/pages/exampleCv/Sample9'
 
 export default function Page() {
   const { sample } = useParams()
@@ -25,6 +26,7 @@ export default function Page() {
       {sample === '6' && <Sample6 data={biodataCurr} />}
       {sample === '7' && <Sample7 data={biodataCurr} />}
       {sample === '8' && <Sample8 data={biodataCurr} />}
+      {sample === '9' && <Sample9 data={biodataCurr} />}
     </>
   )
 }
