@@ -6,15 +6,15 @@ import {
   faTelegram,
   faWhatsapp,
 } from '@fortawesome/free-brands-svg-icons'
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
+import { faEnvelope, faLink } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { cva, VariantProps } from 'class-variance-authority'
 import React, { forwardRef } from 'react'
 import '@/assets/styles/exampleCurr/_example9.css'
-import Badge from '@/components/globals/UI/Badge'
 import moment from 'moment'
 import Image from 'next/image'
 import { useCVSettingStore } from '@/utils/store'
+import { Triangle } from 'lucide-react'
 
 const cvVariants = cva(
   'w-full bg-white sample9-container shadow-lg print:shadow-none bg-[#FEF3E4]',
@@ -197,7 +197,6 @@ const CVText = ({
   )
 }
 
-
 const Sample9 = forwardRef<HTMLDivElement, Sample>(
   (
     {
@@ -208,10 +207,10 @@ const Sample9 = forwardRef<HTMLDivElement, Sample>(
       printable = 'noPrint',
       className,
       iconSize = 'sm',
-      sidebarColor = '#B79A83',
-      primaryColor = '#525B5D',
-      sidebarTextColor = '#FFFFF',
-      skillColor = '#929292',
+      sidebarColor = '#C9A488',
+      primaryColor = '#F2B696',
+      sidebarTextColor = '#000',
+      skillColor = '#F2B696',
       variantText = 'small',
       childrenClassName,
       config = {
@@ -231,64 +230,209 @@ const Sample9 = forwardRef<HTMLDivElement, Sample>(
         desktopBackgroundWidth: 192,
       },
     },
-    ref
+    ref,
   ) => {
     const { data: setting } = useCVSettingStore()
     return (
       <>
         <div ref={ref} className={cn(cvVariants({ size, scale }), className)}>
-          <div className={cn(cvVariants({ printable }), childrenClassName)}
+          <div
+            className={cn(
+              cvVariants({ printable }),
+              childrenClassName,
+              'relative',
+            )}
             style={{
               transformOrigin: 'top center',
               marginBottom: scale === 'xs' || scale === 'sm' ? '10vh' : '0',
-            }}>
+            }}
+          >
+            {/* LEFT LINE */}
+            <div
+              className="absolute min-h-screen h-full w-3 left-0"
+              style={{
+                background: primaryColor,
+              }}
+            ></div>
+            <div
+              className="absolute min-h-screen h-full w-[2.5px] left-7"
+              style={{
+                background: sidebarColor,
+              }}
+            ></div>
 
-            <div className="flex flex-row gap-2 p-4 justify-between w-full">
+            {/* RIGHT LINE */}
+            <div
+              className="absolute min-h-screen h-full w-1.5 right-0"
+              style={{
+                background: primaryColor,
+              }}
+            ></div>
+            <div
+              className="absolute min-h-screen h-full w-[2.5px] right-4.5"
+              style={{
+                background: sidebarColor,
+              }}
+            ></div>
+
+            {/* BOTTOM LINE */}
+            <div
+              className="absolute min-w-full h-2 bottom-0"
+              style={{
+                background: primaryColor,
+              }}
+            ></div>
+
+            {/* ARROW RIGHT */}
+            <div className="absolute right-1.5 top-4 flex w-1/2 items-center">
+              <Triangle
+                className="-rotate-90"
+                size={20}
+                style={{ color: sidebarColor }}
+              />
+              <div
+                className="h-[2.5px] w-full ml-[-2px]"
+                style={{ background: sidebarColor }}
+              />
+            </div>
+
+            <div className="flex flex-row gap-2 px-14 py-4 mt-10 justify-between w-full">
               <div className="w-[70%] flex flex-col gap-2 justify-start px-6 py-10">
-                <CVText
-                  variant="title"
-                  size="lg"
-                  className="font-bold font-[libre-caslon]"
-                >
-                  Gail
-                </CVText>
-                <CVText
-                  variant="title"
-                  size="lg"
-                  className="font-bold font-[libre-caslon]"
-                >
-                  {data?.lastName}
-                </CVText>
+                {/* NAME & PROFILE */}
+                <div className="grid gap-1">
+                  <CVText
+                    variant="title"
+                    size="xl"
+                    className="font-bold font-[libre-caslon]"
+                  >
+                    {data?.firstName}
+                  </CVText>
+                  <CVText
+                    variant="title"
+                    size="xl"
+                    className="font-bold font-[libre-caslon]"
+                  >
+                    {data?.lastName}
+                  </CVText>
+                  <CVText
+                    variant="tiny"
+                    size={textSize}
+                    className="font-light text-justify py-2"
+                  >
+                    {data?.profile}
+                  </CVText>
+                  <CVText
+                    variant="small"
+                    size={textSize}
+                    className="font-medium text-[#B5521B] uppercase"
+                  >
+                    {data?.role?.toUpperCase()}
+                  </CVText>
+                  <div className="relative">
+                    <div className="absolute left-0 top-1/2  flex flex-col items-center h-auto">
+                      {/* Tail */}
+                      <div
+                        className="w-[2.5px] h-24 sm:h-32 md:h-30"
+                        style={{
+                          background: `linear-gradient(
+                            to bottom,
+                            transparent,
+                            ${sidebarColor}
+                          )`,
+                        }}
+                      />
+                      {/* Arrow head */}
+                      <Triangle
+                        className="rotate-180 mt-[-2px]"
+                        size={20}
+                        style={{ color: sidebarColor }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* EXPERIENCES */}
+                <div className="mt-40">
+                  <CVText
+                    variant="subtitle"
+                    size={textSize}
+                    className="font-[libre-caslon] font-extrabold"
+                  >
+                    EXPERIENCES
+                  </CVText>
+                  <div className="p-0 my-4 flex flex-col gap-3">
+                    {data?.experience
+                      ?.toReversed()
+                      ?.map((item: any, key: number) => (
+                        <div className="flex flex-col gap-2" key={key}>
+                          <div className="flex justify-between">
+                            <CVText
+                              variant="small"
+                              size={textSize}
+                              className="font-bold"
+                            >
+                              {item?.jobTitle}
+                            </CVText>
+                            <CVText
+                              variant="small"
+                              size={textSize}
+                              className="font-normal"
+                            >
+                              {`${item?.company} | ${moment(item?.startDate).format('YYYY')} - ${moment(item?.endDate).format('YYYY')}`}
+                            </CVText>
+                          </div>
+                          <CVText
+                            variant="tiny"
+                            size={textSize}
+                            className="font-light text-justify"
+                          >
+                            {item?.descJob}
+                          </CVText>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+
+                {/* CERTIFICATE */}
+                {/* <div className="flex flex-col">
+                  <CVText
+                    variant="subtitle"
+                    size={textSize}
+                    className="font-[libre-caslon] font-extrabold"
+                  >
+                    CERTIFICATES
+                  </CVText>
+                  <ul className="space-y-0.5 list-disc pl-4 ">
+                    {data?.certification?.map((item: any, key: number) => (
+                      <li key={key}>
+                        <CVText
+                          variant="small"
+                          size={textSize}
+                          className="font-semibold mb-2"
+                        >
+                          {`${item?.name} - ${item?.company}`}
+                        </CVText>
+                        <CVText
+                          variant="tiny"
+                          size={textSize}
+                          className="block font-medium text-gray-600"
+                        >
+                          {item?.descCert}
+                        </CVText>
+                      </li>
+                    ))}
+                  </ul>
+                </div> */}
               </div>
               <div className="w-[30%]">
+                {/* PROFILE PHOTO */}
                 {!!setting?.usingPicture && (
                   <div className="flex justify-center items-center flex-col">
-                    {/* Responsive Background */}
-                    <div
-                      className="rounded-br-4xl rounded-bl-3xl"
-                      style={
-                        config.responsiveImage
-                          ? {
-                            background: primaryColor,
-                            height: `${config.mobileBackgroundHeight || 240}px`,
-                            width: `${config.mobileBackgroundWidth || 144}px`,
-                          }
-                          : {
-                            background: primaryColor,
-                            height: '320px',
-                            width: '192px',
-                          }
-                      }
-                    ></div>
-
                     {/* Image Container */}
                     <div
                       className="rounded-full border-6"
                       style={{
                         borderColor: sidebarColor,
-                        marginTop: config.responsiveImage
-                          ? `-${+config.mobileImageSize! * 0.89}px` // Responsive negative margin
-                          : '-160px', // Default margin
                       }}
                     >
                       <Image
@@ -300,25 +444,265 @@ const Sample9 = forwardRef<HTMLDivElement, Sample>(
                         style={
                           config.responsiveImage
                             ? {
-                              width: `${config.mobileImageSize}px`,
-                              height: `${config.mobileImageSize}px`,
-                            }
+                                width: `${config.mobileImageSize}px`,
+                                height: `${config.mobileImageSize}px`,
+                              }
                             : {
-                              width: '200px',
-                              height: '200px',
-                            }
+                                width: '200px',
+                                height: '200px',
+                              }
                         }
                       />
                     </div>
                   </div>
                 )}
+
+                {/* CONTACTS */}
+                <div className="flex flex-col my-4">
+                  <CVText
+                    variant="subtitle"
+                    size={textSize}
+                    className="font-[libre-caslon] font-extrabold"
+                  >
+                    CONTACTS
+                  </CVText>
+                  <div className="grid my-2 gap-4">
+                    {/* Phone/WhatsApp */}
+                    {data?.contacts?.phone && (
+                      <div className="flex gap-2 justify-start">
+                        <FontAwesomeIcon
+                          icon={faWhatsapp}
+                          className={cn(
+                            iconVariants({ iconSize }),
+                            'font-bold shrink-0 w-5 text-xl',
+                          )}
+                          style={{ color: primaryColor }}
+                        />
+                        <div className="flex flex-col gap-2">
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-extrabold tracking-wide font-[libre-caslon]"
+                          >
+                            WhatsApp
+                          </CVText>
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-light tracking-wide"
+                            style={{ color: sidebarTextColor }}
+                          >
+                            {data.contacts.phone}
+                          </CVText>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Telegram */}
+                    {data?.contacts?.telegram && (
+                      <div className="flex gap-2 justify-start">
+                        <FontAwesomeIcon
+                          icon={faTelegram}
+                          className={cn(
+                            iconVariants({ iconSize }),
+                            'font-bold shrink-0 w-5 text-xl',
+                          )}
+                          style={{ color: primaryColor }}
+                        />
+                        <div className="flex flex-col gap-2">
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-extrabold tracking-wide font-[libre-caslon]"
+                          >
+                            Telegram
+                          </CVText>
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-light tracking-wide"
+                            style={{ color: sidebarTextColor }}
+                          >
+                            {data.contacts.telegram}
+                          </CVText>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Email */}
+                    {data?.contacts?.email && (
+                      <div className="flex gap-2 justify-start">
+                        <FontAwesomeIcon
+                          icon={faEnvelope}
+                          className={cn(
+                            iconVariants({ iconSize }),
+                            'font-bold shrink-0 w-5 text-xl',
+                          )}
+                          style={{ color: primaryColor }}
+                        />
+                        <div className="flex flex-col gap-2">
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-extrabold tracking-wide font-[libre-caslon]"
+                          >
+                            Email
+                          </CVText>
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-light tracking-wide"
+                            style={{ color: sidebarTextColor }}
+                          >
+                            {data.contacts.email}
+                          </CVText>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* LinkedIn */}
+                    {data?.contacts?.linkedin && (
+                      <div className="flex gap-2 justify-start">
+                        <FontAwesomeIcon
+                          icon={faLinkedinIn}
+                          className={cn(
+                            iconVariants({ iconSize }),
+                            'font-bold shrink-0 w-5 text-xl',
+                          )}
+                          style={{ color: primaryColor }}
+                        />
+                        <div className="flex flex-col gap-2">
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-extrabold tracking-wide font-[libre-caslon]"
+                          >
+                            LinkedIn
+                          </CVText>
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-light tracking-wide"
+                            style={{ color: sidebarTextColor }}
+                          >
+                            {data.contacts.linkedin}
+                          </CVText>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Instagram */}
+                    {data?.contacts?.instagram && (
+                      <div className="flex gap-2 justify-start">
+                        <FontAwesomeIcon
+                          icon={faInstagram}
+                          className={cn(
+                            iconVariants({ iconSize }),
+                            'font-bold shrink-0 w-5 text-xl',
+                          )}
+                          style={{ color: primaryColor }}
+                        />
+                        <div className="flex flex-col gap-2">
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-extrabold tracking-wide font-[libre-caslon]"
+                          >
+                            Instagram
+                          </CVText>
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-light tracking-wide"
+                            style={{ color: sidebarTextColor }}
+                          >
+                            {data.contacts.instagram}
+                          </CVText>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Otherwise (custom contact) */}
+                    {data?.contacts?.otherwise && (
+                      <div className="flex gap-2 justify-start">
+                        <FontAwesomeIcon
+                          icon={faLink}
+                          className={cn(
+                            iconVariants({ iconSize }),
+                            'font-bold shrink-0 w-5 text-xl',
+                          )}
+                          style={{ color: primaryColor }}
+                        />
+                        <div className="flex flex-col gap-2">
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-extrabold tracking-wide font-[libre-caslon]"
+                          >
+                            {data.contacts.otherwise.name}
+                          </CVText>
+                          <CVText
+                            variant={variantText}
+                            size={textSize}
+                            className="font-light tracking-wide"
+                            style={{ color: sidebarTextColor }}
+                          >
+                            {data.contacts.otherwise.username}
+                          </CVText>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* SKIILS */}
+                  <div className="flex flex-col my-2">
+                    <CVText
+                      variant="subtitle"
+                      size={textSize}
+                      style={{ color: sidebarTextColor }}
+                      className="font-[libre-caslon]"
+                    >
+                      SKILLS
+                    </CVText>
+                    <div className="grid my-2 gap-1.5">
+                      {data?.skills?.map((item: any, key: number) => (
+                        <div className="flex flex-col items-start" key={key}>
+                          <CVText
+                            variant="small"
+                            size={textSize}
+                            className="font-medium"
+                            style={{ color: sidebarTextColor }}
+                          >
+                            {item?.name}
+                          </CVText>
+                          <div className="grid grid-cols-5 w-full gap-0">
+                            {Array.from({ length: item?.level }, (_, index) => (
+                              <div
+                                key={index}
+                                className={`h-2 w-full border-none`}
+                                style={{
+                                  background: ` ${
+                                    Boolean(item?.isHasLevel) &&
+                                    index < item.level
+                                      ? skillColor
+                                      : ''
+                                  }`,
+                                }}
+                              ></div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </>
     )
-  }
+  },
 )
 
 export default Sample9

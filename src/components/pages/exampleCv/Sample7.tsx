@@ -391,7 +391,7 @@ const Sample7 = forwardRef<HTMLDivElement, Sample>(
                   <CVText
                     variant="title"
                     size="lg"
-                    className="font-bold" 
+                    className="font-bold"
                     style={{ color: sidebarColor }}
                   >
                     {`${data?.firstName} ${data?.lastName}`}
