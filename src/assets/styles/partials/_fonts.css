@@ -46,6 +46,12 @@
   font-weight: 700;
 }
 
+@font-face {
+  font-family: 'NTR';
+  src: url('/fonts/ntr/NTR-Regular.ttf') format('truetype');
+  font-weight: 400;
+}
+
 /* Base rule */
 [class^="font-["],
 [class*=" font-["] {
@@ -71,4 +77,8 @@
 
 .font-\[times-new-roman\] {
   --font-family: "Times New Roman", Times, serif;
+}
+
+.font-\[ntr\] {
+  --font-family: 'NTR', serif;
 }

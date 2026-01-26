@@ -324,7 +324,8 @@ const Sample9 = forwardRef<HTMLDivElement, Sample>(
                   <CVText
                     variant="small"
                     size={textSize}
-                    className="font-medium text-[#B5521B] uppercase"
+                    className="font-medium uppercase"
+                    style={{ color: primaryColor }}
                   >
                     {data?.role?.toUpperCase()}
                   </CVText>
@@ -394,7 +395,7 @@ const Sample9 = forwardRef<HTMLDivElement, Sample>(
                 </div>
 
                 {/* CERTIFICATE */}
-                {/* <div className="flex flex-col">
+                <div className="flex flex-col">
                   <CVText
                     variant="subtitle"
                     size={textSize}
@@ -402,58 +403,60 @@ const Sample9 = forwardRef<HTMLDivElement, Sample>(
                   >
                     CERTIFICATES
                   </CVText>
-                  <ul className="space-y-0.5 list-disc pl-4 ">
+                  <div className="space-y-0.5 mt-2">
                     {data?.certification?.map((item: any, key: number) => (
-                      <li key={key}>
-                        <CVText
-                          variant="small"
-                          size={textSize}
-                          className="font-semibold mb-2"
-                        >
-                          {`${item?.name} - ${item?.company}`}
-                        </CVText>
+                      <div className="w-full flex flex-col gap-2" key={key}>
+                        <div className="flex justify-between">
+                          <CVText
+                            variant="small"
+                            size={textSize}
+                            className="font-bold"
+                          >
+                            {item?.name}
+                          </CVText>
+                          <CVText
+                            variant="small"
+                            size={textSize}
+                            className="font-bold"
+                          >
+                            {item?.company}
+                          </CVText>
+                        </div>
                         <CVText
                           variant="tiny"
                           size={textSize}
-                          className="block font-medium text-gray-600"
+                          className="font-light text-justify"
                         >
                           {item?.descCert}
                         </CVText>
-                      </li>
+                      </div>
                     ))}
-                  </ul>
-                </div> */}
+                  </div>
+                </div>
               </div>
               <div className="w-[30%]">
                 {/* PROFILE PHOTO */}
                 {!!setting?.usingPicture && (
                   <div className="flex justify-center items-center flex-col">
                     {/* Image Container */}
-                    <div
-                      className="rounded-full border-6"
-                      style={{
-                        borderColor: sidebarColor,
-                      }}
-                    >
-                      <Image
-                        src={data?.profilePicture || '/User.png'}
-                        alt="user"
-                        width={600}
-                        height={600}
-                        className="object-cover rounded-full"
-                        style={
-                          config.responsiveImage
-                            ? {
-                                width: `${config.mobileImageSize}px`,
-                                height: `${config.mobileImageSize}px`,
-                              }
-                            : {
-                                width: '200px',
-                                height: '200px',
-                              }
-                        }
-                      />
-                    </div>
+                    <Image
+                      src={data?.profilePicture || '/User.png'}
+                      alt="user"
+                      width={600}
+                      height={600}
+                      className="object-cover rounded-tr-xl rounded-tl-xl"
+                      style={
+                        config.responsiveImage
+                          ? {
+                              width: `${config.mobileImageSize}px`,
+                              height: `${config.mobileImageSize}px`,
+                            }
+                          : {
+                              width: '200px',
+                              height: '200px',
+                            }
+                      }
+                    />
                   </div>
                 )}
 
