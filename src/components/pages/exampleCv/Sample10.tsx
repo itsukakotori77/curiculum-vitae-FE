@@ -14,7 +14,6 @@ import '@/assets/styles/exampleCurr/_example10.css'
 import moment from 'moment'
 import Image from 'next/image'
 import { useCVSettingStore } from '@/utils/store'
-import { Triangle } from 'lucide-react'
 
 const cvVariants = cva(
   'w-full bg-white sample10-container shadow-lg print:shadow-none',
