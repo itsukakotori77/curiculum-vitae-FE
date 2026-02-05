@@ -1,4 +1,4 @@
-import { joinClass } from '@/utils/common'
+import { cn } from '@/utils/common'
 import { HTMLMotionProps, motion } from 'framer-motion'
 import React, { forwardRef } from 'react'
 
@@ -32,13 +32,9 @@ const RadioInput: React.FC<RadioInputProps> = forwardRef(
           <label className="flex items-center gap-3 cursor-pointer">
             <motion.input
               ref={ref}
-              className={joinClass(
-                'radio radio-info peer checked:bg-primary radio-xs rounded-full w-6 h-6 border-[0.1px]',
-                isInvalid
-                  ? 'border-error'
-                  : isValid
-                    ? 'border-success'
-                    : '',
+              className={cn(
+                'radio peer  checked:bg-[#F9773F] checked:border-[#F9773F] accent-[#F9773F] radio-xs rounded-full w-6 h-6 border-[0.1px]',
+                isInvalid ? 'border-error' : isValid ? 'border-success' : '',
                 className,
               )}
               type="radio"
@@ -47,7 +43,7 @@ const RadioInput: React.FC<RadioInputProps> = forwardRef(
               {...props}
             />
             <span
-              className={joinClass(
+              className={cn(
                 'text-base font-nunito peer-checked:text-primary',
                 labelClassName,
               )}
