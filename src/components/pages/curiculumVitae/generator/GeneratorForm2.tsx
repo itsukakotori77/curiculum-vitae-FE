@@ -199,7 +199,7 @@ const GeneratorForm2 = forwardRef<GeneratorForm2Ref, FormGeneratorStep2>(
                 required: true,
               }}
               fieldInput={{
-                maxLength: 255,
+                maxLength: 500,
                 rows: 4,
                 placeholder:
                   'Describe your responsibilities, achievements, and key contributions...',

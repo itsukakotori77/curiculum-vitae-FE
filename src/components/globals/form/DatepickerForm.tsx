@@ -14,6 +14,7 @@ interface DatepickerForm extends HTMLProps<HTMLDivElement> {
   disablePast?: boolean
   disabled?: boolean
   onChangeCustom?: (val: any) => void
+  showClearButton?: boolean
 }
 
 const DatepickerForm: React.FC<DatepickerForm> = ({
@@ -25,6 +26,7 @@ const DatepickerForm: React.FC<DatepickerForm> = ({
   disablePast,
   onChangeCustom = () => {},
   disabled,
+  showClearButton = true,
   ...props
 }) => {
   return (
@@ -51,6 +53,10 @@ const DatepickerForm: React.FC<DatepickerForm> = ({
                 onChangeCustom(val)
                 onChange(val)
               }}
+              onClear={() => {
+                onChangeCustom(null)
+                onChange(null)
+              }}
               isInvalid={Boolean(errors?.[name]?.message)}
               placeholder={
                 placeholder ?? `Pilih ${fieldLabel.children}`
@@ -58,6 +64,7 @@ const DatepickerForm: React.FC<DatepickerForm> = ({
               disableFuture={disableFuture}
               disablePast={disablePast}
               disabled={disabled}
+              showClearButton={showClearButton}
             />
             {errors?.[name]?.message && (
               <span className="text-xs text-error">

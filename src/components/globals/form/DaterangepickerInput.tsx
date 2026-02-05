@@ -48,16 +48,16 @@ const DaterangepickerInput: React.FC<DaterangepickerInputProps> =
           }}
           isClearable={isClearable}
           wrapperClassName="w-full"
-          maxDate={
-            max && value?.[0]
-              ? !value?.[1]
-                ? checkTimeDay(new Date(value?.[0]), new Date()) <
-                  max!
-                  ? maxDate
-                  : addDays(value[0], max!)
-                : value?.[1]
-              : maxDate
-          }
+          // maxDate={
+          //   max && value?.[0]
+          //     ? !value?.[1]
+          //       ? checkTimeDay(new Date(value?.[0]), new Date()) <
+          //         max!
+          //         ? maxDate
+          //         : addDays(value[0], max!)
+          //       : value?.[1]
+          //     : maxDate
+          // }
           minDate={
             max && value?.[1] && !value?.[0]
               ? addDays(value[1], 0 - max)

@@ -7,6 +7,8 @@ import {
 } from '@mui/x-date-pickers'
 import { motion } from 'framer-motion'
 import { joinClass } from '@/utils/common'
+import { IconButton } from '@mui/material'
+import { X } from 'lucide-react'
 
 export interface DatepickerInputProps
   extends MobileDatePickerProps,
@@ -15,14 +17,19 @@ export interface DatepickerInputProps
   isInvalid?: boolean
   propsExtra?: any
   placeholder?: string
+  onClear?: () => void
+  showClearButton?: boolean
 }
 
 const DatepickerInput: React.FC<DatepickerInputProps> = forwardRef(
-  ({ isInvalid, isValid, className, placeholder, ...props }, ref) => {
+  ({ isInvalid, isValid, className, placeholder, onClear, showClearButton = true, ...props }, ref) => {
+    const hasValue = props.value !== null && props.value !== undefined
+
     return (
       <motion.div
         animate={isInvalid ? { x: [0, -6, 6, -6, 6, 0] } : {}}
         transition={{ duration: 0.4 }}
+        className="relative"
       >
         <MobileDatePicker
           inputRef={ref as any}
@@ -64,6 +71,24 @@ const DatepickerInput: React.FC<DatepickerInputProps> = forwardRef(
             },
           }}
         />
+        {showClearButton && hasValue && !props.disabled && (
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation()
+              onClear?.()
+            }}
+            className="!absolute !right-10 !top-1/2 !-translate-y-1/2 !z-10"
+            sx={{
+              padding: '4px',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 0, 0, 0.04)',
+              },
+            }}
+          >
+            <X fontSize="small" />
+          </IconButton>
+        )}
       </motion.div>
     )
   },

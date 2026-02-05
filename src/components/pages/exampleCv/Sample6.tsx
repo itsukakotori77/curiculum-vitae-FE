@@ -435,7 +435,7 @@ const Sample6 = forwardRef<HTMLDivElement, Sample>(
                             item?.isHasLevel && (
                               <div className="flex flex-col" key={key}>
                                 <CVText
-                                  variant="small"
+                                    variant="small"
                                   size={textSize}
                                   className="font-medium"
                                   style={{ color: sidebarTextColor }}

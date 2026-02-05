@@ -31,7 +31,7 @@ export interface GeneratorForm4Ref {
 }
 
 const Schema4 = Yup.object().shape({
-  certificateName: Yup.string().required('Certificate name is required'),
+  certificateName: Yup.string().notRequired(),
   company: Yup.string().notRequired(),
   certificatedDate: Yup.string().notRequired(),
   skillName: Yup.string().required('Skill name is required'),
@@ -82,7 +82,10 @@ export const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
     return (
       <Card
         title="Skills & Certificates"
-        className={joinClass('w-full max-w-full overflow-hidden p-[3px]', className)}
+        className={joinClass(
+          'w-full max-w-full overflow-hidden p-[3px]',
+          className,
+        )}
       >
         <form
           noValidate
@@ -103,7 +106,7 @@ export const GeneratorForm4 = forwardRef<GeneratorForm4Ref, FormGenerator4>(
               <TextForm
                 fieldLabel={{
                   children: 'Certificate Name',
-                  required: true,
+                  required: false,
                 }}
                 fieldInput={{
                   maxLength: 50,

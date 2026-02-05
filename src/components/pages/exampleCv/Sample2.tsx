@@ -37,11 +37,7 @@ const cvVariants = cva(
           'print:px-0',
           'flex-col',
         ],
-        noPrint: [
-          'min-h-screen',
-          'flex',
-          'flex-col',
-        ],
+        noPrint: ['min-h-screen', 'flex', 'flex-col'],
       },
     },
     defaultVariants: {
@@ -339,54 +335,51 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
           </ul>
         </div>
 
-        {/* EDUCATION */}
-        <div className="flex flex-col w-full gap-3">
-          <SectionHeader textSize={textSize}>EDUCATION</SectionHeader>
-          <ul className="list-none">
-            {data?.education?.toReversed()?.map((item: any, key: number) => (
-              <li key={key} className="grid gap-2 mb-3">
-                <div className="flex items-end justify-between">
-                  <CVText variant="small" size={textSize} className="font-bold">
-                    {`${item?.major || ''}, ${item?.university?.split('|')[1] || item?.university || ''}`}
-                  </CVText>
-                  <div className="flex-1 border-b border-dotted border-black mx-1 mb-[4.5px]"></div>
-                  {item?.graduatedStatus ? (
-                    <CVText
-                      variant="small"
-                      size={textSize}
-                      className="font-medium"
-                    >
-                      {`Graduated, ${moment(item?.graduated).format('MMMM, Do YYYY')}`}
-                    </CVText>
-                  ) : (
-                    <CVText
-                      variant="small"
-                      size={textSize}
-                      className="font-normal text-gray-500"
-                    >
-                      Not Graduated Yet
-                    </CVText>
-                  )}
-                </div>
-                <CVText
-                  variant="tiny"
-                  size={textSize}
-                  className="font-light text-justify"
-                >
-                  {item?.majorDesc || ''}
-                </CVText>
-              </li>
-            ))}
-          </ul>
-        </div>
-
         {/* CERTIFICATIONS */}
-        <div className="flex flex-col w-full gap-3">
-          <SectionHeader textSize={textSize}>CERTIFICATIONS</SectionHeader>
-          <ul className="list-none">
-            {data?.certification
-              ?.toReversed()
-              ?.map((item: any, key: number) => (
+        {data?.certification && data.certification.length > 0 && (
+          <div className="flex flex-col w-full gap-3">
+            <SectionHeader textSize={textSize}>CERTIFICATIONS</SectionHeader>
+            <ul className="list-none">
+              {data?.certification
+                ?.toReversed()
+                ?.map((item: any, key: number) => (
+                  <li key={key} className="grid gap-2 mb-3">
+                    <div className="flex items-end justify-between">
+                      <CVText
+                        variant="small"
+                        size={textSize}
+                        className="font-bold"
+                      >
+                        {item?.name}
+                      </CVText>
+                      <div className="flex-1 border-b border-dotted border-black mx-1 mb-[4.5px]"></div>
+                      <CVText
+                        variant="small"
+                        size={textSize}
+                        className="font-medium"
+                      >
+                        {`${item?.company}, ${moment(item?.certificateDate).format('MMMM, Do YYYY')}`}
+                      </CVText>
+                    </div>
+                    <CVText
+                      variant="tiny"
+                      size={textSize}
+                      className="font-light text-justify"
+                    >
+                      {item?.descCert || ''}
+                    </CVText>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
+
+        {/* EDUCATION */}
+        {data?.education && data.education.length > 0 && (
+          <div className="flex flex-col w-full gap-3">
+            <SectionHeader textSize={textSize}>EDUCATION</SectionHeader>
+            <ul className="list-none">
+              {data?.education?.toReversed()?.map((item: any, key: number) => (
                 <li key={key} className="grid gap-2 mb-3">
                   <div className="flex items-end justify-between">
                     <CVText
@@ -394,68 +387,39 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
                       size={textSize}
                       className="font-bold"
                     >
-                      {item?.name}
+                      {`${item?.major || ''}, ${item?.university?.split('|')[1] || item?.university || ''}`}
                     </CVText>
                     <div className="flex-1 border-b border-dotted border-black mx-1 mb-[4.5px]"></div>
-                    <CVText
-                      variant="small"
-                      size={textSize}
-                      className="font-medium"
-                    >
-                      {`${item?.company}, ${moment(item?.certificateDate).format('MMMM, Do YYYY')}`}
-                    </CVText>
+                    {item?.graduatedStatus ? (
+                      <CVText
+                        variant="small"
+                        size={textSize}
+                        className="font-medium"
+                      >
+                        {`Graduated, ${moment(item?.graduated).format('MMMM, Do YYYY')}`}
+                      </CVText>
+                    ) : (
+                      <CVText
+                        variant="small"
+                        size={textSize}
+                        className="font-normal text-gray-500"
+                      >
+                        Not Graduated Yet
+                      </CVText>
+                    )}
                   </div>
                   <CVText
                     variant="tiny"
                     size={textSize}
                     className="font-light text-justify"
                   >
-                    {item?.descCert || ''}
+                    {item?.majorDesc || ''}
                   </CVText>
                 </li>
               ))}
-          </ul>
-        </div>
-        {/* EDUCATION */}
-        <div className="flex flex-col w-full gap-3">
-          <SectionHeader textSize={textSize}>EDUCATION</SectionHeader>
-          <ul className="list-none">
-            {data?.education?.toReversed()?.map((item: any, key: number) => (
-              <li key={key} className="grid gap-2 mb-3">
-                <div className="flex items-end justify-between">
-                  <CVText variant="small" size={textSize} className="font-bold">
-                    {`${item?.major || ''}, ${item?.university?.split('|')[1] || item?.university || ''}`}
-                  </CVText>
-                  <div className="flex-1 border-b border-dotted border-black mx-1 mb-[4.5px]"></div>
-                  {item?.graduatedStatus ? (
-                    <CVText
-                      variant="small"
-                      size={textSize}
-                      className="font-medium"
-                    >
-                      {`Graduated, ${moment(item?.graduated).format('MMMM, Do YYYY')}`}
-                    </CVText>
-                  ) : (
-                    <CVText
-                      variant="small"
-                      size={textSize}
-                      className="font-normal text-gray-500"
-                    >
-                      Not Graduated Yet
-                    </CVText>
-                  )}
-                </div>
-                <CVText
-                  variant="tiny"
-                  size={textSize}
-                  className="font-light text-justify"
-                >
-                  {item?.majorDesc || ''}
-                </CVText>
-              </li>
-            ))}
-          </ul>
-        </div>
+            </ul>
+          </div>
+        )}
 
         {/* SKILLS */}
         <div className="flex flex-col w-full gap-3">

@@ -204,40 +204,63 @@ const SkillItem: React.FC<SkillItemProps> = ({
 }) => (
   <ItemCard index={index} onEdit={onEdit} onDelete={onDelete}>
     <div className="flex flex-col gap-3 sm:gap-4">
-      <div className="flex flex-col">
-        <span className="font-bold text-lg sm:text-xl">Certificate</span>
-        <span className="font-bold text-sm sm:text-md break-words">
-          {skill.certificateName}
-        </span>
-        <p className="text-xs sm:text-sm font-medium break-words">
-          {skill.company}
-        </p>
-        <p className="text-xs sm:text-sm text-gray-600">
-          <span className="font-medium">Certificated Publish </span>
-          {moment(skill.certificateDate).format('MMMM, Do YYYY')}
-        </p>
-      </div>
-      <div className="flex flex-col">
-        <span className="font-bold text-lg sm:text-xl">Skills</span>
-        <span className="font-bold text-sm sm:text-md break-words">
-          {skill.skillName}
-        </span>
-        <p className="text-xs sm:text-sm font-medium break-words">
-          {skill.company}
-        </p>
-        {skill.isHasLevel && (
-          <div className="grid grid-cols-5 gap-1 mt-2 max-w-[200px] sm:max-w-xs">
-            {Array.from({ length: 5 }, (_, i) => (
-              <div
-                key={i}
-                className={`${
-                  i + 1 <= skill.level ? 'bg-green-600' : 'bg-gray-300'
-                } w-full h-3 sm:h-4 rounded-sm transition-colors`}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Certificate Section */}
+      {(skill.certificateName || skill.company || skill.certificateDate) && (
+        <div className="flex flex-col">
+          <span className="font-bold text-lg sm:text-xl">Certificate</span>
+
+          {skill.certificateName && (
+            <span className="font-bold text-sm sm:text-md break-words">
+              {skill.certificateName}
+            </span>
+          )}
+
+          {skill.company && (
+            <p className="text-xs sm:text-sm font-medium break-words">
+              {skill.company}
+            </p>
+          )}
+
+          {skill.certificateDate && (
+            <p className="text-xs sm:text-sm text-gray-600">
+              <span className="font-medium">Certificated Publish </span>
+              {moment(skill.certificateDate).format('MMMM, Do YYYY')}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Skills Section */}
+      {(skill.skillName || skill.isHasLevel) && (
+        <div className="flex flex-col">
+          <span className="font-bold text-lg sm:text-xl">Skills</span>
+
+          {skill.skillName && (
+            <span className="font-bold text-sm sm:text-md break-words">
+              {skill.skillName}
+            </span>
+          )}
+
+          {skill.company && (
+            <p className="text-xs sm:text-sm font-medium break-words">
+              {skill.company}
+            </p>
+          )}
+
+          {skill.isHasLevel && typeof skill.level === 'number' && (
+            <div className="grid grid-cols-5 gap-1 mt-2 max-w-[200px] sm:max-w-xs">
+              {Array.from({ length: 5 }, (_, i) => (
+                <div
+                  key={i}
+                  className={`${
+                    i + 1 <= skill.level ? 'bg-green-600' : 'bg-gray-300'
+                  } w-full h-3 sm:h-4 rounded-sm transition-colors`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   </ItemCard>
 )
@@ -573,6 +596,8 @@ const CurrVitaeGenerator: React.FC = () => {
     )
   }
 
+  console.log(finalCV)
+
   return (
     <div className="min-h-screen lg:h-screen">
       <div className="flex flex-col lg:flex-row h-full">
@@ -824,7 +849,7 @@ const CurrVitaeGenerator: React.FC = () => {
           )}
 
           {/* Preview Sidebar (Step 1 only) */}
-          {(currentStep === 1 || currentStep === 5)  && (
+          {(currentStep === 1 || currentStep === 5) && (
             <div className="hidden lg:block w-1/3 xl:w-2/5 bg-white border-l border-gray-200 p-4 lg:p-6 overflow-hidden max-w-full">
               <div className="sticky top-0 bg-white pb-4 mb-4 border-b border-gray-200 flex flex-col gap-1">
                 <h3 className="text-lg font-semibold">Live Preview</h3>
