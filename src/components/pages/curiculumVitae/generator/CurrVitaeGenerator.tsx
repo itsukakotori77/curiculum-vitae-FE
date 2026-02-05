@@ -154,8 +154,10 @@ const ExperienceItem: React.FC<ExperienceItemProps> = ({
       {experience.jobTitle} | {experience.role}
     </p>
     <p className="text-xs sm:text-sm text-gray-600">
-      {experience.date?.startDate} -{' '}
-      {experience.isCurrent ? 'Present' : experience.date?.endDate}
+      {moment(experience.date[0]).format('DD, MMM YYYY')} -{' '}
+      {experience.isCurrent == true
+        ? 'Present'
+        : moment(experience.date[1]).format('DD, MMM YYYY')}
     </p>
     {experience.descJob && (
       <p className="text-xs sm:text-sm text-gray-600 mt-1 break-words">

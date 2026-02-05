@@ -100,7 +100,10 @@ const GeneratorForm2 = forwardRef<GeneratorForm2Ref, FormGeneratorStep2>(
     return (
       <Card
         title="Work Experience"
-        className={joinClass('w-full max-w-full overflow-hidden p-[3px]', className)}
+        className={joinClass(
+          'w-full max-w-full overflow-hidden p-[3px]',
+          className,
+        )}
       >
         <form
           noValidate

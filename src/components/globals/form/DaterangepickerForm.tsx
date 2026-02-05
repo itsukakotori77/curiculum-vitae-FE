@@ -29,16 +29,15 @@ const DaterangepickerForm: React.FC<IProps> = ({
         control={control}
         name={name}
         render={({
-          field: { value, name, onBlur, onChange },
+          field: { value, name, onChange },
           formState: { errors },
         }) => (
           <>
             <DaterangepickerInput
               name={name}
               value={value}
-              onBlur={onBlur}
               onChange={(val) => onChange(val)}
-              disabled={props.disabled}
+              // disabled={props.disabled}
               max={max}
               maxDate={maxDate}
               minDate={minDate}
