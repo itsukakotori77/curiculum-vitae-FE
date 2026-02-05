@@ -86,7 +86,7 @@ const DaterangepickerInput: React.FC<DaterangepickerInputProps> = forwardRef(
                   value[0] ? 'text-gray-900 text-sm' : 'text-gray-400 text-sm'
                 }
               >
-                {value[0] ? format(value[0], 'dd/MM/yyyy') : 'Tanggal mulai'}
+                {value[0] ? format(value[0], 'dd/MM/yyyy') : 'Start Date'}
               </span>
             </div>
 
@@ -100,7 +100,7 @@ const DaterangepickerInput: React.FC<DaterangepickerInputProps> = forwardRef(
                   value[1] ? 'text-gray-900 text-sm' : 'text-gray-400 text-sm'
                 }
               >
-                {value[1] ? format(value[1], 'dd/MM/yyyy') : 'Tanggal akhir'}
+                {value[1] ? format(value[1], 'dd/MM/yyyy') : 'End Date'}
               </span>
             </div>
           </div>
