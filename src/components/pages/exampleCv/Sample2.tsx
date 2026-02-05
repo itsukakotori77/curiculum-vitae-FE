@@ -320,7 +320,7 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
                     size={textSize}
                     className="font-medium"
                   >
-                    {`${moment(item?.startDate).format('MMMM, Do YYYY')} - ${item?.isCurrent ? 'Current' : moment(item?.endDate).format('MMMM, Do YYYY')}`}
+                    {`${moment(item?.startDate).format('MMMM, Do YYYY')} - ${item?.isCurrent == true ? 'Current' : moment(item?.endDate).format('MMMM, Do YYYY')}`}
                   </CVText>
                 </div>
                 <CVText

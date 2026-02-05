@@ -557,7 +557,7 @@ const Sample14 = forwardRef<HTMLDivElement, Sample>(
                       <div className="flex gap-1" key={key}>
                         <div className="w-11 shrink-0 flex items-start">
                           <CVText variant="tiny" size={textSize}>
-                            {`${moment(item?.startDate).format('YYYY')} - ${item?.isCurrent ? 'Present' : moment(item?.endDate).format('YYYY')}`}
+                            {`${moment(item?.startDate).format('YYYY')} - ${item?.isCurrent == true ? 'Present' : moment(item?.endDate).format('YYYY')}`}
                           </CVText>
                         </div>
                         <div className="flex flex-col">

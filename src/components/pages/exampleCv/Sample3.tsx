@@ -593,7 +593,7 @@ const Sample3 = forwardRef<HTMLDivElement, Sample>(
                                   'MMMM, Do YYYY',
                                 )}
                                 <ChevronRight className="w-4 h-4 mx-1" />
-                                {item?.isCurrent
+                                {item?.isCurrent == true
                                   ? 'Current'
                                   : moment(item?.endDate).format(
                                       'MMMM, Do YYYY',
