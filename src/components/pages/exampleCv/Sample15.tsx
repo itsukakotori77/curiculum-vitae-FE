@@ -10,14 +10,12 @@ import { faEnvelope, faLink } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { cva, VariantProps } from 'class-variance-authority'
 import React, { forwardRef } from 'react'
-import '@/assets/styles/exampleCurr/_example14.css'
+import '@/assets/styles/exampleCurr/_example15.css'
 import moment from 'moment'
-import Image from 'next/image'
-import { useCVSettingStore } from '@/utils/store'
 import Badge from '@/components/globals/UI/Badge'
 
 const cvVariants = cva(
-  'w-full bg-white sample14-container shadow-lg print:shadow-none',
+  'w-full bg-white sample15-container shadow-lg print:shadow-none',
   {
     variants: {
       size: {

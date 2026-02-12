@@ -1,0 +1,39 @@
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0.5in;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+
+  .cv-container {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  .print-break {
+    page-break-before: always;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .cv-container {
+    flex-direction: column !important;
+  }
+}
+
+.sample16-container {
+  font-family: var(--font-montserrat);
+  margin: 0 auto;
+}
