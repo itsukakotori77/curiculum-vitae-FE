@@ -16,7 +16,7 @@ import Image from 'next/image'
 import { useCVSettingStore } from '@/utils/store'
 
 const cvVariants = cva(
-  'w-full bg-white sample14-container shadow-lg print:shadow-none bg-[#D1D6D1]',
+  'w-full sample14-container shadow-lg print:shadow-none bg-[#D1D6D1]',
   {
     variants: {
       size: {
