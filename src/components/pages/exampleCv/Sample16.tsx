@@ -15,7 +15,7 @@ import moment from 'moment'
 import Badge from '@/components/globals/UI/Badge'
 
 const cvVariants = cva(
-  'w-full bg-white sample15-container shadow-lg print:shadow-none',
+  'w-full bg-white sample16-container shadow-lg print:shadow-none',
   {
     variants: {
       size: {

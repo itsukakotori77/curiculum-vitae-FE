@@ -1,3 +1,4 @@
+
 @font-face {
   font-family: 'Playfair';
   src: url('/fonts/playfair/Playfair-Regular.ttf') format('truetype');
@@ -106,4 +107,8 @@
 
 .font-\[euphemia\] {
   --font-family: 'Euphemia', serif;
+}
+
+.font-\[imfell\] {
+  --font-family: 'IM Fell Double Pica', serif;
 }
