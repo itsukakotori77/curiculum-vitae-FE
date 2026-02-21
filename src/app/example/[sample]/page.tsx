@@ -22,6 +22,7 @@ import Sample16 from '@/components/pages/exampleCv/Sample16'
 import Sample17 from '@/components/pages/exampleCv/Sample17'
 import Sample18 from '@/components/pages/exampleCv/Sample18'
 import Sample19 from '@/components/pages/exampleCv/Sample19'
+import Sample20 from '@/components/pages/exampleCv/Sample20'
 
 export default function Page() {
   const { sample } = useParams()
@@ -47,6 +48,7 @@ export default function Page() {
       {sample === '17' && <Sample17 data={biodataCurr} />}
       {sample === '18' && <Sample18 data={biodataCurr} />}
       {sample === '19' && <Sample19 data={biodataCurr} />}
+      {sample === '20' && <Sample20 data={biodataCurr} />}
     </>
   )
 }

@@ -198,6 +198,16 @@ export const biodataCurr: ICurrVitae = {
       isHasLevel: true,
       level: 1,
     },
+    {
+      name: 'Quasar',
+      isHasLevel: true,
+      level: 1,
+    },
+    {
+      name: 'NestJs',
+      isHasLevel: true,
+      level: 1,
+    },
   ],
   contacts: {
     phone: '621234567890',

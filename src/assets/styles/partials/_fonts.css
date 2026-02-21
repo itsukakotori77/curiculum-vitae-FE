@@ -115,3 +115,11 @@
 .font-\[josefin\] {
   --font-family: 'Josefin Sans', sans-serif;
 }
+
+.font-\[josefin-slab\] {
+  --font-family: 'Josefin Slab', sans-serif;
+}
+
+.font-\[volkhov\] {
+  --font-family: 'Volkhov', sans-serif;
+}
