@@ -108,6 +108,9 @@ const loadSampleComponent = (id: number) => {
   )
 }
 
+const A4_WIDTH_PX = 794
+const A4_HEIGHT_PX = 1123
+
 // Reusable Item Card Component
 const ItemCard: React.FC<ItemCardProps> = ({
   index,
@@ -831,7 +834,7 @@ const CurrVitaeGenerator: React.FC = () => {
                         border-black 
                         p-2
                         rounded-md 
-                        shadow-[3px_3px_0px_rgba(0,0,0,1)]"
+                        shadow-[3px_3px_0px_rgba(0,0,0,1)] bg-white"
                   onClick={() => setPreview(true)}
                 >
                   <Suspense

@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { CSSProperties, forwardRef } from 'react'
 import '@/assets/styles/exampleCurr/_example2.css'
 import { CVProps } from '@/interface/curiculumVitae'
 import moment from 'moment'
@@ -156,11 +156,16 @@ const iconVariants = cva('', {
 const SectionHeader = ({
   children,
   textSize = 'md',
+  style,
 }: {
   children: React.ReactNode
   textSize?: VariantProps<typeof textVariants>['size']
+  style?: CSSProperties
 }) => (
-  <div className="flex justify-center items-center bg-[#F2F2F2] w-full">
+  <div
+    className="flex justify-center items-center bg-[#F2F2F2] w-full"
+    style={style}
+  >
     <CVText variant="body" size={textSize} className="font-bold">
       {children}
     </CVText>
@@ -213,7 +218,7 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
       className,
       iconSize = 'md',
       sidebarColor = '#E3E9EF',
-      primaryColor = '#5977AC',
+      primaryColor = '#F2F2F2',
       sidebarTextColor = '#463F3F',
       skillColor = '#262424',
       variantText = 'small',
@@ -267,14 +272,14 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
             <CVText
               variant="subtitle"
               size={textSize}
-              className="font-medium tracking-wide"
+              className="font-medium tracking-wide my-1"
             >
               {data?.role || ''}
             </CVText>
             <CVText
               variant="small"
               size={textSize}
-              className="font-medium tracking-normal whitespace-normal text-center"
+              className="font-medium tracking-normal whitespace-normal text-center my-1"
             >
               {data?.contacts?.address || ''}
             </CVText>
@@ -294,7 +299,12 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
 
         {/* SUMMARY */}
         <div className="flex flex-col w-full gap-3">
-          <SectionHeader textSize={textSize}>SUMMARY</SectionHeader>
+          <SectionHeader
+            style={{ background: primaryColor }}
+            textSize={textSize}
+          >
+            SUMMARY
+          </SectionHeader>
           <CVText
             variant="tiny"
             size={textSize}
@@ -306,7 +316,12 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
 
         {/* EXPERIENCE */}
         <div className="flex flex-col w-full gap-3">
-          <SectionHeader textSize={textSize}>EXPERIENCE</SectionHeader>
+          <SectionHeader
+            style={{ background: primaryColor }}
+            textSize={textSize}
+          >
+            EXPERIENCE
+          </SectionHeader>
           <ul className="list-none">
             {data?.experience?.toReversed().map((item: any, key: number) => (
               <li key={key} className="grid gap-2 mb-3">
@@ -338,7 +353,12 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
         {/* CERTIFICATIONS */}
         {data?.certification && data.certification.length > 0 && (
           <div className="flex flex-col w-full gap-3">
-            <SectionHeader textSize={textSize}>CERTIFICATIONS</SectionHeader>
+            <SectionHeader
+              style={{ background: primaryColor }}
+              textSize={textSize}
+            >
+              CERTIFICATIONS
+            </SectionHeader>
             <ul className="list-none">
               {data?.certification
                 ?.toReversed()
@@ -377,7 +397,12 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
         {/* EDUCATION */}
         {data?.education && data.education.length > 0 && (
           <div className="flex flex-col w-full gap-3">
-            <SectionHeader textSize={textSize}>EDUCATION</SectionHeader>
+            <SectionHeader
+              style={{ background: primaryColor }}
+              textSize={textSize}
+            >
+              EDUCATION
+            </SectionHeader>
             <ul className="list-none">
               {data?.education?.toReversed()?.map((item: any, key: number) => (
                 <li key={key} className="grid gap-2 mb-3">
@@ -423,7 +448,12 @@ const Sample2 = forwardRef<HTMLDivElement, Sample>(
 
         {/* SKILLS */}
         <div className="flex flex-col w-full gap-3">
-          <SectionHeader textSize={textSize}>SKILLS</SectionHeader>
+          <SectionHeader
+            style={{ background: primaryColor }}
+            textSize={textSize}
+          >
+            SKILLS
+          </SectionHeader>
           <div className="grid grid-cols-2 gap-2 mb-3">
             {data?.skills?.map((item: any, key: number) => (
               <div key={key} className="flex items-end justify-between">
