@@ -245,7 +245,7 @@ const Sample14 = forwardRef<HTMLDivElement, Sample>(
             <div className="flex flex-col w-full">
               {/* PROFILE PICTURE & CONTACTS*/}
               <div className="flex flex-row gap-1">
-                <div className="w-[70%]">
+                <div className={cn(!!setting?.usingPicture ? 'w-[70%]' : 'w-full')}>
                   <div className="flex flex-col gap-1 p-4 w-full">
                     <div
                       className="flex justify-evenly items-center rounded-lg p-4 gap-1"
@@ -352,11 +352,11 @@ const Sample14 = forwardRef<HTMLDivElement, Sample>(
                     </div>
                   </div>
                 </div>
-                <div
-                  className="w-[30%] rounded-bl-[60px] h-[calc(100vh-80vh)] z-999"
-                  style={{ background: skillColor }}
-                >
-                  {!!setting?.usingPicture && (
+                {!!setting?.usingPicture && (
+                  <div
+                    className="w-[30%] rounded-bl-[60px] h-[calc(100vh-80vh)] z-999"
+                    style={{ background: skillColor }}
+                  >
                     <div className="flex justify-center items-center h-full">
                       <Image
                         src={data?.profilePicture || '/User.png'}
@@ -380,13 +380,13 @@ const Sample14 = forwardRef<HTMLDivElement, Sample>(
                         }
                       />
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
 
               {/* PROFILE */}
               <div
-                className="flex flex-col py-4 px-10 gap-1 w-[96%] rounded-br-[60px] -mt-12 z-1"
+                className={cn('flex flex-col py-4 px-10 gap-1 w-[96%] rounded-br-[60px] z-1', !!setting?.usingPicture ? '-mt-12' : 'mt-0')}
                 style={{ background: mixWithWhite(primaryColor) }}
               >
                 <CVText variant="title" size="lg" className="font-[euphemia]">

@@ -245,9 +245,9 @@ const Sample12 = forwardRef<HTMLDivElement, Sample>(
             <div className="flex flex-col w-full p-4 gap-3">
               <div className="flex flex-row w-full gap-4">
                 {/* PICTURE PROFILE */}
-                <div className="w-[30%]">
-                  <div className="flex flex-col gap-1">
-                    {!!setting?.usingPicture && (
+                {!!setting?.usingPicture && (
+                  <div className="w-[30%]">
+                    <div className="flex flex-col gap-1">
                       <div className="flex justify-center items-center flex-col">
                         {/* Image Container */}
                         <Image
@@ -271,12 +271,17 @@ const Sample12 = forwardRef<HTMLDivElement, Sample>(
                           }
                         />
                       </div>
-                    )}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* ROLE & FULLNAME & PROFILE */}
-                <div className="w-[70%]">
+                <div
+                  className={cn(
+                    !!setting?.usingPicture && 'w-[70%]',
+                    !!!setting?.usingPicture && 'w-full',
+                  )}
+                >
                   <div
                     className="flex flex-col gap-1 border-2 rounded-2xl items-start justify-start p-2"
                     style={{ borderColor: sidebarColor }}

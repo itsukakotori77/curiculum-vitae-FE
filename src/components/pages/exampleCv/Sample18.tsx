@@ -245,7 +245,14 @@ const Sample18 = forwardRef<HTMLDivElement, Sample>(
           >
             <div className="flex flex-col gap-2 w-full pr-10">
               {/* PROFILE & FULL NAME */}
-              <div className="grid grid-cols-[4fr_6fr] gap-2">
+              <div
+                className={cn(
+                  'grid gap-2',
+                  !!setting?.usingPicture
+                    ? 'grid-cols-[4fr_6fr]'
+                    : 'grid-cols-1',
+                )}
+              >
                 {/* IMAGE */}
 
                 <div className="flex flex-col gap-2">
@@ -275,7 +282,12 @@ const Sample18 = forwardRef<HTMLDivElement, Sample>(
                   )}
                 </div>
 
-                <div className="flex flex-col justify-center items-start px-4">
+                <div
+                  className={cn(
+                    'flex flex-col justify-center items-start px-4',
+                    !setting?.usingPicture && 'px-25',
+                  )}
+                >
                   <div className="flex justify-start flex-col">
                     <CVText variant="title" size="lg" className="font-light">
                       {data?.firstName}
