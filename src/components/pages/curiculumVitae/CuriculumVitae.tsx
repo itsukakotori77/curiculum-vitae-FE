@@ -25,7 +25,7 @@ import { useCVSettingStore } from '@/utils/store'
 import { useRouter, usePathname } from 'next/navigation'
 import BottomSheet from '@/components/globals/bottomSheet'
 import { useWindowSize } from '@/utils/hooks'
-import { ListFilter } from 'lucide-react'
+import { ListFilter, Loader2 } from 'lucide-react'
 import { apiGetListTemplate } from '@/services/template/api'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
@@ -85,6 +85,7 @@ export default function CuriculumVitae() {
   const {
     data,
     isFetching,
+    isPending: isInitialLoading,
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
@@ -265,7 +266,7 @@ export default function CuriculumVitae() {
             )}
 
             <div className="overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 pr-0 sm:pr-2 pb-4 py-2 px-0 sm:px-2 md:px-4">
-              {isFetching
+              {isInitialLoading
                 ? Array.from({ length: limit }).map((_, index) => (
                     <div key={`skeleton-${index}`}>
                       <SkeletonCard />
@@ -314,6 +315,19 @@ export default function CuriculumVitae() {
                   </div>
                 ))}
             </div>
+
+            {isFetchingNextPage && (
+              <div className="flex items-center justify-center gap-2 py-3 text-gray-500">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-sm">Loading more templates...</span>
+              </div>
+            )}
+
+            {!isFetchingNextPage && hasNextPage && templates.length > 0 && (
+              <div className="flex items-center justify-center py-3">
+                <span className="text-xs text-gray-400">Scroll to load more</span>
+              </div>
+            )}
 
             <div ref={loadMoreRef} className="h-2 w-full" />
 
