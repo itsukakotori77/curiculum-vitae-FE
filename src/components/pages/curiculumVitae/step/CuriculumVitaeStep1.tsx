@@ -120,12 +120,13 @@ export default function CuriculumVitaeStep1({
               onBlur={() => setFocusedCard(null)}
               tabIndex={0}
             >
-              <div className="relative w-full h-full aspect-[1/1.414] overflow-hidden rounded shadow-md">
+              <div className="relative w-full aspect-[1/1.414] overflow-hidden rounded shadow-md bg-white">
                 {option?.image ? (
                   <Image
                     className="w-full h-full object-cover object-top"
                     src={option?.image}
                     fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 48vw, 40vw"
                     alt="Template preview"
                   />
                 ) : (

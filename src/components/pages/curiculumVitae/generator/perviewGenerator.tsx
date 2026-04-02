@@ -163,6 +163,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
         const pdfWidth = pageWidth
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
 
+        pdf.setFillColor(0,0,0,0)
         pdf.addImage(
           dataUrl,
           'PNG',
@@ -189,7 +190,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
       () => ({
         data: data || biodataCurr,
         scale: 'md' as const,
-        textSize: 'xs' as const,
+        textSize: 'sm' as const,
         config: {
           sidebarWidth: 28,
           responsiveImage: true,
@@ -207,7 +208,7 @@ const PreviewGenerator = forwardRef<PreviewGeneratorHandle, IProps>(
           desktopBackgroundWidth: 192,
         },
         printable: 'noPrint' as const,
-        iconSize: 'xs' as const,
+        iconSize: 'sm' as const,
         variantText: 'tiny' as const,
         className:
           'bg-white shadow-lg !w-[210mm] !min-h-[297mm] !max-w-none mx-auto rounded-none sm:rounded-lg',

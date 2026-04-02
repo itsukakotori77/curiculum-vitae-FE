@@ -2,7 +2,9 @@
 
 import React, {
   HTMLAttributeReferrerPolicy,
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -21,36 +23,49 @@ import { rgbaToHex } from '@/utils/common'
 import { toast } from 'react-toastify'
 import { useCVSettingStore } from '@/utils/store'
 import { useRouter, usePathname } from 'next/navigation'
-import { X } from 'lucide-react'
 import BottomSheet from '@/components/globals/bottomSheet'
-import { useWindowSize, useFetchQuery } from '@/utils/hooks'
-import Button from '@/components/CultUI/Button'
+import { useWindowSize } from '@/utils/hooks'
 import { ListFilter } from 'lucide-react'
 import { apiGetListTemplate } from '@/services/template/api'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useGetDetailTemplate } from '@/services/template/query'
 import Loading from '@/components/globals/UI/Loading'
+import { useInfiniteQuery } from '@tanstack/react-query'
 
 const defaultParam = {
   page: 1,
-  limit: 10,
+  limit: 4,
   sortBy: 'created_at',
   sortSystem: 'desc',
 }
 
+const MOBILE_BREAKPOINT = 1024
+
+const extractTemplates = (response: any): any[] => {
+  if (Array.isArray(response?.data?.data)) return response.data.data
+  if (Array.isArray(response?.data)) return response.data
+  if (Array.isArray(response)) return response
+  return []
+}
+
 export default function CuriculumVitae() {
   const filterRef = useRef<HTMLAttributeReferrerPolicy>(null)
+  const loadMoreRef = useRef<HTMLDivElement | null>(null)
   const { openModal, closeModal } = useModalConfirm()
   const { data: dataSetting, updateData } = useCVSettingStore()
   const router = useRouter()
   const pathname = usePathname()
+  const { width } = useWindowSize()
   const [modal, setModal] = useState<boolean>(false)
   const [currStep, setCurrStep] = useState<number>(1)
   const [usePhoto, setPhoto] = useState<boolean>(false)
   const [filterMobile, setFilterMobile] = useState<boolean>(false)
+  const [filterState, setFilterState] = useState<any>(defaultParam)
   const { mutate: postSetting, isPending } = usePostSetting()
   const [detail, setDetail] = useState<number | null>(null)
+  const isDesktop = width >= MOBILE_BREAKPOINT
+  const limit = isDesktop ? 4 : 5
   const {
     data: dataDetail,
     refetch: refetchDetail,
@@ -59,18 +74,68 @@ export default function CuriculumVitae() {
     enabled: false,
   })
 
-  const [
-    { data, isFetching, refetch, isSuccess, isError, error },
-    state,
-    setState,
-  ] = useFetchQuery('LIST CV', apiGetListTemplate, defaultParam, {
-    keepPreviousData: false,
+  const queryParams = useMemo(
+    () => ({
+      ...filterState,
+      limit,
+    }),
+    [filterState, limit],
+  )
+
+  const {
+    data,
+    isFetching,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+    refetch,
+    isError,
+  } = useInfiniteQuery({
+    queryKey: ['LIST CV', queryParams],
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) =>
+      apiGetListTemplate({ ...queryParams, page: pageParam as number }),
+    getNextPageParam: (lastPage, allPages) => {
+      const lastItems = extractTemplates(lastPage)
+      return lastItems.length === limit ? allPages.length + 1 : undefined
+    },
     retry: 1,
-    retryDelay: 1000,
-    enabled: true,
   })
 
-  const templates = data?.data || data || []
+  const templates = useMemo(() => {
+    if (!data?.pages) return []
+
+    const merged = data.pages.flatMap((page) => extractTemplates(page))
+    const seen = new Set<string | number>()
+
+    return merged.filter((item: any) => {
+      const key = item?.id
+      if (key === undefined || key === null) return true
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [data])
+
+  const setFilter = useCallback(
+    (updater: any) => {
+      setFilterState((prev: any) => {
+        const next = typeof updater === 'function' ? updater(prev) : updater
+        const normalized = {
+          ...next,
+          page: 1,
+          limit,
+        }
+
+        if (JSON.stringify(prev) === JSON.stringify(normalized)) {
+          return prev
+        }
+
+        return normalized
+      })
+    },
+    [limit],
+  )
 
   const handleSubmit = (data: IColorCurr) => {
     const param = {
@@ -111,6 +176,39 @@ export default function CuriculumVitae() {
     }
   }, [detail])
 
+  useEffect(() => {
+    setFilterState((prev: any) => ({
+      ...prev,
+      page: 1,
+      limit,
+    }))
+  }, [limit])
+
+  useEffect(() => {
+    if (!loadMoreRef.current) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage()
+        }
+      },
+      {
+        root: null,
+        rootMargin: '120px',
+        threshold: 0.1,
+      },
+    )
+
+    observer.observe(loadMoreRef.current)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage])
+
   return (
     <>
       <Loading isLoading={isPending} />
@@ -130,9 +228,9 @@ export default function CuriculumVitae() {
             <div className="w-full sticky top-0">
               <Filter
                 ref={filterRef}
-                filter={state}
-                setFilter={setState}
-                defaultValue={defaultParam}
+                filter={filterState}
+                setFilter={setFilter}
+                defaultValue={{ ...defaultParam, limit }}
               />
             </div>
           </div>
@@ -143,9 +241,9 @@ export default function CuriculumVitae() {
           >
             <Filter
               ref={filterRef}
-              filter={state}
-              setFilter={setState}
-              defaultValue={defaultParam}
+              filter={filterState}
+              setFilter={setFilter}
+              defaultValue={{ ...defaultParam, limit }}
             />
           </BottomSheet>
 
@@ -168,7 +266,7 @@ export default function CuriculumVitae() {
 
             <div className="overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 pr-0 sm:pr-2 pb-4 py-2 px-0 sm:px-2 md:px-4">
               {isFetching
-                ? Array.from({ length: defaultParam.limit }).map((_, index) => (
+                ? Array.from({ length: limit }).map((_, index) => (
                     <div key={`skeleton-${index}`}>
                       <SkeletonCard />
                     </div>
@@ -196,18 +294,28 @@ export default function CuriculumVitae() {
                         childrenClass="p-0 rounded-sm aspect-[1/1.414]"
                       >
                         {/* A4 aspect ratio container using Tailwind */}
-                        <div className="relative w-full aspect-[1/1.414]">
+                        <div className="relative w-full aspect-[1/1.414] overflow-hidden rounded-sm bg-white">
                           <Image
                             className="w-full h-full object-cover object-top"
                             src={`${item.template_photo}`}
                             fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                             alt={item.value || 'Template'}
                           />
                         </div>
                       </Card>
                     </motion.div>
                   ))}
+
+              {isFetchingNextPage &&
+                Array.from({ length: limit }).map((_, index) => (
+                  <div key={`skeleton-next-${index}`}>
+                    <SkeletonCard />
+                  </div>
+                ))}
             </div>
+
+            <div ref={loadMoreRef} className="h-2 w-full" />
 
             {/* No data message */}
             {!isFetching &&

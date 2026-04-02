@@ -153,7 +153,7 @@ const DaterangepickerInput: React.FC<DaterangepickerInputProps> = forwardRef(
         <input
           type="hidden"
           name={name}
-          value={value[0]?.toISOString() || ''}
+          value={value[0]?.toString() || ''}
         />
       </div>
     )
