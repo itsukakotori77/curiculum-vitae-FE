@@ -13,6 +13,7 @@ import { jwtDecode } from 'jwt-decode'
 import { useAuthStore } from '@/utils/store'
 import { pushRotate as Menu } from 'react-burger-menu'
 import { Spin as Hamburger } from 'hamburger-react'
+import Image from 'next/image'
 
 export default function Navbar() {
   const router = useRouter()
@@ -89,12 +90,26 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="w-full flex justify-between items-center px-4 sm:px-6 md:px-10 lg:px-20 py-4">
+      <header className="w-full flex justify-between items-center px-4 sm:px-6 md:px-10 lg:pr-20 py-4">
         <span
           className="text-lg font-semibold hover:cursor-pointer"
           onClick={() => router.push('/')}
         >
-          Logo
+          <Image
+            src="/logo/logo.png"
+            alt="Logo"
+            width={40}
+            height={40}
+            className="w-60 object-contain lg:block hidden"
+          />
+
+          <Image
+            src="/logo/logo-single.png"
+            alt="Logo"
+            width={40}
+            height={40}
+            className="w-20 object-contain lg:hidden block"
+          />
         </span>
 
         {/* Desktop Navigation */}
